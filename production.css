@@ -526,6 +526,8 @@ main{
   gap:clamp(.6rem,2.5vmin,1rem);
 }
 
+.work-actions.single-action{grid-template-columns:minmax(0,1fr)}
+
 .detail-btn,
 .select-btn{
   width:100%;
@@ -674,6 +676,7 @@ main{
   top:50%;
   z-index:25000;
   width:min(calc(100vw - var(--safe-left) - var(--safe-right) - 2rem),30rem);
+  max-height:calc(100vh - var(--safe-top) - var(--safe-bottom) - 2rem);
   max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 2rem);
   overflow:auto;
   padding:clamp(1.35rem,5vmin,2.4rem);
