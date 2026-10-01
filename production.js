@@ -1,6 +1,5 @@
 const MAX_VOTES=3;
-const STORAGE_KEY="sakuhin_vote_done_v15";
-const VOTE_TREND_REFRESH_MS=60000;
+const STORAGE_KEY='sakuhin_vote_done_v15';
 
 let works=[];
 let selected=[];
@@ -12,7 +11,9 @@ function setCookie(name,value,days){
 }
 
 function getCookie(name){
-  const item=document.cookie.split('; ').find(value=>value.startsWith(name+'='));
+  const item=document.cookie.split('; ').find(function(value){
+    return value.startsWith(name+'=');
+  });
   return item?decodeURIComponent(item.split('=').slice(1).join('=')):'';
 }
 
@@ -57,170 +58,9 @@ function init(){
   }
 
   loadWorks();
-  loadVoteTrend();
-  setInterval(loadVoteTrend,VOTE_TREND_REFRESH_MS);
-  if(hasVoted()){
-    showVotedMask();
-  }else{
-    hideVotedMask();
-  }
-}
 
-function loadVoteTrend(){
-  const status=document.getElementById('voteTrendStatus');
-  if(!status)return;
-
-  status.textContent='SYNC ACTIVE';
-
-  google.script.run
-    .withSuccessHandler(function(data){
-      const rows=Array.isArray(data)?data:[];
-      renderVoteTrend(rows);
-      const total=document.getElementById('voteTrendTotal');
-      if(total){
-        const totalVotes=rows.reduce(function(sum,item){
-          return sum+Math.max(0,Number(item.count)||0);
-        },0);
-        total.textContent='TOTAL '+totalVotes;
-      }
-      status.textContent='LIVE / '+new Date().toLocaleTimeString('ja-JP',{
-        hour:'2-digit',
-        minute:'2-digit'
-      });
-    })
-    .withFailureHandler(function(error){
-      status.textContent='DATA ERROR';
-      renderVoteTrendError();
-      console.error(error);
-    })
-    .getVoteIntervalData();
-}
-
-function renderVoteTrend(data){
-  const svg=document.getElementById('voteTrendChart');
-  if(!svg)return;
-
-  while(svg.firstChild)svg.removeChild(svg.firstChild);
-
-  if(!data.length){
-    renderVoteTrendError('投票データなし');
-    return;
-  }
-
-  const width=1000;
-  const height=140;
-  const left=104;
-  const right=20;
-  const top=18;
-  const bottom=34;
-  const chartWidth=width-left-right;
-  const chartHeight=height-top-bottom;
-
-  svg.setAttribute('viewBox','0 0 '+width+' '+height);
-  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
-
-  const values=data.map(function(item){return Number(item.count)||0;});
-  const maxValue=Math.max.apply(null,values.concat([4]));
-  const yMax=Math.max(4,Math.ceil(maxValue/2)*2);
-
-  function el(tag,attrs){
-    const node=document.createElementNS('http://www.w3.org/2000/svg',tag);
-    Object.keys(attrs||{}).forEach(function(key){
-      node.setAttribute(key,attrs[key]);
-    });
-    return node;
-  }
-
-  function xFor(index){
-    if(data.length<=1)return left+chartWidth/2;
-    return left+(index/(data.length-1))*chartWidth;
-  }
-
-  function yFor(value){
-    return top+chartHeight-(value/yMax)*chartHeight;
-  }
-
-  // Axis labels are sized in SVG user-units as a proportion of the
-  // SVG coordinate width. No CSS vmin and no viewport->SVG conversion.
-  // This keeps the text on the same scale as the graph itself.
-  const axisFontSize=width*0.012;
-  const xAxisFontSize=width*0.012;
-
-  for(let value=0;value<=yMax;value+=2){
-    const y=yFor(value);
-
-    svg.appendChild(el('line',{
-      x1:left,x2:width-right,y1:y,y2:y,
-      class:'trend-grid'
-    }));
-
-    const label=el('text',{
-      x:left-10,
-      y:y+axisFontSize*0.35,
-      'text-anchor':'end',
-      class:'trend-y-label',
-      'font-size':axisFontSize,
-      'font-family':'system-ui, -apple-system, "Segoe UI", sans-serif',
-      'font-weight':'700',
-      'letter-spacing':'0',
-      'fill':'#79f6ff'
-    });
-    label.textContent=String(value);
-    svg.appendChild(label);
-  }
-
-  data.forEach(function(item,index){
-    const x=xFor(index);
-
-    svg.appendChild(el('line',{
-      x1:x,x2:x,y1:top,y2:height-bottom,
-      class:'trend-tick'
-    }));
-
-    const label=el('text',{
-      x:x,
-      y:height-3,
-      'text-anchor':'middle',
-      class:'trend-x-label',
-      'font-size':xAxisFontSize,
-      'font-family':'system-ui, -apple-system, "Segoe UI", sans-serif',
-      'font-weight':'700',
-      'letter-spacing':'0',
-      'fill':'#79f6ff'
-    });
-    label.textContent=new Date(item.timestamp).toLocaleTimeString('ja-JP',{
-      hour:'2-digit',
-      minute:'2-digit'
-    });
-    svg.appendChild(label);
-  });
-
-  const points=data.map(function(item,index){
-    return xFor(index)+','+yFor(Number(item.count)||0);
-  }).join(' ');
-
-  svg.appendChild(el('polyline',{
-    points:points,
-    class:'trend-line'
-  }));
-}
-
-function renderVoteTrendError(message){
-  const svg=document.getElementById('voteTrendChart');
-  if(!svg)return;
-
-  while(svg.firstChild)svg.removeChild(svg.firstChild);
-
-  svg.setAttribute('viewBox','0 0 1000 140');
-  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
-
-  const text=document.createElementNS('http://www.w3.org/2000/svg','text');
-  text.setAttribute('x','500');
-  text.setAttribute('y','62');
-  text.setAttribute('text-anchor','middle');
-  text.setAttribute('class','trend-empty');
-  text.textContent=message||'投票データを取得できませんでした';
-  svg.appendChild(text);
+  if(hasVoted())showVotedMask();
+  else hideVotedMask();
 }
 
 function loadWorks(){
@@ -251,10 +91,11 @@ function parseChoiceInfo(value){
 
   if(secondSpace===-1)return{title:raw,author:'',comment:''};
 
-  const author=rest.slice(0,secondSpace).trim();
-  const comment=rest.slice(secondSpace+1).trim();
-
-  return{title,author,comment};
+  return{
+    title:title,
+    author:rest.slice(0,secondSpace).trim(),
+    comment:rest.slice(secondSpace+1).trim()
+  };
 }
 
 function attachImageFallback(image,imageWrap){
@@ -264,27 +105,7 @@ function attachImageFallback(image,imageWrap){
 
   image.addEventListener('error',fail,{once:true});
 
-  if(image.complete && image.naturalWidth===0){
-    fail();
-  }
-}
-
-function appendImageFallback(imageWrap,title){
-  const fallback=document.createElement('div');
-  fallback.className='image-fallback';
-  fallback.setAttribute('aria-hidden','true');
-
-  const kicker=document.createElement('div');
-  kicker.className='image-fallback-kicker';
-  kicker.textContent='NO IMAGE';
-
-  const label=document.createElement('div');
-  label.className='image-fallback-title';
-  label.textContent=title||'画像を表示できません';
-
-  fallback.appendChild(kicker);
-  fallback.appendChild(label);
-  imageWrap.appendChild(fallback);
+  if(image.complete&&image.naturalWidth===0)fail();
 }
 
 function showMaxVoteError(){
@@ -300,7 +121,7 @@ function showMaxVoteError(){
   window.maxVoteErrorTimer=setTimeout(function(){
     panel.classList.remove('show');
     panel.setAttribute('aria-hidden','true');
-  },2400);
+  },1800);
 }
 
 function renderWorks(){
@@ -308,145 +129,124 @@ function renderWorks(){
   container.innerHTML='';
 
   works.forEach(function(work,index){
-    const isSelected=selected.includes(work.value);
     const parsed=parseChoiceInfo(work.value);
+    const isSelected=selected.includes(work.value);
 
-    const wrapper=document.createElement('article');
-    wrapper.className='work-card'+(isSelected?' selected':'');
-    wrapper.dataset.workIndex=String(index);
-    wrapper.dataset.workValue=work.value;
-
-    const number=document.createElement('div');
-    number.className='work-number';
-    number.textContent=String(index+1).padStart(2,'0');
-    number.setAttribute('aria-label','作品番号 '+String(index+1));
+    const card=document.createElement('article');
+    card.className='work-card'+(isSelected?' selected':'');
+    card.dataset.workValue=work.value;
+    card.dataset.workIndex=String(index);
 
     const imageWrap=document.createElement('div');
     imageWrap.className='work-image-wrap';
-    appendImageFallback(imageWrap,parsed.title||('作品 '+String(index+1)));
 
     if(work.image){
       const image=document.createElement('img');
       image.className='work-image';
+      image.src=work.image;
       image.alt='作品画像：'+(parsed.title||('作品 '+String(index+1)));
       image.decoding='async';
-      if(index===0){
-        image.loading='eager';
-        if('fetchPriority' in image) image.fetchPriority='high';
-      }else{
-        image.loading='lazy';
-      }
-      image.src=work.image;
+      image.loading=index<2?'eager':'lazy';
       attachImageFallback(image,imageWrap);
       imageWrap.appendChild(image);
-    }else{
-      imageWrap.classList.add('no-image');
     }
 
-    const info=document.createElement('div');
-    info.className='work-info';
+    const selectMask=document.createElement('button');
+    selectMask.type='button';
+    selectMask.className='work-select-mask';
+    selectMask.setAttribute('aria-pressed',isSelected?'true':'false');
+    selectMask.setAttribute('aria-label',(isSelected?'選択解除：':'選択：')+(parsed.title||('作品 '+String(index+1))));
 
-    const infoTop=document.createElement('div');
-    infoTop.className='work-info-top';
-    infoTop.textContent='WORK '+String(index+1).padStart(2,'0');
+    const hint=document.createElement('span');
+    hint.className='select-hint';
+    hint.textContent='ここをタップして選択';
 
-    const titleBlock=document.createElement('div');
-    titleBlock.className='data-block work-title-block';
+    const check=document.createElement('span');
+    check.className='select-check';
+    check.setAttribute('aria-hidden','true');
+    check.textContent='✓';
 
-    const titleLabel=document.createElement('span');
-    titleLabel.className='data-label';
-    titleLabel.textContent='TITLE';
+    selectMask.appendChild(hint);
+    selectMask.appendChild(check);
+    selectMask.addEventListener('click',function(){
+      toggleSelection(work.value);
+    });
+
+    imageWrap.appendChild(selectMask);
+
+    const meta=document.createElement('div');
+    meta.className='work-meta';
+
+    const workIndex=document.createElement('span');
+    workIndex.className='work-index';
+    workIndex.textContent='WORK '+String(index+1).padStart(2,'0');
 
     const title=document.createElement('h3');
     title.className='work-title';
     title.id='work-title-'+String(index+1);
     title.textContent=parsed.title||('作品 '+String(index+1));
-    wrapper.setAttribute('aria-labelledby',title.id);
+    card.setAttribute('aria-labelledby',title.id);
 
-    titleBlock.appendChild(titleLabel);
-    titleBlock.appendChild(title);
+    meta.appendChild(workIndex);
+    meta.appendChild(title);
 
-    const authorBlock=document.createElement('div');
-    authorBlock.className='data-block work-author-block';
-
-    const authorLabel=document.createElement('span');
-    authorLabel.className='work-author-label';
-    authorLabel.textContent='ARTIST';
-
-    const author=document.createElement('div');
-    author.className='work-author';
-    author.textContent=parsed.author||'作者名なし';
-
-    authorBlock.appendChild(authorLabel);
-    authorBlock.appendChild(author);
-
-    const commentBlock=document.createElement('div');
-    commentBlock.className='data-block work-comment-block';
-
-    const commentLabel=document.createElement('span');
-    commentLabel.className='work-comment-label';
-    commentLabel.textContent='COMMENT';
-
-    const comment=document.createElement('div');
-    comment.className='work-comment is-collapsed';
-    comment.id='work-comment-'+String(index+1);
-    comment.textContent=parsed.comment;
-
-    commentBlock.appendChild(commentLabel);
-    commentBlock.appendChild(comment);
-
-    const hasComment=Boolean(parsed.comment.trim());
-    if(!hasComment){
-      commentBlock.hidden=true;
+    if(parsed.author){
+      const author=document.createElement('div');
+      author.className='work-author';
+      author.textContent=parsed.author;
+      meta.appendChild(author);
     }
 
-    const actions=document.createElement('div');
-    actions.className='work-actions'+(hasComment?'':' single-action');
+    if(parsed.comment.trim()){
+      const detailRow=document.createElement('div');
+      detailRow.className='work-detail-row';
 
-    const button=document.createElement('button');
-    button.type='button';
-    button.className='select-btn'+(isSelected?' selected':'');
-    button.textContent=isSelected?'選択解除':'選択する';
-    button.setAttribute('aria-pressed',isSelected?'true':'false');
-    button.setAttribute('aria-label',(isSelected?'選択解除：':'選択：')+title.textContent);
-    button.onclick=function(){toggleSelection(work.value);};
+      const detail=document.createElement('button');
+      detail.type='button';
+      detail.className='detail-btn';
+      detail.textContent='DETAIL';
+      detail.setAttribute('aria-expanded','false');
+      detail.setAttribute('aria-controls','work-comment-'+String(index+1));
 
-    const detail=document.createElement('button');
-    detail.type='button';
-    detail.className='detail-btn';
-    detail.textContent='DETAIL';
-    detail.setAttribute('aria-expanded','false');
-    detail.setAttribute('aria-controls',comment.id);
-    detail.hidden=!hasComment;
-    detail.onclick=function(){toggleDetail(commentBlock,detail,wrapper);};
+      const comment=document.createElement('div');
+      comment.className='work-comment';
+      comment.id='work-comment-'+String(index+1);
+      comment.hidden=true;
+      comment.textContent=parsed.comment;
 
-    actions.appendChild(button);
-    actions.appendChild(detail);
+      detail.addEventListener('click',function(){
+        toggleDetail(comment,detail);
+      });
 
-    info.appendChild(infoTop);
-    info.appendChild(titleBlock);
-    info.appendChild(authorBlock);
+      detailRow.appendChild(detail);
+      meta.appendChild(detailRow);
+      meta.appendChild(comment);
+    }
 
-    wrapper.appendChild(number);
-    wrapper.appendChild(imageWrap);
-    wrapper.appendChild(info);
-    wrapper.appendChild(actions);
-    wrapper.appendChild(commentBlock);
-    container.appendChild(wrapper);
+    card.appendChild(imageWrap);
+    card.appendChild(meta);
+    container.appendChild(card);
   });
 
   container.setAttribute('aria-busy','false');
   updateUI();
 }
 
+function cssEscape(value){
+  if(window.CSS&&typeof window.CSS.escape==='function'){
+    return window.CSS.escape(String(value));
+  }
+  return String(value).replace(/["\\]/g,'\\$&');
+}
+
 function toggleSelection(value){
   if(hasVoted())return;
 
-  const selectedIndex=selected.indexOf(value);
-  const wasSelected=selectedIndex>=0;
+  const currentIndex=selected.indexOf(value);
+  const isSelected=currentIndex>=0;
 
-  if(wasSelected){
-    selected.splice(selectedIndex,1);
+  if(isSelected){
+    selected.splice(currentIndex,1);
   }else{
     if(selected.length>=MAX_VOTES){
       showMaxVoteError();
@@ -455,24 +255,16 @@ function toggleSelection(value){
     selected.push(value);
   }
 
-  if(document.activeElement && typeof document.activeElement.blur==='function'){
-    document.activeElement.blur();
-  }
-
-  const workIndex=works.findIndex(function(work){return work.value===value;});
-  const cards=document.querySelectorAll('.work-card');
-  const card=workIndex>=0?cards[workIndex]:null;
-
+  const card=document.querySelector('.work-card[data-work-value="'+cssEscape(value)+'"]');
   if(card){
-    const button=card.querySelector('.select-btn');
-    card.classList.toggle('selected',!wasSelected);
+    const nextSelected=!isSelected;
+    card.classList.toggle('selected',nextSelected);
 
-    if(button){
-      button.classList.toggle('selected',!wasSelected);
-      button.textContent=!wasSelected?'選択解除':'選択する';
-      button.setAttribute('aria-pressed',!wasSelected?'true':'false');
+    const mask=card.querySelector('.work-select-mask');
+    if(mask){
       const title=card.querySelector('.work-title');
-      button.setAttribute('aria-label',(!wasSelected?'選択解除：':'選択：')+(title?title.textContent:'作品'));
+      mask.setAttribute('aria-pressed',nextSelected?'true':'false');
+      mask.setAttribute('aria-label',(nextSelected?'選択解除：':'選択：')+(title?title.textContent:'作品'));
     }
   }
 
@@ -480,39 +272,61 @@ function toggleSelection(value){
 }
 
 function updateUI(){
-  document.getElementById('count').textContent=selected.length;
-
-  const selectedElement=document.getElementById('selected');
-
-  if(!selected.length){
-    selectedElement.textContent='0 / '+MAX_VOTES+'　選択作品なし';
-    selectedElement.setAttribute('aria-label','0 / '+MAX_VOTES+'。選択作品なし');
-  }else{
-    const selectedTitles=selected.map(function(value){
-      return parseChoiceInfo(value).title;
-    });
-    selectedElement.textContent=selected.length+' / '+MAX_VOTES+'　作品選択中';
-    selectedElement.setAttribute('aria-label',selected.length+' / '+MAX_VOTES+'。選択中：'+selectedTitles.join('、'));
-  }
-
-  document.getElementById('voteButton').disabled=selected.length===0;
-
-  const dots=document.querySelectorAll('.capacity-dot');
-  dots.forEach(function(dot,index){
-    dot.classList.toggle('active',index<selected.length);
-  });
+  const count=selected.length;
+  document.getElementById('selectionStatus').textContent=count+'作品選択中';
+  document.getElementById('count').textContent=String(count);
+  document.getElementById('voteButton').disabled=count===0;
+  renderSelectedThumbs();
 }
 
-function toggleDetail(commentBlock,button,card){
-  const comment=commentBlock.querySelector('.work-comment');
-  // コメントがないカードはDETAIL操作を一切行わない。
-  if(!comment || !comment.textContent.trim()) return;
-  const expanded=!comment.classList.contains('is-expanded');
-  comment.classList.toggle('is-expanded',expanded);
-  comment.classList.toggle('is-collapsed',!expanded);
-  card.classList.toggle('detail-open',expanded);
-  button.textContent=expanded?'閉じる':'DETAIL';
-  button.classList.toggle('is-open',expanded);
+function renderSelectedThumbs(){
+  const slots=document.querySelectorAll('.selected-thumb-slot');
+
+  slots.forEach(function(slot,index){
+    slot.innerHTML='';
+    slot.classList.remove('filled');
+
+    const value=selected[index];
+    if(!value){
+      slot.setAttribute('aria-hidden','true');
+      return;
+    }
+
+    const work=works.find(function(item){return item.value===value;});
+    const workIndex=works.findIndex(function(item){return item.value===value;});
+
+    slot.classList.add('filled');
+    slot.setAttribute('aria-hidden','false');
+
+    if(work&&work.image){
+      const image=document.createElement('img');
+      image.src=work.image;
+      image.alt='';
+      image.decoding='async';
+      slot.appendChild(image);
+    }
+
+    const indexLabel=document.createElement('span');
+    indexLabel.className='thumb-index';
+    indexLabel.textContent=workIndex>=0?String(workIndex+1).padStart(2,'0'):String(index+1);
+    slot.appendChild(indexLabel);
+  });
+
+  const selectedTitles=selected.map(function(value){
+    return parseChoiceInfo(value).title;
+  });
+
+  document.getElementById('selectedThumbs').setAttribute(
+    'aria-label',
+    selected.length
+      ?selected.length+'作品選択中：'+selectedTitles.join('、')
+      :'選択中の作品はありません'
+  );
+}
+
+function toggleDetail(comment,button){
+  const expanded=comment.hidden;
+  comment.hidden=!expanded;
   button.setAttribute('aria-expanded',expanded?'true':'false');
 }
 
@@ -550,14 +364,12 @@ function submitVote(){
       button.removeAttribute('aria-busy');
       alert('投票に失敗しました。\n'+error.message);
     })
-    .submitVoteToForm(selected);
+    .submitVoteToForm(selected.slice());
 }
 
 function showAdmin(){
   const code=window.prompt('管理者コードを入力してください。');
-
   if(code===null)return;
-
   adminReset(code.trim());
 }
 
@@ -570,11 +382,8 @@ function adminReset(code){
       }
 
       localStorage.removeItem(STORAGE_KEY);
-
       document.cookie='sakuhin_vote_done=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
-
       selected=[];
-
       hideVotedMask();
       renderWorks();
       updateUI();
@@ -588,43 +397,42 @@ if(document.readyState==='loading'){
   init();
 }
 
-/* Chrome pinch-zoom position recovery: restore the pre-zoom document position once, only when returning to 1x. */
 (function(){
-  const vv = window.visualViewport;
-  if(!vv) return;
+  const vv=window.visualViewport;
+  if(!vv)return;
 
-  let zooming = false;
-  let savedScrollY = 0;
-  let restorePending = false;
-  let restoreTimer = null;
+  let zooming=false;
+  let savedScrollY=0;
+  let restorePending=false;
+  let restoreTimer=null;
 
   function onViewportResize(){
-    const scale = vv.scale || 1;
+    const scale=vv.scale||1;
 
-    if(scale > 1.02 && !zooming){
-      zooming = true;
-      savedScrollY = window.scrollY || window.pageYOffset || 0;
-      restorePending = false;
+    if(scale>1.02&&!zooming){
+      zooming=true;
+      savedScrollY=window.scrollY||window.pageYOffset||0;
+      restorePending=false;
       if(restoreTimer){
         clearTimeout(restoreTimer);
-        restoreTimer = null;
+        restoreTimer=null;
       }
       return;
     }
 
-    if(zooming && scale <= 1.02 && !restorePending){
-      restorePending = true;
-      restoreTimer = setTimeout(function(){
-        window.scrollTo(0, savedScrollY);
+    if(zooming&&scale<=1.02&&!restorePending){
+      restorePending=true;
+      restoreTimer=setTimeout(function(){
+        window.scrollTo(0,savedScrollY);
         requestAnimationFrame(function(){
-          window.scrollTo(0, savedScrollY);
-          zooming = false;
-          restorePending = false;
-          restoreTimer = null;
+          window.scrollTo(0,savedScrollY);
+          zooming=false;
+          restorePending=false;
+          restoreTimer=null;
         });
-      }, 80);
+      },80);
     }
   }
 
-  vv.addEventListener('resize', onViewportResize, {passive:true});
+  vv.addEventListener('resize',onViewportResize,{passive:true});
 })();

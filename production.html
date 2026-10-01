@@ -3,92 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f3f1e9">
+  <meta name="theme-color" content="#eeeae0">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票</title>
-
   <link rel="stylesheet" href="production.css">
 </head>
 <body>
-  <a class="skip-link" href="#worksSection">作品一覧へ移動</a>
+  <a class="skip-link" href="#works">作品一覧へ移動</a>
 
   <div class="app-shell">
-    <header class="app-header">
-      <div class="header-topline">
+    <header class="app-header" aria-label="作品展バナー">
+      <div class="hero-visual" aria-hidden="true"></div>
+      <div class="hero-topline">
         <span>山口駐屯地創設71周年記念行事</span>
-        <span class="header-feed"><b>2026.9.20</b> YAMAGUCHI</span>
+        <span class="hero-mark" aria-hidden="true"></span>
       </div>
-
       <div class="hero-copy">
         <h1>作品展</h1>
-        <div class="header-rule" aria-hidden="true"></div>
         <div class="hero-side">日常に、小さな美を。</div>
-        <div class="hero-caption">2026.9.20 山口駐屯地グランドから朝日を望む</div>
       </div>
-
-      <section class="vote-trend" aria-label="5分間隔・直近6時間の投票トレンド">
-        <div class="vote-trend-head">
-          <div class="vote-trend-title-group">
-            <div class="vote-trend-kicker">EXHIBITION / ACTIVITY</div>
-            <h2>投票トレンド</h2>
-          </div>
-          <div class="vote-trend-meta">
-            <span id="voteTrendTotal" class="vote-trend-total">TOTAL 0</span>
-            <span id="voteTrendStatus" class="vote-trend-status">SYNC WAIT</span>
-          </div>
-        </div>
-        <div class="vote-trend-chart-wrap">
-          <svg id="voteTrendChart" class="vote-trend-chart" role="img" aria-label="5分間隔・直近6時間の投票数推移"></svg>
-        </div>
-      </section>
+      <div class="hero-caption">2026.9.20 山口駐屯地グランドから朝日を望む</div>
     </header>
 
-    <section class="selection-console" aria-live="polite" aria-label="投票の選択状況">
-      <div class="console-left">
-        <button id="adminButton" class="console-label vote-status-admin" type="button">選択状況</button>
-        <span id="selected">選択作品なし</span>
-      </div>
-      <div class="console-right">
-        <button id="voteButton" class="vote-button" type="button" disabled>投票する</button>
-        <span id="count" aria-hidden="true" hidden>0</span>
-      </div>
-    </section>
+    <main class="gallery-shell">
+      <section class="gallery-intro" aria-labelledby="galleryTitle">
+        <div>
+          <h2 id="galleryTitle">作品展投票</h2>
+          <p>気に入った作品を選択してください。最大3作品まで選択できます。</p>
+        </div>
+        <div id="selectionStatus" class="selection-status" aria-live="polite">0作品選択中</div>
+      </section>
 
-    <main id="worksSection" tabindex="-1">
-      <div class="works-heading">
-        <div class="works-heading-kicker">EXHIBITION WORKS</div>
-        <h2>作品を選ぶ</h2>
-        <p>気になる作品を最大3作品まで選んで、「投票する」ボタンから送信してください。</p>
-      </div>
-      <div id="works" class="works-list" aria-busy="true">
+      <div id="works" class="works-grid" aria-busy="true">
         <p class="works-loading" role="status">作品を読み込んでいます…</p>
       </div>
     </main>
   </div>
 
+  <footer class="selection-bar" aria-label="選択中の作品と投票操作">
+    <div class="selection-bar-inner">
+      <button id="adminButton" class="selection-bar-label" type="button" aria-label="管理者機能">
+        <span>選択中の作品</span>
+        <small>SELECTED</small>
+      </button>
+
+      <div id="selectedThumbs" class="selected-thumbs" aria-label="選択中の作品サムネイル">
+        <div class="selected-thumb-slot" data-slot="0" aria-hidden="true"></div>
+        <div class="selected-thumb-slot" data-slot="1" aria-hidden="true"></div>
+        <div class="selected-thumb-slot" data-slot="2" aria-hidden="true"></div>
+      </div>
+
+      <button id="voteButton" class="vote-button" type="button" disabled>投票する</button>
+      <span id="count" hidden aria-hidden="true">0</span>
+    </div>
+  </footer>
+
+  <div id="maxVoteErrorPanel" class="max-vote-error-panel" role="alert" aria-live="assertive" aria-hidden="true">
+    最大3作品まで選択できます
+  </div>
+
   <div id="votedMask" class="voted-mask" hidden aria-hidden="true" aria-live="polite" aria-modal="true" role="dialog" aria-labelledby="votedMaskTitle">
-    <div class="voted-mask-image" aria-hidden="true"></div>
-    <div class="voted-mask-overlay" aria-hidden="true"></div>
     <div class="voted-mask-admin-zone" aria-label="管理者機能" role="button" tabindex="0"></div>
     <div class="voted-mask-content">
-      <div class="voted-mask-check" aria-hidden="true" data-glitch="✓"><span>✓</span></div>
+      <div class="voted-mask-check" aria-hidden="true">✓</div>
       <div class="voted-mask-kicker">VOTE COMPLETE</div>
-      <div id="votedMaskTitle" class="voted-mask-title" data-glitch="投▒済み█す">投票済みです</div>
+      <div id="votedMaskTitle" class="voted-mask-title">投票済みです</div>
       <div class="voted-mask-subtitle">ご投票ありがとうございました。</div>
       <div class="voted-mask-status">投票内容を受け付けました。<br>この端末からの追加投票はできません。</div>
       <div class="voted-mask-footer">作品展投票システム</div>
     </div>
-  </div>
-
-  <div id="maxVoteErrorPanel" class="max-vote-error-panel" aria-live="assertive" aria-hidden="true" role="alert">
-    <div class="max-vote-error-warning">選択上限</div>
-    <div class="max-vote-error-code">MAXIMUM 3 WORKS</div>
-    <div class="max-vote-error-title">NOTICE</div>
-    <div class="max-vote-error-message">これ以上選択できません</div>
-    <div class="max-vote-error-sub">最大3作品まで選択できます</div>
-    <div class="max-vote-error-meta">別の作品を選ぶ場合は、選択済み作品を解除してください。</div>
-    <div class="max-vote-error-meta">SELECTION LIMIT</div>
-    <div class="max-vote-error-warning-bottom">3作品まで</div>
   </div>
 
   <script src="production.js"></script>
