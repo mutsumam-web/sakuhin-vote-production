@@ -7,13 +7,10 @@
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="production.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap">
 </head>
 <body>
-  <a class="skip-link" href="#works">作品一覧へ移動</a>
+  <a class="skip-link" href="#worksSection">作品一覧へ移動</a>
 
   <div class="app-shell">
     <header class="app-header">
@@ -57,8 +54,10 @@
       </div>
     </section>
 
-    <main>
-      <div id="works" class="works-list" aria-live="polite"></div>
+    <main id="worksSection" tabindex="-1">
+      <div id="works" class="works-list" aria-busy="true">
+        <p class="works-loading" role="status">作品を読み込んでいます…</p>
+      </div>
     </main>
   </div>
 
@@ -76,7 +75,7 @@
     </div>
   </div>
 
-  <div id="maxVoteErrorPanel" class="max-vote-error-panel" aria-live="assertive" aria-hidden="true" role="status">
+  <div id="maxVoteErrorPanel" class="max-vote-error-panel" aria-live="assertive" aria-hidden="true" role="alert">
     <div class="max-vote-error-warning">選択上限</div>
     <div class="max-vote-error-code">MAXIMUM 3 WORKS</div>
     <div class="max-vote-error-title">NOTICE</div>

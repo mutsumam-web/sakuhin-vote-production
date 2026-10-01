@@ -38,10 +38,9 @@ body{
   min-width:0;
   min-height:100vh;
   min-height:100dvh;
-  overflow-x:hidden;
   color:var(--ink);
   background:var(--bg);
-  font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic",Meiryo,sans-serif;
   font-synthesis:none;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
@@ -147,7 +146,7 @@ svg{max-width:100%}
 
 .header-feed{
   min-width:0;
-  font-family:Montserrat,"Segoe UI",Arial,sans-serif;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.14em;
   overflow-wrap:anywhere;
 }
@@ -176,7 +175,7 @@ svg{max-width:100%}
   content:"ART EXHIBITION";
   display:block;
   margin-top:clamp(.65rem,2.2vmin,1.15rem);
-  font:500 clamp(.72rem,2.8vmin,1rem)/1.3 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:500 clamp(.72rem,2.8vmin,1rem)/1.3 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.24em;
   color:rgba(255,255,255,.8);
 }
@@ -239,7 +238,7 @@ svg{max-width:100%}
 .vote-trend-kicker{
   min-width:0;
   color:rgba(255,255,255,.66);
-  font:500 clamp(.62rem,2.4vmin,.8rem)/1.35 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:500 clamp(.62rem,2.4vmin,.8rem)/1.35 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.12em;
   overflow-wrap:anywhere;
 }
@@ -262,7 +261,7 @@ svg{max-width:100%}
   align-items:flex-end;
   gap:.25rem;
   color:rgba(255,255,255,.68);
-  font:500 clamp(.6rem,2.2vmin,.76rem)/1.3 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:500 clamp(.6rem,2.2vmin,.76rem)/1.3 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.07em;
   text-align:right;
   overflow-wrap:anywhere;
@@ -318,7 +317,7 @@ svg{max-width:100%}
   background:transparent;
   color:var(--ink);
   cursor:pointer;
-  font:600 clamp(.72rem,2.8vmin,.88rem)/1.25 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:600 clamp(.72rem,2.8vmin,.88rem)/1.25 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.1em;
   white-space:nowrap;
 }
@@ -371,6 +370,16 @@ main{
   gap:clamp(1.4rem,5vmin,3rem);
 }
 
+.works-loading{
+  margin:clamp(1.5rem,6vmin,3rem) 0;
+  padding:clamp(1rem,4vmin,1.5rem);
+  color:var(--muted);
+  text-align:center;
+  font-size:clamp(.88rem,3.4vmin,1rem);
+  line-height:1.7;
+  overflow-wrap:anywhere;
+}
+
 /* WORK CARD — mobile-first */
 .work-card{
   position:relative;
@@ -408,7 +417,7 @@ main{
   background:rgba(255,255,255,.92);
   color:var(--accent-strong);
   box-shadow:0 .35rem 1.2rem rgba(0,0,0,.1);
-  font:700 clamp(.62rem,2.6vmin,.78rem)/1 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:700 clamp(.62rem,2.6vmin,.78rem)/1 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.06em;
   white-space:nowrap;
 }
@@ -424,16 +433,10 @@ main{
   border-radius:999px;
   background:rgba(18,37,30,.72);
   color:#fff;
-  font:600 clamp(.72rem,3vmin,.9rem)/1 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:600 clamp(.72rem,3vmin,.9rem)/1 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.08em;
   box-shadow:0 .35rem 1.2rem rgba(0,0,0,.1);
 }
-
-.number-status,
-.image-hud,
-.crt-label,
-.crt-signal,
-.callout-svg{display:none}
 
 .work-image-wrap{
   grid-area:image;
@@ -491,7 +494,7 @@ main{
   flex-wrap:wrap;
   gap:.4rem .85rem;
   color:var(--muted);
-  font:500 clamp(.62rem,2.45vmin,.78rem)/1.4 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:500 clamp(.62rem,2.45vmin,.78rem)/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.12em;
   overflow-wrap:anywhere;
 }
@@ -508,7 +511,7 @@ main{
   display:block;
   margin-bottom:.45rem;
   color:var(--muted);
-  font:500 clamp(.62rem,2.4vmin,.77rem)/1.35 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:500 clamp(.62rem,2.4vmin,.77rem)/1.35 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.11em;
 }
 
@@ -556,7 +559,7 @@ main{
   background:transparent;
   color:var(--ink);
   cursor:pointer;
-  font:600 clamp(.72rem,2.8vmin,.88rem)/1.2 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:600 clamp(.72rem,2.8vmin,.88rem)/1.2 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.07em;
   overflow-wrap:anywhere;
   transition:background-color .16s ease,color .16s ease,border-color .16s ease,transform .16s ease;
@@ -567,7 +570,6 @@ main{
 .select-btn:active{transform:scale(.985)}
 
 .select-btn{
-  order:-1;
   border-color:var(--accent);
   background:var(--accent);
   color:#fff;
@@ -658,7 +660,7 @@ main{
 
 .voted-mask-kicker{
   color:var(--muted);
-  font:500 clamp(.66rem,2.5vmin,.8rem)/1.35 Montserrat,"Segoe UI",Arial,sans-serif;
+  font:500 clamp(.66rem,2.5vmin,.8rem)/1.35 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   letter-spacing:.12em;
 }
 
@@ -743,7 +745,6 @@ main{
   overflow-wrap:anywhere;
 }
 
-.max-vote-red-flash{animation:none}
 
 /* Wider viewports: preserve the established 4-column card intent. */
 @media (min-aspect-ratio:5/4){
