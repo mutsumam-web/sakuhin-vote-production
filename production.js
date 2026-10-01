@@ -298,7 +298,7 @@ function attachImageSignal(image,imageWrap,signalMeter,scanLabel,crtSignal){
     clearTimeout(step3);
     updateSignalDisplay(signalMeter,scanLabel,crtSignal,0,'error');
     imageWrap.classList.remove('signal-loading');
-    imageWrap.classList.add('signal-error');
+    imageWrap.classList.add('signal-error','image-unavailable');
   };
 
   imageWrap.classList.add('signal-loading');
@@ -347,17 +347,12 @@ function showMaxVoteError(){
 
   panel.classList.remove('show');
   panel.setAttribute('aria-hidden','false');
-  panel.style.visibility='visible';
-  panel.style.opacity='1';
-  panel.style.transform='translate(-50%,-50%) scale(1)';
   void panel.offsetWidth;
   panel.classList.add('show');
 
   clearTimeout(window.maxVoteErrorTimer);
   window.maxVoteErrorTimer=setTimeout(function(){
     panel.classList.remove('show');
-    panel.style.opacity='0';
-    panel.style.visibility='hidden';
     panel.setAttribute('aria-hidden','true');
   },1100);
 }
@@ -417,7 +412,7 @@ function renderWorks(revealValue){
   container.innerHTML='';
 
   works.forEach(function(work,index){
-    const wrapper=document.createElement('div');
+    const wrapper=document.createElement('article');
     wrapper.className='work-card'+(selected.includes(work.value)?' selected':'');
     wrapper.dataset.workIndex=String(index);
     wrapper.dataset.workValue=work.value;
@@ -441,8 +436,12 @@ function renderWorks(revealValue){
       image=document.createElement('img');
       image.className='work-image';
       image.src=work.image;
-      image.alt=parsed.title;
+      image.alt=parsed.title||('作品 '+String(index+1));
+      image.loading='lazy';
+      image.decoding='async';
       imageWrap.appendChild(image);
+    }else{
+      imageWrap.classList.add('no-image');
     }
 
     const imageHud=document.createElement('div');
@@ -502,9 +501,11 @@ function renderWorks(revealValue){
     titleLabel.className='data-label';
     titleLabel.textContent='TITLE';
 
-    const title=document.createElement('div');
+    const title=document.createElement('h3');
     title.className='work-title';
-    title.textContent=parsed.title;
+    title.id='work-title-'+String(index+1);
+    title.textContent=parsed.title||('作品 '+String(index+1));
+    wrapper.setAttribute('aria-labelledby',title.id);
 
     titleBlock.appendChild(titleLabel);
     titleBlock.appendChild(title);
@@ -534,6 +535,7 @@ function renderWorks(revealValue){
 
     const comment=document.createElement('div');
     comment.className='work-comment is-collapsed';
+    comment.id='work-comment-'+String(index+1);
     comment.textContent=parsed.comment;
 
     commentBlock.appendChild(commentLabel);
@@ -543,13 +545,22 @@ function renderWorks(revealValue){
     actions.className='work-actions';
 
     const detail=document.createElement('button');
+    detail.type='button';
     detail.className='detail-btn';
     detail.textContent='DETAIL';
+    detail.setAttribute('aria-expanded','false');
+    detail.setAttribute('aria-controls',comment.id);
+    if(!parsed.comment.trim()){
+      detail.hidden=true;
+      actions.classList.add('single-action');
+    }
     detail.onclick=function(){toggleDetail(commentBlock,detail,wrapper);};
 
     const button=document.createElement('button');
+    button.type='button';
     button.className='select-btn'+(selected.includes(work.value)?' selected':'');
     button.textContent=selected.includes(work.value)?'選択済み':'選択する';
+    button.setAttribute('aria-pressed',selected.includes(work.value)?'true':'false');
     button.onclick=function(){toggleSelection(work.value);};
 
     actions.appendChild(detail);
@@ -766,6 +777,7 @@ function toggleSelection(value){
       if(button){
         button.classList.remove('selected');
         button.textContent='選択する';
+        button.setAttribute('aria-pressed','false');
         button.blur();
       }
       const svg=card.querySelector('.callout-svg');
@@ -778,6 +790,7 @@ function toggleSelection(value){
       if(button){
         button.classList.add('selected');
         button.textContent='選択済み';
+        button.setAttribute('aria-pressed','true');
       }
       const svg=card.querySelector('.callout-svg');
       if(svg){
@@ -801,10 +814,13 @@ function updateUI(){
 
   if(!selected.length){
     selectedElement.textContent='選択作品なし';
+    selectedElement.setAttribute('aria-label','選択作品なし');
   }else{
-    selectedElement.textContent=selected.map(function(value){
+    const selectedTitles=selected.map(function(value){
       return parseChoiceInfo(value).title;
-    }).join(' / ');
+    });
+    selectedElement.textContent=selectedTitles.join(' / ');
+    selectedElement.setAttribute('aria-label',selected.length+'作品選択中。'+selectedTitles.join('、'));
   }
 
   document.getElementById('voteButton').disabled=selected.length===0;
@@ -825,6 +841,7 @@ function toggleDetail(commentBlock,button,card){
   card.classList.toggle('detail-open',expanded);
   button.textContent=expanded?'閉じる':'DETAIL';
   button.classList.toggle('is-open',expanded);
+  button.setAttribute('aria-expanded',expanded?'true':'false');
   requestAnimationFrame(drawAllCallouts);
 }
 
