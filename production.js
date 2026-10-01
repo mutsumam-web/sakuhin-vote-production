@@ -269,6 +269,24 @@ function attachImageFallback(image,imageWrap){
   }
 }
 
+function appendImageFallback(imageWrap,title){
+  const fallback=document.createElement('div');
+  fallback.className='image-fallback';
+  fallback.setAttribute('aria-hidden','true');
+
+  const kicker=document.createElement('div');
+  kicker.className='image-fallback-kicker';
+  kicker.textContent='NO IMAGE';
+
+  const label=document.createElement('div');
+  label.className='image-fallback-title';
+  label.textContent=title||'画像を表示できません';
+
+  fallback.appendChild(kicker);
+  fallback.appendChild(label);
+  imageWrap.appendChild(fallback);
+}
+
 function showMaxVoteError(){
   const panel=document.getElementById('maxVoteErrorPanel');
   if(!panel)return;
@@ -282,7 +300,7 @@ function showMaxVoteError(){
   window.maxVoteErrorTimer=setTimeout(function(){
     panel.classList.remove('show');
     panel.setAttribute('aria-hidden','true');
-  },1100);
+  },2400);
 }
 
 function renderWorks(){
@@ -305,6 +323,7 @@ function renderWorks(){
 
     const imageWrap=document.createElement('div');
     imageWrap.className='work-image-wrap';
+    appendImageFallback(imageWrap,parsed.title||('作品 '+String(index+1)));
 
     if(work.image){
       const image=document.createElement('img');
@@ -472,8 +491,8 @@ function updateUI(){
     const selectedTitles=selected.map(function(value){
       return parseChoiceInfo(value).title;
     });
-    selectedElement.textContent=selected.length+' / '+MAX_VOTES+'　'+selectedTitles.join(' / ');
-    selectedElement.setAttribute('aria-label',selected.length+' / '+MAX_VOTES+'。'+selected.length+'作品選択中。'+selectedTitles.join('、'));
+    selectedElement.textContent=selected.length+' / '+MAX_VOTES+'　作品選択中';
+    selectedElement.setAttribute('aria-label',selected.length+' / '+MAX_VOTES+'。選択中：'+selectedTitles.join('、'));
   }
 
   document.getElementById('voteButton').disabled=selected.length===0;
