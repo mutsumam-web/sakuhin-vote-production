@@ -396,6 +396,23 @@ main{
   box-shadow:0 clamp(.45rem,1.6vmin,.9rem) clamp(1.4rem,4.5vmin,3.2rem) rgba(33,77,62,.14);
 }
 
+.work-card.selected .work-image-wrap::before{
+  content:"✓  SELECTED";
+  position:absolute;
+  z-index:3;
+  top:clamp(.7rem,3vmin,1.15rem);
+  right:clamp(.7rem,3vmin,1.15rem);
+  max-width:calc(100% - 5rem);
+  padding:.45rem .7rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.92);
+  color:var(--accent-strong);
+  box-shadow:0 .35rem 1.2rem rgba(0,0,0,.1);
+  font:700 clamp(.62rem,2.6vmin,.78rem)/1 Montserrat,"Segoe UI",Arial,sans-serif;
+  letter-spacing:.06em;
+  white-space:nowrap;
+}
+
 .work-number{
   position:absolute;
   z-index:3;
