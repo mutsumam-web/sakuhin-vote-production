@@ -337,6 +337,37 @@ svg{
   font-weight:800;
 }
 
+.powered-by{
+  min-width:0;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+
+.powered-by span{
+  display:block;
+  font-size:clamp(.56rem,2.25vmin,.72rem);
+  font-weight:500;
+  letter-spacing:.08em;
+  text-transform:lowercase;
+}
+
+.powered-by strong{
+  display:block;
+  margin-top:clamp(.12rem,.55vmin,.22rem);
+  color:var(--ink-soft);
+  font-size:clamp(.72rem,2.9vmin,.94rem);
+  font-weight:700;
+  letter-spacing:.025em;
+}
+
+.powered-by-main{
+  margin-top:clamp(1.5rem,6vmin,3rem);
+  padding-top:clamp(.8rem,3vmin,1.25rem);
+  border-top:1px solid var(--line);
+}
+
 .selection-status{
   min-width:0;
   align-self:end;
@@ -667,6 +698,13 @@ body.work-detail-active{
   color:var(--ink);
 }
 
+.powered-by-detail{
+  align-self:end;
+  margin-top:auto;
+  padding-top:clamp(.8rem,3vmin,1.3rem);
+  border-top:1px solid var(--line);
+}
+
 .selection-bar{
   position:fixed;
   z-index:500;
@@ -956,6 +994,12 @@ body.vote-confirm-active{
   color:var(--ink);
 }
 
+.powered-by-confirm{
+  margin-top:clamp(1rem,4vmin,1.5rem);
+  padding-top:clamp(.75rem,3vmin,1.1rem);
+  border-top:1px solid var(--line);
+}
+
 .max-vote-error-panel{
   position:fixed;
   z-index:700;
@@ -966,7 +1010,10 @@ body.vote-confirm-active{
   transform:translate(-50%,.7rem);
   padding:clamp(1.35rem,5.8vmin,2rem) clamp(1.2rem,5vw,2rem);
   display:grid;
-  place-items:center;
+  grid-template-columns:minmax(0,1fr);
+  align-content:center;
+  justify-items:center;
+  gap:clamp(.75rem,3vmin,1.1rem);
   border:clamp(1px,.35vmin,2px) solid rgba(138,59,50,.34);
   border-radius:clamp(1rem,4.5vmin,1.8rem);
   background:rgba(255,249,246,.985);
@@ -981,6 +1028,25 @@ body.vote-confirm-active{
   opacity:0;
   pointer-events:none;
   transition:opacity .14s ease,transform .14s ease,visibility .14s ease;
+}
+
+.max-vote-error-message{
+  min-width:0;
+}
+
+.powered-by-warning{
+  width:100%;
+  padding-top:clamp(.55rem,2vmin,.8rem);
+  border-top:1px solid rgba(138,59,50,.18);
+}
+
+.powered-by-warning span{
+  color:rgba(138,59,50,.66);
+}
+
+.powered-by-warning strong{
+  color:rgba(138,59,50,.86);
+  font-size:clamp(.66rem,2.7vmin,.88rem);
 }
 
 .max-vote-error-panel.show{
@@ -1059,6 +1125,12 @@ body.vote-confirm-active{
   color:var(--muted);
   font-size:clamp(.72rem,2.8vmin,.88rem);
   line-height:1.7;
+}
+
+.powered-by-voted{
+  margin-top:clamp(1.15rem,4.5vmin,1.8rem);
+  padding-top:clamp(.75rem,3vmin,1.1rem);
+  border-top:1px solid var(--line);
 }
 
 @media (max-width:22rem){
