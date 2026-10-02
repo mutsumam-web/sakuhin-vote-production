@@ -794,6 +794,21 @@ body.work-detail-active{
   background:#dadbd6;
 }
 
+.selected-thumb-slot.filled{
+  cursor:pointer;
+  touch-action:manipulation;
+  transition:transform .12s ease,box-shadow .12s ease;
+}
+
+.selected-thumb-slot.filled:active{
+  transform:scale(.96);
+}
+
+.selected-thumb-slot.filled:focus-visible{
+  outline:2px solid rgba(36,79,64,.72);
+  outline-offset:2px;
+}
+
 .selected-thumb-slot::after{
   content:"";
   position:absolute;

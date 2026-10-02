@@ -52,6 +52,26 @@ function init(){
   document.getElementById('voteConfirmSubmitButton').addEventListener('click',submitVote);
   document.getElementById('voteConfirmBackButton').addEventListener('click',closeVoteConfirm);
 
+  const selectedThumbs=document.getElementById('selectedThumbs');
+  selectedThumbs.addEventListener('click',function(event){
+    const slot=event.target.closest('.selected-thumb-slot.filled');
+    if(!slot||!selectedThumbs.contains(slot))return;
+
+    const value=slot.dataset.workValue;
+    if(value)toggleSelection(value);
+  });
+
+  selectedThumbs.addEventListener('keydown',function(event){
+    if(event.key!=='Enter'&&event.key!==' ')return;
+
+    const slot=event.target.closest('.selected-thumb-slot.filled');
+    if(!slot||!selectedThumbs.contains(slot))return;
+
+    event.preventDefault();
+    const value=slot.dataset.workValue;
+    if(value)toggleSelection(value);
+  });
+
   const detailView=document.getElementById('workDetailView');
   const detailPanel=document.getElementById('workDetailPanel');
   const detailSelectButton=document.getElementById('workDetailSelectButton');
@@ -370,6 +390,10 @@ function renderSelectedThumbs(){
   slots.forEach(function(slot,index){
     slot.innerHTML='';
     slot.classList.remove('filled');
+    slot.removeAttribute('role');
+    slot.removeAttribute('tabindex');
+    slot.removeAttribute('aria-label');
+    delete slot.dataset.workValue;
 
     const value=selected[index];
     if(!value){
@@ -379,9 +403,14 @@ function renderSelectedThumbs(){
 
     const work=works.find(function(item){return item.value===value;});
     const workIndex=works.findIndex(function(item){return item.value===value;});
+    const parsed=parseChoiceInfo(value);
 
     slot.classList.add('filled');
     slot.setAttribute('aria-hidden','false');
+    slot.setAttribute('role','button');
+    slot.setAttribute('tabindex','0');
+    slot.setAttribute('aria-label','選択解除：'+(parsed.title||('作品 '+String(workIndex+1))));
+    slot.dataset.workValue=value;
 
     if(work&&work.image){
       const image=document.createElement('img');
