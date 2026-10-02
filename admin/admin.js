@@ -32,82 +32,39 @@
   }
 
   const GAS_DEPLOYMENT_ID='AKfycbwYEyWV-4OGXd3GcJIvPKjY_ccMDlhHOZaiaStYuqXi_XmnA_3fHYASV4bgLuIuTp0Z';
-  const DEFAULT_BRIDGE_URL='https://script.google.com/macros/s/'+GAS_DEPLOYMENT_ID+'/exec?env=admin-api';
-  const BRIDGE_URL=window.__SAKUHIN_ADMIN_BRIDGE_URL||DEFAULT_BRIDGE_URL;
-  const rpcPending=new Map();
-  let bridgeFrame=null;
-  let bridgeReadyPromise=null;
-  let rpcSequence=0;
-
-  function ensureBridge(){
-    if(bridgeReadyPromise)return bridgeReadyPromise;
-
-    bridgeReadyPromise=new Promise(function(resolve,reject){
-      bridgeFrame=document.createElement('iframe');
-      bridgeFrame.src=BRIDGE_URL;
-      bridgeFrame.hidden=true;
-      bridgeFrame.setAttribute('aria-hidden','true');
-      bridgeFrame.setAttribute('tabindex','-1');
-      bridgeFrame.title='Admin API bridge';
-
-      const timer=setTimeout(function(){
-        reject(new Error('管理APIブリッジの読み込みがタイムアウトしました。'));
-      },15000);
-
-      bridgeFrame.addEventListener('load',function(){
-        clearTimeout(timer);
-        resolve();
-      },{once:true});
-
-      bridgeFrame.addEventListener('error',function(){
-        clearTimeout(timer);
-        reject(new Error('管理APIブリッジを読み込めませんでした。'));
-      },{once:true});
-
-      document.body.appendChild(bridgeFrame);
-    });
-
-    return bridgeReadyPromise;
-  }
-
-  window.addEventListener('message',function(event){
-    if(!bridgeFrame||event.source!==bridgeFrame.contentWindow)return;
-    const data=event.data;
-    if(!data||data.type!=='sakuhin-admin-rpc-result'||!data.id)return;
-
-    const pending=rpcPending.get(data.id);
-    if(!pending)return;
-    rpcPending.delete(data.id);
-    clearTimeout(pending.timer);
-
-    if(data.ok){
-      pending.resolve(data.result);
-    }else{
-      pending.reject(new Error(data.error||'管理APIの実行に失敗しました。'));
-    }
-  });
+  const ADMIN_API_URL='https://script.google.com/macros/s/'+GAS_DEPLOYMENT_ID+'/exec';
 
   function gasCall(name){
     const args=[].slice.call(arguments,1);
 
-    return ensureBridge().then(function(){
-      return new Promise(function(resolve,reject){
-        const id='rpc-'+Date.now().toString(36)+'-'+(++rpcSequence).toString(36);
-        const timer=setTimeout(function(){
-          rpcPending.delete(id);
-          reject(new Error('管理APIの応答がタイムアウトしました。'));
-        },30000);
-
-        rpcPending.set(id,{resolve:resolve,reject:reject,timer:timer});
-
-        bridgeFrame.contentWindow.postMessage({
-          type:'sakuhin-admin-rpc',
-          id:id,
-          method:name,
-          args:args
-        },'*');
+    return fetch(ADMIN_API_URL,{
+      method:'POST',
+      redirect:'follow',
+      headers:{
+        'Content-Type':'text/plain;charset=utf-8'
+      },
+      body:JSON.stringify({
+        channel:'admin',
+        method:name,
+        args:args
+      })
+    })
+      .then(function(response){
+        if(!response.ok){
+          throw new Error('管理API HTTP '+response.status);
+        }
+        return response.json();
+      })
+      .then(function(payload){
+        if(!payload||payload.ok!==true){
+          throw new Error(
+            payload&&payload.error
+              ?payload.error
+              :'管理APIの実行に失敗しました。'
+          );
+        }
+        return payload.result;
       });
-    });
   }
 
   function setBusy(busy){
