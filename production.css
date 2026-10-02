@@ -561,9 +561,9 @@ body.work-detail-active{
   min-width:0;
   padding:
     clamp(.45rem,1.9vmin,.7rem)
-    max(calc(var(--safe-right) + clamp(.6rem,2.8vw,1.2rem)),clamp(.6rem,2.8vw,1.2rem))
+    max(calc(var(--safe-right) + clamp(4px,2.4vw,1.1rem)),clamp(4px,2.4vw,1.1rem))
     max(var(--safe-bottom),clamp(.45rem,1.9vmin,.7rem))
-    max(calc(var(--safe-left) + clamp(.6rem,2.8vw,1.2rem)),clamp(.6rem,2.8vw,1.2rem));
+    max(calc(var(--safe-left) + clamp(4px,2.4vw,1.1rem)),clamp(4px,2.4vw,1.1rem));
   background:var(--bar-bg);
   border-top:1px solid rgba(31,60,49,.18);
   box-shadow:0 -.55rem 1.7rem rgba(24,36,30,.09);
@@ -584,7 +584,7 @@ body.work-detail-active{
   grid-template-columns:minmax(0,1fr) max-content minmax(0,1fr);
   align-items:center;
   justify-content:space-between;
-  gap:clamp(.3rem,1.6vw,.75rem);
+  gap:clamp(3px,1.4vw,.65rem);
 }
 
 .selection-bar-label{
