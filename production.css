@@ -94,7 +94,11 @@ svg{
 
 .app-shell{
   min-width:0;
+  min-height:100vh;
+  min-height:100dvh;
   padding-bottom:calc(var(--bar-height) + var(--safe-bottom) + clamp(1.1rem,4vmin,2rem));
+  display:flex;
+  flex-direction:column;
 }
 
 .app-header{
@@ -299,8 +303,11 @@ svg{
 .gallery-shell{
   width:var(--content-width);
   min-width:0;
+  flex:1 0 auto;
   margin:0 auto;
   padding:clamp(1.35rem,5.3vmin,3rem) 0 clamp(1.4rem,5vmin,3rem);
+  display:flex;
+  flex-direction:column;
 }
 
 .gallery-intro{
@@ -366,9 +373,8 @@ svg{
 }
 
 .powered-by-main{
-  margin-top:clamp(1.5rem,6vmin,3rem);
-  padding-top:clamp(.8rem,3vmin,1.25rem);
-  border-top:1px solid var(--line);
+  margin-top:auto;
+  padding-top:clamp(1.5rem,6vmin,3rem);
 }
 
 .selection-status{
@@ -1017,10 +1023,8 @@ body.vote-confirm-active{
   padding:clamp(1.35rem,5.8vmin,2rem) clamp(1.2rem,5vw,2rem);
   display:grid;
   grid-template-columns:minmax(0,1fr);
-  grid-template-rows:1fr auto;
   align-items:center;
   justify-items:center;
-  gap:clamp(.75rem,3vmin,1.1rem);
   border:clamp(1px,.35vmin,2px) solid rgba(138,59,50,.34);
   border-radius:clamp(1rem,4.5vmin,1.8rem);
   background:rgba(255,249,246,.985);
@@ -1040,21 +1044,6 @@ body.vote-confirm-active{
 .max-vote-error-message{
   min-width:0;
   align-self:center;
-}
-
-.powered-by-warning{
-  width:100%;
-  padding-top:clamp(.55rem,2vmin,.8rem);
-  border-top:1px solid rgba(138,59,50,.18);
-}
-
-.powered-by-warning span{
-  color:rgba(138,59,50,.66);
-}
-
-.powered-by-warning strong{
-  color:rgba(138,59,50,.86);
-  font-size:clamp(.5rem,2vmin,.66rem);
 }
 
 .max-vote-error-panel.show{
@@ -1139,7 +1128,7 @@ body.vote-confirm-active{
 }
 
 .powered-by-voted{
-  margin-top:auto;
+  margin-top:clamp(1.15rem,4.5vmin,1.8rem);
   padding-top:clamp(.75rem,3vmin,1.1rem);
   border-top:1px solid var(--line);
 }
