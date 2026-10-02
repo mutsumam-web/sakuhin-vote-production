@@ -58,6 +58,24 @@
     </div>
   </footer>
 
+  <section id="workDetailView" class="work-detail-view" hidden aria-hidden="true" aria-modal="true" role="dialog" aria-labelledby="workDetailTitle">
+    <div id="workDetailPanel" class="work-detail-panel" tabindex="-1">
+      <div class="work-detail-image-wrap">
+        <img id="workDetailImage" class="work-detail-image" alt="" hidden>
+      </div>
+      <div class="work-detail-meta">
+        <div id="workDetailIndex" class="work-detail-index"></div>
+        <h2 id="workDetailTitle" class="work-detail-title"></h2>
+        <div id="workDetailAuthor" class="work-detail-author"></div>
+        <div id="workDetailComment" class="work-detail-comment"></div>
+      </div>
+      <div class="work-detail-actions" aria-label="詳細画面の操作">
+        <button id="workDetailSelectButton" class="work-detail-select-button" type="button">選択する</button>
+        <button id="workDetailCloseButton" class="work-detail-close-button" type="button">閉じる</button>
+      </div>
+    </div>
+  </section>
+
   <div id="maxVoteErrorPanel" class="max-vote-error-panel" role="alert" aria-live="assertive" aria-hidden="true">
     最大3作品まで選択できます
   </div>
