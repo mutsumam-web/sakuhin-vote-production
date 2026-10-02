@@ -29,6 +29,7 @@ function markVoted(){
 
 function showVotedMask(){
   closeWorkDetail();
+  closeVoteConfirm();
   const mask=document.getElementById('votedMask');
   if(!mask)return;
   mask.hidden=false;
@@ -45,8 +46,11 @@ function hideVotedMask(){
 }
 
 function init(){
-  document.getElementById('voteButton').addEventListener('click',submitVote);
+  document.getElementById('voteButton').addEventListener('click',openVoteConfirm);
   document.getElementById('adminButton').addEventListener('click',showAdmin);
+
+  document.getElementById('voteConfirmSubmitButton').addEventListener('click',submitVote);
+  document.getElementById('voteConfirmBackButton').addEventListener('click',closeVoteConfirm);
 
   const detailView=document.getElementById('workDetailView');
   const detailPanel=document.getElementById('workDetailPanel');
@@ -405,12 +409,93 @@ function renderSelectedThumbs(){
   );
 }
 
+function renderVoteConfirm(){
+  const container=document.getElementById('voteConfirmWorks');
+  container.innerHTML='';
+
+  selected.forEach(function(value,selectedIndex){
+    const work=works.find(function(item){return item.value===value;});
+    const workIndex=works.findIndex(function(item){return item.value===value;});
+    const parsed=parseChoiceInfo(value);
+
+    const item=document.createElement('article');
+    item.className='vote-confirm-item';
+
+    const thumb=document.createElement('div');
+    thumb.className='vote-confirm-thumb';
+
+    if(work&&work.image){
+      const image=document.createElement('img');
+      image.src=work.image;
+      image.alt='';
+      image.decoding='async';
+      thumb.appendChild(image);
+    }
+
+    const copy=document.createElement('div');
+    copy.className='vote-confirm-item-copy';
+
+    const indexLabel=document.createElement('div');
+    indexLabel.className='vote-confirm-item-index';
+    indexLabel.textContent='WORK '+String(workIndex>=0?workIndex+1:selectedIndex+1).padStart(2,'0');
+
+    const title=document.createElement('h3');
+    title.className='vote-confirm-item-title';
+    title.textContent=parsed.title||('作品 '+String(selectedIndex+1));
+
+    copy.appendChild(indexLabel);
+    copy.appendChild(title);
+
+    if(parsed.author){
+      const author=document.createElement('div');
+      author.className='vote-confirm-item-author';
+      author.textContent=parsed.author;
+      copy.appendChild(author);
+    }
+
+    item.appendChild(thumb);
+    item.appendChild(copy);
+    container.appendChild(item);
+  });
+}
+
+function openVoteConfirm(){
+  if(selected.length<1||selected.length>MAX_VOTES||hasVoted())return;
+
+  hideMaxVoteError();
+  closeWorkDetail();
+  renderVoteConfirm();
+
+  const view=document.getElementById('voteConfirmView');
+  view.hidden=false;
+  view.setAttribute('aria-hidden','false');
+  document.body.classList.add('vote-confirm-active');
+
+  requestAnimationFrame(function(){
+    document.getElementById('voteConfirmSubmitButton').focus({preventScroll:true});
+  });
+}
+
+function closeVoteConfirm(){
+  const view=document.getElementById('voteConfirmView');
+  if(!view||view.hidden)return;
+
+  view.hidden=true;
+  view.setAttribute('aria-hidden','true');
+  document.body.classList.remove('vote-confirm-active');
+
+  const submitButton=document.getElementById('voteConfirmSubmitButton');
+  submitButton.disabled=false;
+  submitButton.textContent='投票する';
+  submitButton.removeAttribute('aria-busy');
+}
+
 function submitVote(){
   if(selected.length<1||selected.length>MAX_VOTES)return;
 
   hideMaxVoteError();
 
-  const button=document.getElementById('voteButton');
+  const button=document.getElementById('voteConfirmSubmitButton');
   if(!button||button.disabled)return;
 
   button.disabled=true;
@@ -433,6 +518,7 @@ function submitVote(){
       button.textContent='投票する';
       button.disabled=true;
       button.removeAttribute('aria-busy');
+      closeVoteConfirm();
       showVotedMask();
     })
     .withFailureHandler(function(error){
@@ -462,6 +548,7 @@ function adminReset(code){
       document.cookie='sakuhin_vote_done=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
       hideMaxVoteError();
       closeWorkDetail();
+      closeVoteConfirm();
       selected=[];
       hideVotedMask();
       renderWorks();
