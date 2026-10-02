@@ -94,7 +94,7 @@ svg{
 
 .app-shell{
   min-width:0;
-  padding-bottom:calc(var(--bar-height) + var(--safe-bottom) + clamp(2.6rem,8vmin,3.4rem));
+  padding-bottom:calc(var(--bar-height) + var(--safe-bottom) + clamp(1.1rem,4vmin,2rem));
 }
 
 .app-header{
@@ -367,15 +367,11 @@ svg{
 
 /* Powered-by placement: each screen owns one unambiguous rule. */
 .powered-by-main{
-  position:fixed;
-  z-index:480;
-  left:max(var(--safe-left),0px);
-  right:max(var(--safe-right),0px);
-  bottom:calc(var(--bar-height) + var(--safe-bottom) + clamp(.22rem,.9vmin,.4rem));
-  width:auto;
-  margin:0;
-  padding:0 clamp(.7rem,3vw,1.2rem);
-  pointer-events:none;
+  position:static;
+  width:100%;
+  margin-top:clamp(1.6rem,6.5vmin,3rem);
+  padding-top:clamp(.8rem,3vmin,1.2rem);
+  border-top:1px solid var(--line);
 }
 
 .powered-by-detail{
@@ -1035,9 +1031,9 @@ body.vote-confirm-active{
   color:var(--danger);
   box-shadow:0 .75rem 2.6rem rgba(40,28,25,.2);
   text-align:center;
-  font-size:clamp(1.35rem,6vmin,1.9rem);
-  line-height:1.28;
-  font-weight:850;
+  font-size:clamp(.92rem,3.9vmin,1.2rem);
+  line-height:1.35;
+  font-weight:800;
   letter-spacing:.01em;
   visibility:hidden;
   opacity:0;
