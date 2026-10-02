@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#11161b">
+  <meta name="format-detection" content="telephone=no">
+  <title>作品展投票システム / ADMIN DASHBOARD</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
+    <section class="auth-card">
+      <div class="eyebrow">SECURE ADMIN ACCESS</div>
+      <h1 id="loginTitle">作品展投票システム</h1>
+      <p class="auth-subtitle">ADMIN DASHBOARD</p>
+      <form id="loginForm" class="auth-form" autocomplete="off">
+        <label for="adminCode">管理者コード</label>
+        <input id="adminCode" name="adminCode" type="password" inputmode="numeric" autocomplete="current-password" required>
+        <button id="loginButton" type="submit">認証する</button>
+      </form>
+      <p id="loginMessage" class="auth-message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <div id="dashboardShell" class="dashboard-shell" hidden>
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">作品展投票システム</div>
+        <h1>ADMIN DASHBOARD</h1>
+      </div>
+      <div class="topbar-actions">
+        <span id="systemStatus" class="status-badge status-neutral">SYSTEM —</span>
+        <button id="refreshButton" class="button-secondary" type="button">更新</button>
+        <button id="logoutButton" class="button-ghost" type="button">ログアウト</button>
+      </div>
+    </header>
+
+    <section class="status-strip" aria-label="更新状況">
+      <div><span>LAST UPDATE</span><strong id="lastUpdated">—</strong></div>
+      <div><span>LAST VOTE</span><strong id="lastVote">—</strong></div>
+      <div><span>AUTO REFRESH</span><button id="autoRefreshButton" class="text-button" type="button" aria-pressed="true">ON / 60s</button></div>
+      <div><span>DATA SOURCE</span><strong id="systemSource">—</strong></div>
+    </section>
+
+    <section class="toolbar" aria-label="表示設定">
+      <div class="range-control" role="group" aria-label="投票トレンド表示期間">
+        <button type="button" data-range="3h">3時間</button>
+        <button class="active" type="button" data-range="6h">6時間</button>
+        <button type="button" data-range="12h">12時間</button>
+        <button type="button" data-range="24h">24時間</button>
+        <button type="button" data-range="all">全期間</button>
+      </div>
+      <div class="toolbar-actions">
+        <button id="exportCsvButton" class="button-secondary" type="button">CSV</button>
+        <button id="printButton" class="button-secondary" type="button">印刷 / PDF</button>
+      </div>
+    </section>
+
+    <section id="kpiGrid" class="kpi-grid" aria-label="概要指標">
+      <article class="kpi-card"><span>総投票件数</span><strong id="kpiResponses">—</strong><small>Google Form回答数</small></article>
+      <article class="kpi-card"><span>総得票数</span><strong id="kpiVotes">—</strong><small>作品選択数の合計</small></article>
+      <article class="kpi-card"><span>登録作品</span><strong id="kpiWorks">—</strong><small>CHECKBOX選択肢</small></article>
+      <article class="kpi-card"><span>直近30分</span><strong id="kpi30m">—</strong><small>投票件数</small></article>
+      <article class="kpi-card"><span>直近60分</span><strong id="kpi60mVotes">—</strong><small>総得票数</small></article>
+      <article class="kpi-card"><span>最終投票</span><strong id="kpiLastVoteAgo">—</strong><small>経過時間</small></article>
+      <article class="kpi-card"><span>GAS成功率</span><strong id="kpiGasSuccess">—</strong><small>完了 / 終了実行</small></article>
+      <article class="kpi-card"><span>GASエラー</span><strong id="kpiGasErrors">—</strong><small>FAILED + TIMED_OUT</small></article>
+      <article class="kpi-card"><span>GAS平均時間</span><strong id="kpiGasAvg">—</strong><small>実行時間</small></article>
+      <article class="kpi-card"><span>GAS p95</span><strong id="kpiGasP95">—</strong><small>95パーセンタイル</small></article>
+    </section>
+
+    <section class="panel panel-wide">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">VOTE FLOW</span>
+          <h2>投票トレンド</h2>
+        </div>
+        <p id="trendMeta">30分単位</p>
+      </div>
+      <div id="voteTrendChart" class="chart" role="img" aria-label="投票件数と総得票数の推移"></div>
+      <div class="legend">
+        <span><i class="legend-line series-a"></i>投票件数</span>
+        <span><i class="legend-line series-b"></i>総得票数</span>
+      </div>
+    </section>
+
+    <div class="dashboard-grid two-column">
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">RANKING</span>
+            <h2>得票数ランキング</h2>
+          </div>
+          <div class="inline-controls">
+            <input id="rankingSearch" type="search" placeholder="作品検索" aria-label="作品検索">
+            <button id="rankingLimitButton" class="text-button" type="button" aria-pressed="false">TOP 10</button>
+          </div>
+        </div>
+        <div id="rankingChart" class="ranking-chart"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">LIVE</span>
+            <h2>今この瞬間</h2>
+          </div>
+          <span class="live-dot" aria-label="自動更新中"></span>
+        </div>
+        <div id="livePanel" class="live-panel"></div>
+      </section>
+    </div>
+
+    <div class="dashboard-grid two-column">
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">MOMENTUM</span>
+            <h2>伸びている作品</h2>
+          </div>
+        </div>
+        <div id="momentumPanel" class="data-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">RANK SHIFT</span>
+            <h2>順位変動</h2>
+          </div>
+        </div>
+        <div id="rankMovementPanel" class="data-list"></div>
+      </section>
+    </div>
+
+    <div class="dashboard-grid three-column">
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">CLOSE RACE</span>
+            <h2>接戦分析</h2>
+          </div>
+        </div>
+        <div id="closeRacePanel" class="data-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">CONCENTRATION</span>
+            <h2>投票集中度</h2>
+          </div>
+        </div>
+        <div id="concentrationPanel" class="metric-stack"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">CO-SELECTION</span>
+            <h2>共選択ペア</h2>
+          </div>
+        </div>
+        <div id="coSelectionPanel" class="data-list"></div>
+      </section>
+    </div>
+
+    <div class="dashboard-grid two-column">
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">ANOMALY</span>
+            <h2>時系列の異常候補</h2>
+          </div>
+        </div>
+        <div id="anomalyPanel" class="data-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">PATTERN</span>
+            <h2>投票パターン要確認</h2>
+          </div>
+        </div>
+        <div id="patternPanel" class="data-list"></div>
+      </section>
+    </div>
+
+    <section class="panel panel-wide">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">SYSTEM OBSERVABILITY</span>
+          <h2>Apps Script 実行・エラー監視</h2>
+        </div>
+        <p id="processApiState">—</p>
+      </div>
+      <div id="systemTrendChart" class="chart" role="img" aria-label="Apps Script実行回数とエラー件数の推移"></div>
+      <div class="legend">
+        <span><i class="legend-line series-a"></i>実行回数</span>
+        <span><i class="legend-line series-danger"></i>FAILED / TIMED_OUT</span>
+      </div>
+      <div id="statusBreakdown" class="status-breakdown"></div>
+    </section>
+
+    <div class="dashboard-grid two-column">
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">FUNCTIONS</span>
+            <h2>関数別分析</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>関数</th><th>実行</th><th>失敗</th><th>平均</th><th>p95</th></tr>
+            </thead>
+            <tbody id="functionStatsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">HEALTH</span>
+            <h2>SYSTEM HEALTH</h2>
+          </div>
+        </div>
+        <div id="healthPanel" class="health-panel"></div>
+      </section>
+    </div>
+
+    <footer class="dashboard-footer">
+      <p>表示データは管理者向け集計値のみ。個人追跡・個人識別情報は表示しない。</p>
+      <p id="dashboardNotice"></p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="admin.js"></script>
+</body>
+</html>
