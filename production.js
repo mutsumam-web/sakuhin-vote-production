@@ -3,6 +3,7 @@ const STORAGE_KEY='sakuhin_vote_done_v15';
 
 let works=[];
 let selected=[];
+let activeDetailValue='';
 
 function setCookie(name,value,days){
   const date=new Date();
@@ -27,6 +28,7 @@ function markVoted(){
 }
 
 function showVotedMask(){
+  closeWorkDetail();
   const mask=document.getElementById('votedMask');
   if(!mask)return;
   mask.hidden=false;
@@ -45,6 +47,34 @@ function hideVotedMask(){
 function init(){
   document.getElementById('voteButton').addEventListener('click',submitVote);
   document.getElementById('adminButton').addEventListener('click',showAdmin);
+
+  const detailView=document.getElementById('workDetailView');
+  const detailPanel=document.getElementById('workDetailPanel');
+  const detailSelectButton=document.getElementById('workDetailSelectButton');
+  const detailCloseButton=document.getElementById('workDetailCloseButton');
+
+  detailView.addEventListener('click',function(event){
+    if(event.target.closest('.work-detail-actions'))return;
+    closeWorkDetail();
+  });
+
+  detailPanel.addEventListener('keydown',function(event){
+    if(event.key==='Escape'){
+      event.preventDefault();
+      closeWorkDetail();
+    }
+  });
+
+  detailSelectButton.addEventListener('click',function(event){
+    event.stopPropagation();
+    if(activeDetailValue)toggleSelection(activeDetailValue);
+    closeWorkDetail();
+  });
+
+  detailCloseButton.addEventListener('click',function(event){
+    event.stopPropagation();
+    closeWorkDetail();
+  });
 
   const votedMaskAdminZone=document.querySelector('.voted-mask-admin-zone');
   if(votedMaskAdminZone){
@@ -141,6 +171,9 @@ function renderWorks(){
     card.className='work-card'+(isSelected?' selected':'');
     card.dataset.workValue=work.value;
     card.dataset.workIndex=String(index);
+    card.tabIndex=0;
+    card.setAttribute('role','button');
+    card.setAttribute('aria-label','詳細表示：'+(parsed.title||('作品 '+String(index+1))));
 
     const imageWrap=document.createElement('div');
     imageWrap.className='work-image-wrap';
@@ -156,28 +189,29 @@ function renderWorks(){
       imageWrap.appendChild(image);
     }
 
-    const selectMask=document.createElement('button');
-    selectMask.type='button';
-    selectMask.className='work-select-mask';
-    selectMask.setAttribute('aria-pressed',isSelected?'true':'false');
-    selectMask.setAttribute('aria-label',(isSelected?'選択解除：':'選択：')+(parsed.title||('作品 '+String(index+1))));
-
-    const hint=document.createElement('span');
-    hint.className='select-hint';
-    hint.textContent='ここをタップして選択';
+    const selectZone=document.createElement('button');
+    selectZone.type='button';
+    selectZone.className='work-select-zone';
+    selectZone.setAttribute('aria-pressed',isSelected?'true':'false');
+    selectZone.setAttribute('aria-label',(isSelected?'選択解除：':'選択：')+(parsed.title||('作品 '+String(index+1))));
 
     const check=document.createElement('span');
     check.className='select-check';
     check.setAttribute('aria-hidden','true');
     check.textContent='✓';
 
-    selectMask.appendChild(hint);
-    selectMask.appendChild(check);
-    selectMask.addEventListener('click',function(){
+    const selectLabel=document.createElement('span');
+    selectLabel.className='select-zone-label';
+    selectLabel.textContent=isSelected?'選択解除':'選択';
+
+    selectZone.appendChild(check);
+    selectZone.appendChild(selectLabel);
+    selectZone.addEventListener('click',function(event){
+      event.stopPropagation();
       toggleSelection(work.value);
     });
 
-    imageWrap.appendChild(selectMask);
+    imageWrap.appendChild(selectZone);
 
     const meta=document.createElement('div');
     meta.className='work-meta';
@@ -202,40 +236,77 @@ function renderWorks(){
       meta.appendChild(author);
     }
 
-    if(parsed.comment.trim()){
-      const detailRow=document.createElement('div');
-      detailRow.className='work-detail-row';
-
-      const detail=document.createElement('button');
-      detail.type='button';
-      detail.className='detail-btn';
-      detail.textContent='DETAIL';
-      detail.setAttribute('aria-label','DETAIL：'+title.textContent);
-      detail.setAttribute('aria-expanded','false');
-      detail.setAttribute('aria-controls','work-comment-'+String(index+1));
-
-      const comment=document.createElement('div');
-      comment.className='work-comment';
-      comment.id='work-comment-'+String(index+1);
-      comment.hidden=true;
-      comment.textContent=parsed.comment;
-
-      detail.addEventListener('click',function(){
-        toggleDetail(comment,detail);
-      });
-
-      detailRow.appendChild(detail);
-      meta.appendChild(detailRow);
-      meta.appendChild(comment);
-    }
-
     card.appendChild(imageWrap);
     card.appendChild(meta);
+
+    card.addEventListener('click',function(){
+      openWorkDetail(work.value);
+    });
+
+    card.addEventListener('keydown',function(event){
+      if(event.target!==card)return;
+      if(event.key==='Enter'||event.key===' '){
+        event.preventDefault();
+        openWorkDetail(work.value);
+      }
+    });
+
     container.appendChild(card);
   });
 
   container.setAttribute('aria-busy','false');
   updateUI();
+}
+
+function openWorkDetail(value){
+  const workIndex=works.findIndex(function(work){
+    return work.value===value;
+  });
+  if(workIndex<0)return;
+
+  const work=works[workIndex];
+  const parsed=parseChoiceInfo(work.value);
+  activeDetailValue=value;
+
+  document.getElementById('workDetailIndex').textContent='WORK '+String(workIndex+1).padStart(2,'0');
+  document.getElementById('workDetailTitle').textContent=parsed.title||('作品 '+String(workIndex+1));
+  document.getElementById('workDetailAuthor').textContent=parsed.author||'';
+  document.getElementById('workDetailComment').textContent=parsed.comment||'';
+
+  const image=document.getElementById('workDetailImage');
+  if(work.image){
+    image.src=work.image;
+    image.alt='作品画像：'+(parsed.title||('作品 '+String(workIndex+1)));
+    image.hidden=false;
+  }else{
+    image.removeAttribute('src');
+    image.alt='';
+    image.hidden=true;
+  }
+
+  const selectButton=document.getElementById('workDetailSelectButton');
+  const isSelected=selected.includes(value);
+  selectButton.textContent=isSelected?'選択解除':'選択する';
+  selectButton.setAttribute('aria-pressed',isSelected?'true':'false');
+
+  const detailView=document.getElementById('workDetailView');
+  detailView.hidden=false;
+  detailView.setAttribute('aria-hidden','false');
+  document.body.classList.add('work-detail-active');
+
+  requestAnimationFrame(function(){
+    document.getElementById('workDetailPanel').focus({preventScroll:true});
+  });
+}
+
+function closeWorkDetail(){
+  const detailView=document.getElementById('workDetailView');
+  if(!detailView||detailView.hidden)return;
+
+  detailView.hidden=true;
+  detailView.setAttribute('aria-hidden','true');
+  document.body.classList.remove('work-detail-active');
+  activeDetailValue='';
 }
 
 function toggleSelection(value){
@@ -264,11 +335,13 @@ function toggleSelection(value){
     const nextSelected=!isSelected;
     card.classList.toggle('selected',nextSelected);
 
-    const mask=card.querySelector('.work-select-mask');
-    if(mask){
+    const zone=card.querySelector('.work-select-zone');
+    if(zone){
       const title=card.querySelector('.work-title');
-      mask.setAttribute('aria-pressed',nextSelected?'true':'false');
-      mask.setAttribute('aria-label',(nextSelected?'選択解除：':'選択：')+(title?title.textContent:'作品'));
+      zone.setAttribute('aria-pressed',nextSelected?'true':'false');
+      zone.setAttribute('aria-label',(nextSelected?'選択解除：':'選択：')+(title?title.textContent:'作品'));
+      const label=zone.querySelector('.select-zone-label');
+      if(label)label.textContent=nextSelected?'選択解除':'選択';
     }
   }
 
@@ -328,12 +401,6 @@ function renderSelectedThumbs(){
   );
 }
 
-function toggleDetail(comment,button){
-  const expanded=comment.hidden;
-  comment.hidden=!expanded;
-  button.setAttribute('aria-expanded',expanded?'true':'false');
-}
-
 function submitVote(){
   if(selected.length<1||selected.length>MAX_VOTES)return;
 
@@ -390,6 +457,7 @@ function adminReset(code){
       localStorage.removeItem(STORAGE_KEY);
       document.cookie='sakuhin_vote_done=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
       hideMaxVoteError();
+      closeWorkDetail();
       selected=[];
       hideVotedMask();
       renderWorks();
