@@ -31,6 +31,7 @@
 html{
   min-height:100%;
   background:var(--bg);
+  scroll-padding-bottom:calc(var(--bar-height) + var(--safe-bottom) + clamp(1rem,4vmin,2rem));
   -webkit-text-size-adjust:100%;
   text-size-adjust:100%;
 }
@@ -314,6 +315,7 @@ svg{
   display:grid;
   grid-template-columns:minmax(0,1fr);
   align-content:start;
+  scroll-margin-bottom:calc(var(--bar-height) + var(--safe-bottom) + clamp(1rem,4vmin,2rem));
   background:transparent;
 }
 
@@ -361,6 +363,13 @@ svg{
   border:0 solid rgba(255,255,255,.95);
   background:transparent;
   transition:background-color .14s ease,border-width .14s ease;
+}
+
+.work-select-mask:focus-visible{
+  outline:0;
+  box-shadow:
+    inset 0 0 0 3px rgba(255,255,255,.96),
+    inset 0 0 0 5px rgba(36,79,64,.72);
 }
 
 .select-hint{

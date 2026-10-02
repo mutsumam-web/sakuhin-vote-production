@@ -108,20 +108,25 @@ function attachImageFallback(image,imageWrap){
   if(image.complete&&image.naturalWidth===0)fail();
 }
 
+function hideMaxVoteError(){
+  const panel=document.getElementById('maxVoteErrorPanel');
+  if(!panel)return;
+
+  clearTimeout(window.maxVoteErrorTimer);
+  panel.classList.remove('show');
+  panel.setAttribute('aria-hidden','true');
+}
+
 function showMaxVoteError(){
   const panel=document.getElementById('maxVoteErrorPanel');
   if(!panel)return;
 
-  panel.classList.remove('show');
+  hideMaxVoteError();
   panel.setAttribute('aria-hidden','false');
   void panel.offsetWidth;
   panel.classList.add('show');
 
-  clearTimeout(window.maxVoteErrorTimer);
-  window.maxVoteErrorTimer=setTimeout(function(){
-    panel.classList.remove('show');
-    panel.setAttribute('aria-hidden','true');
-  },1800);
+  window.maxVoteErrorTimer=setTimeout(hideMaxVoteError,1800);
 }
 
 function renderWorks(){
@@ -205,6 +210,7 @@ function renderWorks(){
       detail.type='button';
       detail.className='detail-btn';
       detail.textContent='DETAIL';
+      detail.setAttribute('aria-label','DETAIL：'+title.textContent);
       detail.setAttribute('aria-expanded','false');
       detail.setAttribute('aria-controls','work-comment-'+String(index+1));
 
@@ -232,13 +238,6 @@ function renderWorks(){
   updateUI();
 }
 
-function cssEscape(value){
-  if(window.CSS&&typeof window.CSS.escape==='function'){
-    return window.CSS.escape(String(value));
-  }
-  return String(value).replace(/["\\]/g,'\\$&');
-}
-
 function toggleSelection(value){
   if(hasVoted())return;
 
@@ -255,7 +254,12 @@ function toggleSelection(value){
     selected.push(value);
   }
 
-  const card=document.querySelector('.work-card[data-work-value="'+cssEscape(value)+'"]');
+  hideMaxVoteError();
+
+  const workIndex=works.findIndex(function(work){
+    return work.value===value;
+  });
+  const card=workIndex>=0?document.querySelectorAll('.work-card')[workIndex]:null;
   if(card){
     const nextSelected=!isSelected;
     card.classList.toggle('selected',nextSelected);
@@ -333,6 +337,8 @@ function toggleDetail(comment,button){
 function submitVote(){
   if(selected.length<1||selected.length>MAX_VOTES)return;
 
+  hideMaxVoteError();
+
   const button=document.getElementById('voteButton');
   if(!button||button.disabled)return;
 
@@ -383,6 +389,7 @@ function adminReset(code){
 
       localStorage.removeItem(STORAGE_KEY);
       document.cookie='sakuhin_vote_done=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+      hideMaxVoteError();
       selected=[];
       hideVotedMask();
       renderWorks();
