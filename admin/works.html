@@ -13,7 +13,7 @@
     <section class="auth-card">
       <div class="eyebrow">SECURE ADMIN ACCESS</div>
       <h1 id="loginTitle">作品展投票システム</h1>
-      <p class="auth-subtitle">ADMIN DASHBOARD</p>
+      <p class="auth-subtitle">WORKS MANAGEMENT</p>
       <form id="loginForm" class="auth-form" autocomplete="off">
         <label for="adminCode">管理者コード</label>
         <input id="adminCode" name="adminCode" type="password" inputmode="numeric" autocomplete="current-password" required>
@@ -27,24 +27,24 @@
     <header class="topbar">
       <div>
         <div class="eyebrow">作品展投票システム</div>
-        <h1>ADMIN DASHBOARD</h1>
+        <h1>WORKS MANAGEMENT</h1>
       </div>
       <div class="topbar-actions">
-        <span id="systemStatus" class="status-badge status-neutral">SYSTEM —</span>
-        <button id="worksPageButton" class="button-secondary" type="button">作品管理</button>
-        <button id="refreshButton" class="button-secondary" type="button">更新</button>
+        <span id="systemStatus" class="status-badge status-neutral" hidden>SYSTEM —</span>
+        <button id="dashboardPageButton" class="button-secondary" type="button">分析ダッシュボード</button>
+        <button id="refreshButton" class="button-secondary" type="button" hidden>更新</button>
         <button id="logoutButton" class="button-ghost" type="button">ログアウト</button>
       </div>
     </header>
 
-    <section class="status-strip" aria-label="更新状況">
+    <section class="status-strip" aria-label="更新状況" hidden>
       <div><span>LAST UPDATE</span><strong id="lastUpdated">—</strong></div>
       <div><span>LAST VOTE</span><strong id="lastVote">—</strong></div>
       <div><span>AUTO REFRESH</span><button id="autoRefreshButton" class="text-button" type="button" aria-pressed="true">ON / 60s</button></div>
       <div><span>DATA SOURCE</span><strong id="systemSource">—</strong></div>
     </section>
 
-    <section class="toolbar" aria-label="表示設定">
+    <section class="toolbar" aria-label="表示設定" hidden>
       <div class="range-control" role="group" aria-label="投票トレンド表示期間">
         <button type="button" data-range="3h">3時間</button>
         <button class="active" type="button" data-range="6h">6時間</button>
@@ -58,7 +58,7 @@
       </div>
     </section>
 
-    <section class="panel panel-wide work-manager" hidden>
+    <section class="panel panel-wide work-manager">
       <div class="panel-heading">
         <div>
           <span class="panel-kicker">WORKS MANAGEMENT</span>
@@ -118,7 +118,7 @@
       </div>
     </section>
 
-    <section class="panel panel-wide" hidden>
+    <section class="panel panel-wide">
       <div class="panel-heading">
         <div>
           <span class="panel-kicker">SECURITY</span>
@@ -150,6 +150,7 @@
       </form>
     </section>
 
+    <div id="analyticsContent" hidden>
     <section id="kpiGrid" class="kpi-grid" aria-label="概要指標">
       <article class="kpi-card"><span>総投票件数</span><strong id="kpiResponses">—</strong><small>投票送信件数</small></article>
       <article class="kpi-card"><span>総得票数</span><strong id="kpiVotes">—</strong><small>作品選択数の合計</small></article>
@@ -330,6 +331,7 @@
       <p>表示データは管理者向け集計値のみ。個人追跡・個人識別情報は表示しない。</p>
       <p id="dashboardNotice"></p>
     </footer>
+    </div>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>

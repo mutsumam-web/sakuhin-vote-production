@@ -1056,6 +1056,14 @@
     });
 
     $('logoutButton').addEventListener('click',logout);
+    const worksPageButton=$('worksPageButton');
+    if(worksPageButton){
+      worksPageButton.addEventListener('click',function(){window.location.href='works.html';});
+    }
+    const dashboardPageButton=$('dashboardPageButton');
+    if(dashboardPageButton){
+      dashboardPageButton.addEventListener('click',function(){window.location.href='index.html';});
+    }
     $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager()]);});
     $('autoRefreshButton').addEventListener('click',function(){
       state.autoRefresh=!state.autoRefresh;
