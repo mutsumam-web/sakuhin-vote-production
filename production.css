@@ -341,84 +341,61 @@ svg{
 
 .work-image-wrap.image-unavailable .work-image{display:none}
 
-.work-select-mask{
+.work-select-zone{
   position:absolute;
-  inset:0;
-  z-index:2;
-  width:100%;
+  z-index:3;
+  top:0;
+  left:0;
+  right:0;
+  height:20%;
   min-width:0;
-  min-height:var(--tap-min);
   border:0;
-  border-radius:inherit;
-  padding:0;
-  background:transparent;
+  border-radius:inherit inherit 0 0;
+  padding:0 clamp(.35rem,1.8vmin,.65rem);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(.2rem,1vmin,.38rem);
+  background:rgba(17,28,23,.38);
   color:#fff;
   cursor:pointer;
-}
-
-.work-select-mask::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border:0 solid rgba(255,255,255,.95);
-  background:transparent;
-  transition:background-color .14s ease,border-width .14s ease;
-}
-
-.work-select-mask:focus-visible{
-  outline:0;
-  box-shadow:
-    inset 0 0 0 3px rgba(255,255,255,.96),
-    inset 0 0 0 5px rgba(36,79,64,.72);
-}
-
-.select-hint{
-  position:absolute;
-  left:50%;
-  bottom:clamp(.35rem,1.8vmin,.6rem);
-  max-width:calc(100% - .8rem);
-  transform:translateX(-50%);
-  padding:.28rem .48rem;
-  border-radius:999px;
-  background:rgba(17,28,23,.62);
-  color:#fff;
-  font-size:clamp(.54rem,2.2vmin,.7rem);
-  line-height:1.25;
+  font-size:clamp(.54rem,2.25vmin,.72rem);
+  line-height:1.2;
+  font-weight:700;
+  letter-spacing:.035em;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  box-shadow:0 .15rem .5rem rgba(0,0,0,.12);
+  text-shadow:0 1px 3px rgba(0,0,0,.28);
+  transition:background-color .14s ease;
+}
+
+.work-select-zone:focus-visible{
+  outline:0;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.98),
+    inset 0 0 0 4px rgba(36,79,64,.8);
 }
 
 .select-check{
-  position:absolute;
-  left:50%;
-  top:50%;
-  display:grid;
+  flex:0 0 auto;
+  display:none;
+  width:1.2em;
+  height:1.2em;
   place-items:center;
-  width:clamp(2.35rem,10vmin,3.4rem);
-  aspect-ratio:1;
-  transform:translate(-50%,-50%) scale(.86);
-  border:2px solid rgba(255,255,255,.94);
+  border:1px solid rgba(255,255,255,.9);
   border-radius:50%;
-  color:#fff;
-  font-size:clamp(1.35rem,6vmin,2rem);
+  font-size:.88em;
   line-height:1;
-  opacity:0;
-  transition:opacity .14s ease,transform .14s ease;
 }
 
-.work-card.selected .work-select-mask::before{
-  border-width:clamp(2px,.7vmin,4px);
-  background:rgba(35,55,47,.46);
+.work-card.selected .work-select-zone{
+  background:rgba(31,60,49,.72);
 }
 
 .work-card.selected .select-check{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
+  display:grid;
 }
-
-.work-card.selected .select-hint{display:none}
 
 .work-meta{
   min-width:0;
@@ -457,43 +434,153 @@ svg{
   word-break:break-word;
 }
 
-.work-detail-row{
-  min-width:0;
-  margin-top:.4rem;
-  display:flex;
-  justify-content:flex-end;
+.work-card{
+  cursor:pointer;
 }
 
-.detail-btn{
-  min-height:var(--tap-min);
-  padding:.25rem 0 .15rem .75rem;
-  border:0;
-  background:transparent;
-  color:var(--accent);
+.work-card:focus-visible{
+  outline:3px solid rgba(36,79,64,.38);
+  outline-offset:3px;
+}
+
+.work-detail-view{
+  position:fixed;
+  z-index:1200;
+  inset:0;
+  min-width:0;
+  min-height:100vh;
+  min-height:100dvh;
+  overflow:auto;
+  overscroll-behavior:contain;
+  padding:
+    calc(var(--safe-top) + clamp(.8rem,3.2vmin,1.4rem))
+    calc(var(--safe-right) + clamp(.8rem,3.2vw,1.5rem))
+    calc(var(--safe-bottom) + clamp(.8rem,3.2vmin,1.4rem))
+    calc(var(--safe-left) + clamp(.8rem,3.2vw,1.5rem));
+  background:rgba(238,234,224,.985);
+}
+
+body.work-detail-active{
+  overflow:hidden;
+}
+
+.work-detail-panel{
+  width:min(100%,52rem);
+  min-width:0;
+  min-height:calc(100vh - var(--safe-top) - var(--safe-bottom) - clamp(1.6rem,6.4vmin,2.8rem));
+  min-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - clamp(1.6rem,6.4vmin,2.8rem));
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  align-content:start;
+  gap:clamp(.8rem,3.4vmin,1.4rem);
   cursor:pointer;
-  font-size:clamp(.58rem,2.35vmin,.74rem);
+}
+
+.work-detail-image-wrap{
+  min-width:0;
+  width:100%;
+  aspect-ratio:4/3;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:#deddd7;
+  box-shadow:0 .5rem 2rem rgba(35,45,39,.1);
+}
+
+.work-detail-image{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  background:#e9e7e1;
+}
+
+.work-detail-meta{
+  min-width:0;
+}
+
+.work-detail-index{
+  margin-bottom:.35rem;
+  color:var(--muted);
+  font-size:clamp(.6rem,2.4vmin,.78rem);
   line-height:1.2;
   font-weight:700;
-  letter-spacing:.09em;
+  letter-spacing:.1em;
 }
 
-.detail-btn::after{content:" +";font-weight:500}
-.detail-btn[aria-expanded="true"]::after{content:" −"}
-
-.work-comment{
+.work-detail-title{
   min-width:0;
-  margin-top:.35rem;
-  padding:.55rem .6rem;
+  margin:0;
+  color:var(--ink);
+  font-size:clamp(1.35rem,6vmin,2.35rem);
+  line-height:1.3;
+  font-weight:700;
+  letter-spacing:-.03em;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+.work-detail-author{
+  min-width:0;
+  margin-top:.45rem;
+  color:var(--ink-soft);
+  font-size:clamp(.78rem,3.2vmin,1rem);
+  line-height:1.55;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+.work-detail-comment{
+  min-width:0;
+  margin-top:clamp(.8rem,3.2vmin,1.2rem);
+  padding-top:clamp(.7rem,3vmin,1rem);
   border-top:1px solid var(--line);
   color:var(--ink-soft);
-  font-size:clamp(.64rem,2.7vmin,.84rem);
-  line-height:1.7;
+  font-size:clamp(.76rem,3vmin,.98rem);
+  line-height:1.8;
   white-space:pre-wrap;
   overflow-wrap:anywhere;
   word-break:break-word;
 }
 
-.work-comment[hidden]{display:none!important}
+.work-detail-actions{
+  min-width:0;
+  margin-top:auto;
+  padding-top:clamp(.4rem,2vmin,.8rem);
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(.55rem,2.4vw,1rem);
+}
+
+.work-detail-select-button,
+.work-detail-close-button{
+  min-width:0;
+  min-height:var(--tap-min);
+  padding:clamp(.68rem,2.8vmin,.9rem) clamp(.75rem,3vw,1.2rem);
+  border-radius:999px;
+  cursor:pointer;
+  font-size:clamp(.76rem,3vmin,.96rem);
+  line-height:1.2;
+  font-weight:700;
+}
+
+.work-detail-select-button{
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#fff;
+}
+
+.work-detail-select-button[aria-pressed="true"]{
+  background:var(--surface-strong);
+  color:var(--accent);
+}
+
+.work-detail-close-button{
+  border:1px solid var(--line-strong);
+  background:var(--surface-strong);
+  color:var(--ink);
+}
 
 .selection-bar{
   position:fixed;
