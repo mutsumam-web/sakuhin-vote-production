@@ -57,17 +57,76 @@
       </div>
     </section>
 
+    <section class="panel panel-wide work-manager">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">WORKS MANAGEMENT</span>
+          <h2>作品管理</h2>
+        </div>
+        <div class="inline-controls">
+          <button id="newWorkButton" class="button-secondary" type="button">新規作品</button>
+          <button id="reloadWorksButton" class="button-secondary" type="button">作品一覧を更新</button>
+        </div>
+      </div>
+
+      <div class="work-manager-grid">
+        <form id="workEditorForm" class="work-editor" autocomplete="off">
+          <input id="workId" type="hidden">
+
+          <label>
+            <span>作品名</span>
+            <input id="workTitle" type="text" maxlength="120" required>
+          </label>
+
+          <label>
+            <span>作者名</span>
+            <input id="workAuthor" type="text" maxlength="120">
+          </label>
+
+          <label class="work-editor-wide">
+            <span>コメント</span>
+            <textarea id="workComment" rows="5" maxlength="1200"></textarea>
+          </label>
+
+          <label>
+            <span>公開状態</span>
+            <select id="workStatus">
+              <option value="draft">非公開</option>
+              <option value="published">公開</option>
+            </select>
+          </label>
+
+          <label>
+            <span>作品画像</span>
+            <input id="workImage" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+          </label>
+
+          <div class="work-editor-actions">
+            <button id="saveWorkButton" type="submit">保存</button>
+            <button id="clearWorkButton" class="button-ghost" type="button">入力をクリア</button>
+          </div>
+
+          <p id="workEditorMessage" class="work-editor-message" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="work-list-wrap">
+          <div id="workManagerSummary" class="work-manager-summary">作品 0件</div>
+          <div id="workManagerList" class="work-manager-list"></div>
+        </div>
+      </div>
+    </section>
+
     <section id="kpiGrid" class="kpi-grid" aria-label="概要指標">
-      <article class="kpi-card"><span>総投票件数</span><strong id="kpiResponses">—</strong><small>Google Form回答数</small></article>
+      <article class="kpi-card"><span>総投票件数</span><strong id="kpiResponses">—</strong><small>投票送信件数</small></article>
       <article class="kpi-card"><span>総得票数</span><strong id="kpiVotes">—</strong><small>作品選択数の合計</small></article>
-      <article class="kpi-card"><span>登録作品</span><strong id="kpiWorks">—</strong><small>CHECKBOX選択肢</small></article>
+      <article class="kpi-card"><span>登録作品</span><strong id="kpiWorks">—</strong><small>D1作品マスター</small></article>
       <article class="kpi-card"><span>直近30分</span><strong id="kpi30m">—</strong><small>投票件数</small></article>
       <article class="kpi-card"><span>直近60分</span><strong id="kpi60mVotes">—</strong><small>総得票数</small></article>
       <article class="kpi-card"><span>最終投票</span><strong id="kpiLastVoteAgo">—</strong><small>経過時間</small></article>
-      <article class="kpi-card"><span>GAS成功率</span><strong id="kpiGasSuccess">—</strong><small>完了 / 終了実行</small></article>
-      <article class="kpi-card"><span>GASエラー</span><strong id="kpiGasErrors">—</strong><small>FAILED + TIMED_OUT</small></article>
-      <article class="kpi-card"><span>GAS平均時間</span><strong id="kpiGasAvg">—</strong><small>実行時間</small></article>
-      <article class="kpi-card"><span>GAS p95</span><strong id="kpiGasP95">—</strong><small>95パーセンタイル</small></article>
+      <article class="kpi-card"><span>API成功率</span><strong id="kpiGasSuccess">—</strong><small>HTTPリクエスト</small></article>
+      <article class="kpi-card"><span>APIエラー</span><strong id="kpiGasErrors">—</strong><small>HTTP 4xx / 5xx</small></article>
+      <article class="kpi-card"><span>API平均時間</span><strong id="kpiGasAvg">—</strong><small>Worker実行時間</small></article>
+      <article class="kpi-card"><span>API p95</span><strong id="kpiGasP95">—</strong><small>95パーセンタイル</small></article>
     </section>
 
     <section class="panel panel-wide">
@@ -192,14 +251,14 @@
       <div class="panel-heading">
         <div>
           <span class="panel-kicker">SYSTEM OBSERVABILITY</span>
-          <h2>Apps Script 実行・エラー監視</h2>
+          <h2>Worker API 実行・エラー監視</h2>
         </div>
         <p id="processApiState">—</p>
       </div>
-      <div id="systemTrendChart" class="chart" role="img" aria-label="Apps Script実行回数とエラー件数の推移"></div>
+      <div id="systemTrendChart" class="chart" role="img" aria-label="Worker API実行回数とエラー件数の推移"></div>
       <div class="legend">
         <span><i class="legend-line series-a"></i>実行回数</span>
-        <span><i class="legend-line series-danger"></i>FAILED / TIMED_OUT</span>
+        <span><i class="legend-line series-danger"></i>HTTPエラー</span>
       </div>
       <div id="statusBreakdown" class="status-breakdown"></div>
     </section>
@@ -208,14 +267,14 @@
       <section class="panel">
         <div class="panel-heading">
           <div>
-            <span class="panel-kicker">FUNCTIONS</span>
-            <h2>関数別分析</h2>
+            <span class="panel-kicker">ENDPOINTS</span>
+            <h2>API経路別分析</h2>
           </div>
         </div>
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>関数</th><th>実行</th><th>失敗</th><th>平均</th><th>p95</th></tr>
+              <tr><th>API経路</th><th>実行</th><th>失敗</th><th>平均</th><th>p95</th></tr>
             </thead>
             <tbody id="functionStatsBody"></tbody>
           </table>

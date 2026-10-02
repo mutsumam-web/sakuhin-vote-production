@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const SESSION_KEY='sakuhin_admin_session_v1';
+  const SESSION_KEY='sakuhin_admin_session_v2';
   const CLIENT_KEY='sakuhin_admin_client_v1';
   const REFRESH_MS=60000;
   const TZ='Asia/Tokyo';
@@ -13,7 +13,8 @@
     timer:null,
     voteData:null,
     systemData:null,
-    showAllRanking:false
+    showAllRanking:false,
+    works:[]
   };
 
   const $=function(id){return document.getElementById(id);};
@@ -31,40 +32,47 @@
     return value;
   }
 
-  const GAS_DEPLOYMENT_ID='AKfycbwYEyWV-4OGXd3GcJIvPKjY_ccMDlhHOZaiaStYuqXi_XmnA_3fHYASV4bgLuIuTp0Z';
-  const ADMIN_API_URL='https://script.google.com/macros/s/'+GAS_DEPLOYMENT_ID+'/exec';
+  const API_BASE=(window.__SAKUHIN_API_BASE__||'https://sakuhin-vote-api.mutsumam.workers.dev').replace(/\/$/,'');
 
-  function gasCall(name){
+  async function apiRequest(path,options){
+    const config=Object.assign({method:'GET'},options||{});
+    const headers=new Headers(config.headers||{});
+
+    if(config.json!==undefined){
+      headers.set('Content-Type','application/json');
+      config.body=JSON.stringify(config.json);
+      delete config.json;
+    }
+
+    config.headers=headers;
+
+    const response=await fetch(API_BASE+path,config);
+    let payload=null;
+    try{payload=await response.json();}catch(e){}
+
+    if(!response.ok||!payload||payload.ok===false){
+      const code=payload&&payload.error?payload.error:'HTTP_'+response.status;
+      const error=new Error(code);
+      error.code=code;
+      error.status=response.status;
+      throw error;
+    }
+
+    return payload;
+  }
+
+  async function adminRpc(method){
     const args=[].slice.call(arguments,1);
-
-    return fetch(ADMIN_API_URL,{
+    const payload=await apiRequest('/api/admin/rpc',{
       method:'POST',
-      redirect:'follow',
-      headers:{
-        'Content-Type':'text/plain;charset=utf-8'
-      },
-      body:JSON.stringify({
-        channel:'admin',
-        method:name,
-        args:args
-      })
-    })
-      .then(function(response){
-        if(!response.ok){
-          throw new Error('管理API HTTP '+response.status);
-        }
-        return response.json();
-      })
-      .then(function(payload){
-        if(!payload||payload.ok!==true){
-          throw new Error(
-            payload&&payload.error
-              ?payload.error
-              :'管理APIの実行に失敗しました。'
-          );
-        }
-        return payload.result;
-      });
+      json:{method:method,args:args}
+    });
+    return payload.result;
+  }
+
+  async function adminRest(path,options){
+    const payload=await apiRequest(path,options);
+    return payload.result;
   }
 
   function setBusy(busy){
@@ -160,7 +168,7 @@
     $('loginButton').disabled=true;
     $('loginMessage').textContent='認証しています…';
     try{
-      const result=await gasCall('adminDashboardLogin',code,clientId());
+      const result=await adminRpc('adminDashboardLogin',code,clientId());
       if(!result||!result.ok){
         const retry=result&&result.retryAfterSeconds?(' '+formatAgo(result.retryAfterSeconds).replace('前','後に再試行')):'';
         $('loginMessage').textContent=(result&&result.message?result.message:'認証できませんでした。')+retry;
@@ -169,7 +177,7 @@
       state.session=result.session;
       try{sessionStorage.setItem(SESSION_KEY,state.session);}catch(e){}
       showDashboard();
-      await loadAll(true);
+      await Promise.all([loadAll(true),loadWorksManager()]);
     }catch(error){
       $('loginMessage').textContent='認証処理に失敗しました。';
     }finally{
@@ -179,17 +187,17 @@
 
   async function logout(){
     const token=state.session;
-    showLogin('');
     if(token){
-      try{await gasCall('adminDashboardLogout',token);}catch(e){}
+      try{await adminRpc('adminDashboardLogout',token);}catch(e){}
     }
+    showLogin('');
   }
 
   async function loadAll(manual){
     if(!state.session)return;
     setBusy(true);
-    const votePromise=gasCall('getAdminDashboardData',state.session,state.range);
-    const systemPromise=gasCall('getAdminSystemMetrics',state.session,'24h');
+    const votePromise=adminRpc('getAdminDashboardData',state.session,state.range);
+    const systemPromise=adminRpc('getAdminSystemMetrics',state.session);
     const results=await Promise.allSettled([votePromise,systemPromise]);
     let authFailure=false;
 
@@ -277,9 +285,7 @@
     $('kpiGasAvg').textContent=formatDuration(data.averageDurationMs);
     $('kpiGasP95').textContent=formatDuration(data.p95DurationMs);
     $('systemSource').textContent=data.sourceLabel||'—';
-    $('processApiState').textContent=data.processApi&&data.processApi.available
-      ?'Apps Script Processes API'
-      :'フォールバック監視';
+    $('processApiState').textContent=data.sourceLabel||'Cloudflare Worker / D1 telemetry';
 
     drawLineChart('systemTrendChart',safeArray(data.trend),[
       {key:'total',label:'実行回数',className:'a'},
@@ -419,7 +425,7 @@
       ['30分得票',formatNumber(data&&data.votesLast30m)+'票'],
       ['30分TOP',data&&data.topWorkLast30m?data.topWorkLast30m.title+' / '+formatNumber(data.topWorkLast30m.votes)+'票':'データ不足'],
       ['勢いTOP',data&&data.momentumLeader?data.momentumLeader.title+' / '+data.momentumLeader.label:'データ不足'],
-      ['直近GAS失敗',state.systemData&&state.systemData.latestFailure?formatDateTime(state.systemData.latestFailure.startTime):'なし / 未取得'],
+      ['直近API失敗',state.systemData&&state.systemData.latestFailure?formatDateTime(state.systemData.latestFailure.startTime):'なし / 未取得'],
       ['システム',state.systemData&&state.systemData.health?state.systemData.health.status:'—']
     ];
     container.innerHTML='';
@@ -714,6 +720,248 @@
     }
   }
 
+  async function loadWorksManager(){
+    if(!state.session)return;
+    try{
+      const works=await adminRest('/api/admin/works',{
+        headers:{'X-Admin-Session':state.session}
+      });
+      state.works=safeArray(works);
+      renderWorksManager();
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      $('workManagerList').innerHTML='<div class="empty-note">作品一覧を取得できませんでした。</div>';
+      $('workEditorMessage').textContent=String(error&&error.message?error.message:error||'');
+    }
+  }
+
+  function resetWorkEditor(){
+    $('workId').value='';
+    $('workTitle').value='';
+    $('workAuthor').value='';
+    $('workComment').value='';
+    $('workStatus').value='draft';
+    $('workImage').value='';
+    $('workEditorMessage').textContent='新しい作品を登録できます。';
+    $('saveWorkButton').textContent='登録する';
+  }
+
+  function editWork(workId){
+    const work=state.works.find(function(item){return String(item.id)===String(workId);});
+    if(!work)return;
+    $('workId').value=String(work.id);
+    $('workTitle').value=work.title||'';
+    $('workAuthor').value=work.author||'';
+    $('workComment').value=work.comment||'';
+    $('workStatus').value=work.enabled?'published':'draft';
+    $('workImage').value='';
+    $('workEditorMessage').textContent='作品を編集中';
+    $('saveWorkButton').textContent='変更を保存';
+    $('workTitle').focus();
+    $('workEditorForm').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  function assetExtension(file){
+    const map={
+      'image/jpeg':'jpg',
+      'image/png':'png',
+      'image/webp':'webp',
+      'image/gif':'gif',
+      'image/avif':'avif'
+    };
+    return map[file.type]||'';
+  }
+
+  function randomId(){
+    if(window.crypto&&typeof window.crypto.randomUUID==='function')return window.crypto.randomUUID();
+    return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+  }
+
+  async function uploadWorkImage(work,file){
+    const ext=assetExtension(file);
+    if(!ext)throw new Error('UNSUPPORTED_ASSET_TYPE');
+    const key='works/'+String(work.id)+'/'+randomId()+'.'+ext;
+    const asset=await adminRest('/api/admin/assets/'+encodeURIComponent(key),{
+      method:'PUT',
+      headers:{
+        'X-Admin-Session':state.session,
+        'Content-Type':file.type
+      },
+      body:file
+    });
+
+    const updated=await adminRest('/api/admin/works/'+encodeURIComponent(work.id),{
+      method:'PATCH',
+      json:{
+        session:state.session,
+        work:{
+          displayOrder:work.displayOrder,
+          value:work.value,
+          title:work.title,
+          author:work.author,
+          comment:work.comment,
+          imageKey:asset.key,
+          enabled:work.enabled
+        }
+      }
+    });
+
+    return updated;
+  }
+
+  async function saveWork(event){
+    event.preventDefault();
+    const id=$('workId').value.trim();
+    const current=id
+      ?state.works.find(function(item){return String(item.id)===id;})
+      :null;
+    const work={
+      displayOrder:current?current.displayOrder:null,
+      value:current?current.value:undefined,
+      title:$('workTitle').value.trim(),
+      author:$('workAuthor').value.trim(),
+      comment:$('workComment').value.trim(),
+      imageKey:current?current.imageKey:null,
+      enabled:$('workStatus').value==='published'
+    };
+    const image=$('workImage').files&&$('workImage').files[0]?$('workImage').files[0]:null;
+
+    if(!work.title){
+      $('workEditorMessage').textContent='作品名を入力してください。';
+      return;
+    }
+
+    $('saveWorkButton').disabled=true;
+    $('workEditorMessage').textContent='保存しています…';
+
+    try{
+      let saved;
+      if(current){
+        saved=await adminRest('/api/admin/works/'+encodeURIComponent(current.id),{
+          method:'PATCH',
+          json:{session:state.session,work:work}
+        });
+      }else{
+        saved=await adminRest('/api/admin/works',{
+          method:'POST',
+          json:{session:state.session,work:work}
+        });
+      }
+
+      if(image){
+        saved=await uploadWorkImage(saved,image);
+      }
+
+      await loadWorksManager();
+      resetWorkEditor();
+      await loadAll(false);
+      showToast(current?'作品を更新しました。':'作品を登録しました。');
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      $('workEditorMessage').textContent='保存できませんでした。 '+String(error&&error.message?error.message:'');
+    }finally{
+      $('saveWorkButton').disabled=false;
+    }
+  }
+
+  async function moveWork(workId,direction){
+    const list=state.works.slice();
+    const index=list.findIndex(function(item){return String(item.id)===String(workId);});
+    const target=index+direction;
+    if(index<0||target<0||target>=list.length)return;
+    const temp=list[index];
+    list[index]=list[target];
+    list[target]=temp;
+
+    try{
+      await adminRest('/api/admin/works/reorder',{
+        method:'POST',
+        json:{session:state.session,ids:list.map(function(item){return item.id;})}
+      });
+      state.works=list;
+      renderWorksManager();
+      showToast('表示順を更新しました。');
+    }catch(error){
+      showToast('表示順を更新できませんでした。');
+    }
+  }
+
+  function renderWorksManager(){
+    const list=$('workManagerList');
+    const works=safeArray(state.works);
+    $('workManagerSummary').textContent='作品 '+works.length+'件 / 公開 '+works.filter(function(item){return item.enabled;}).length+'件';
+    list.innerHTML='';
+
+    if(!works.length){
+      list.innerHTML='<div class="empty-note">作品はまだ登録されていません。</div>';
+      return;
+    }
+
+    works.forEach(function(work,index){
+      const row=document.createElement('article');
+      row.className='work-manager-row';
+
+      const thumb=document.createElement('div');
+      thumb.className='work-manager-thumb';
+      if(work.image){
+        const img=document.createElement('img');
+        img.src=work.image;
+        img.alt='作品画像：'+(work.title||'作品');
+        thumb.appendChild(img);
+      }else{
+        const empty=document.createElement('span');
+        empty.textContent='NO IMAGE';
+        thumb.appendChild(empty);
+      }
+
+      const copy=document.createElement('div');
+      copy.className='work-manager-copy';
+      const title=document.createElement('h3');
+      title.className='work-manager-title';
+      title.textContent=work.title||'無題';
+      const meta=document.createElement('div');
+      meta.className='work-manager-meta';
+      meta.textContent=(work.author||'作者未設定')+(work.comment?' / '+work.comment:'');
+      const status=document.createElement('span');
+      status.className='work-manager-status '+(work.enabled?'status-published':'status-draft');
+      status.textContent=work.enabled?'公開':'非公開';
+      copy.appendChild(title);
+      copy.appendChild(meta);
+      copy.appendChild(status);
+
+      const actions=document.createElement('div');
+      actions.className='work-manager-actions';
+      const edit=document.createElement('button');
+      edit.type='button';
+      edit.textContent='編集';
+      edit.addEventListener('click',function(){editWork(work.id);});
+      const up=document.createElement('button');
+      up.type='button';
+      up.textContent='↑';
+      up.disabled=index===0;
+      up.addEventListener('click',function(){moveWork(work.id,-1);});
+      const down=document.createElement('button');
+      down.type='button';
+      down.textContent='↓';
+      down.disabled=index===works.length-1;
+      down.addEventListener('click',function(){moveWork(work.id,1);});
+      actions.appendChild(edit);
+      actions.appendChild(up);
+      actions.appendChild(down);
+
+      row.appendChild(thumb);
+      row.appendChild(copy);
+      row.appendChild(actions);
+      list.appendChild(row);
+    });
+  }
+
   function bind(){
     $('loginForm').addEventListener('submit',function(event){
       event.preventDefault();
@@ -721,7 +969,7 @@
     });
 
     $('logoutButton').addEventListener('click',logout);
-    $('refreshButton').addEventListener('click',function(){loadAll(true);});
+    $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager()]);});
     $('autoRefreshButton').addEventListener('click',function(){
       state.autoRefresh=!state.autoRefresh;
       $('autoRefreshButton').setAttribute('aria-pressed',state.autoRefresh?'true':'false');
@@ -752,6 +1000,10 @@
 
     $('exportCsvButton').addEventListener('click',exportCsv);
     $('printButton').addEventListener('click',function(){window.print();});
+    $('workEditorForm').addEventListener('submit',saveWork);
+    $('newWorkButton').addEventListener('click',resetWorkEditor);
+    $('clearWorkButton').addEventListener('click',resetWorkEditor);
+    $('reloadWorksButton').addEventListener('click',loadWorksManager);
   }
 
   async function init(){
@@ -764,7 +1016,7 @@
     }
     state.session=saved;
     showDashboard();
-    await loadAll(false);
+    await Promise.all([loadAll(false),loadWorksManager()]);
   }
 
   if(document.readyState==='loading'){
