@@ -18,8 +18,8 @@
   --safe-bottom:env(safe-area-inset-bottom,0px);
   --safe-left:env(safe-area-inset-left,0px);
   --content-width:min(94%,68rem);
-  --bar-height:clamp(4.8rem,21vmin,6.3rem);
-  --thumb-size:clamp(1.65rem,9.6vw,3.05rem);
+  --bar-height:clamp(5.2rem,23vmin,7rem);
+  --thumb-size:clamp(2.05rem,11.5vw,3.65rem);
   --radius:clamp(.45rem,1.8vmin,.9rem);
   --tap-min:44px;
 }
@@ -310,6 +310,7 @@ svg{
 }
 
 .work-card{
+  position:relative;
   min-width:0;
   width:100%;
   display:grid;
@@ -397,6 +398,23 @@ svg{
   display:grid;
 }
 
+.work-card::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  inset:0;
+  border:0 solid rgba(255,255,255,.94);
+  border-radius:calc(var(--radius)*.8);
+  background:transparent;
+  pointer-events:none;
+  transition:background-color .14s ease,border-width .14s ease;
+}
+
+.work-card.selected::after{
+  border-width:clamp(2px,.7vmin,4px);
+  background:rgba(31,60,49,.28);
+}
+
 .work-meta{
   min-width:0;
   padding:clamp(.55rem,2.4vmin,.85rem) .05rem 0;
@@ -416,7 +434,7 @@ svg{
   min-width:0;
   margin:0;
   color:var(--ink);
-  font-size:clamp(.82rem,3.65vmin,1.18rem);
+  font-size:clamp(.96rem,4.15vmin,1.36rem);
   line-height:1.42;
   font-weight:650;
   letter-spacing:-.02em;
@@ -426,9 +444,9 @@ svg{
 
 .work-author{
   min-width:0;
-  margin-top:.24rem;
+  margin-top:.3rem;
   color:var(--ink-soft);
-  font-size:clamp(.64rem,2.7vmin,.86rem);
+  font-size:clamp(.74rem,3.05vmin,.98rem);
   line-height:1.45;
   overflow-wrap:anywhere;
   word-break:break-word;
@@ -513,7 +531,7 @@ body.work-detail-active{
   min-width:0;
   margin:0;
   color:var(--ink);
-  font-size:clamp(1.35rem,6vmin,2.35rem);
+  font-size:clamp(1.62rem,7vmin,2.8rem);
   line-height:1.3;
   font-weight:700;
   letter-spacing:-.03em;
@@ -523,9 +541,9 @@ body.work-detail-active{
 
 .work-detail-author{
   min-width:0;
-  margin-top:.45rem;
+  margin-top:.55rem;
   color:var(--ink-soft);
-  font-size:clamp(.78rem,3.2vmin,1rem);
+  font-size:clamp(.94rem,3.8vmin,1.2rem);
   line-height:1.55;
   overflow-wrap:anywhere;
   word-break:break-word;
@@ -537,7 +555,7 @@ body.work-detail-active{
   padding-top:clamp(.7rem,3vmin,1rem);
   border-top:1px solid var(--line);
   color:var(--ink-soft);
-  font-size:clamp(.76rem,3vmin,.98rem);
+  font-size:clamp(.9rem,3.65vmin,1.14rem);
   line-height:1.8;
   white-space:pre-wrap;
   overflow-wrap:anywhere;
@@ -557,10 +575,10 @@ body.work-detail-active{
 .work-detail-close-button{
   min-width:0;
   min-height:var(--tap-min);
-  padding:clamp(.68rem,2.8vmin,.9rem) clamp(.75rem,3vw,1.2rem);
+  padding:clamp(.74rem,3vmin,.96rem) clamp(.8rem,3.2vw,1.3rem);
   border-radius:999px;
   cursor:pointer;
-  font-size:clamp(.76rem,3vmin,.96rem);
+  font-size:clamp(.84rem,3.35vmin,1.04rem);
   line-height:1.2;
   font-weight:700;
 }
@@ -718,6 +736,156 @@ body.work-detail-active{
   background:var(--disabled);
   color:var(--disabled-ink);
   cursor:not-allowed;
+}
+
+.vote-confirm-view{
+  position:fixed;
+  z-index:1300;
+  inset:0;
+  min-width:0;
+  min-height:100vh;
+  min-height:100dvh;
+  overflow:auto;
+  overscroll-behavior:contain;
+  padding:
+    calc(var(--safe-top) + clamp(1rem,4vmin,1.8rem))
+    calc(var(--safe-right) + clamp(.9rem,4vw,1.8rem))
+    calc(var(--safe-bottom) + clamp(1rem,4vmin,1.8rem))
+    calc(var(--safe-left) + clamp(.9rem,4vw,1.8rem));
+  background:rgba(238,234,224,.985);
+}
+
+body.vote-confirm-active{
+  overflow:hidden;
+}
+
+.vote-confirm-panel{
+  width:min(100%,38rem);
+  min-width:0;
+  margin:0 auto;
+  padding:clamp(1.1rem,4.5vmin,2rem);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--surface-strong);
+  box-shadow:0 .8rem 2.8rem rgba(35,45,39,.12);
+}
+
+.vote-confirm-kicker{
+  color:var(--muted);
+  font-size:clamp(.64rem,2.55vmin,.8rem);
+  line-height:1.3;
+  font-weight:700;
+  letter-spacing:.11em;
+}
+
+.vote-confirm-title{
+  margin:.45rem 0 0;
+  color:var(--ink);
+  font-size:clamp(1.55rem,6.5vmin,2.5rem);
+  line-height:1.25;
+  font-weight:700;
+  letter-spacing:-.03em;
+}
+
+.vote-confirm-lead{
+  margin:.65rem 0 0;
+  color:var(--ink-soft);
+  font-size:clamp(.88rem,3.55vmin,1.08rem);
+  line-height:1.7;
+}
+
+.vote-confirm-works{
+  min-width:0;
+  margin-top:clamp(1rem,4vmin,1.5rem);
+  display:grid;
+  gap:clamp(.7rem,3vmin,1rem);
+}
+
+.vote-confirm-item{
+  min-width:0;
+  display:grid;
+  grid-template-columns:clamp(4.2rem,22vw,6.4rem) minmax(0,1fr);
+  align-items:center;
+  gap:clamp(.7rem,3vw,1rem);
+  padding:clamp(.6rem,2.6vmin,.85rem);
+  border:1px solid var(--line);
+  border-radius:calc(var(--radius)*.8);
+  background:var(--surface);
+}
+
+.vote-confirm-thumb{
+  width:100%;
+  aspect-ratio:1;
+  overflow:hidden;
+  border-radius:calc(var(--radius)*.65);
+  background:#deddd7;
+}
+
+.vote-confirm-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.vote-confirm-item-copy{
+  min-width:0;
+}
+
+.vote-confirm-item-index{
+  color:var(--muted);
+  font-size:clamp(.62rem,2.4vmin,.78rem);
+  font-weight:700;
+  letter-spacing:.08em;
+}
+
+.vote-confirm-item-title{
+  margin:.22rem 0 0;
+  color:var(--ink);
+  font-size:clamp(.98rem,4vmin,1.24rem);
+  line-height:1.45;
+  font-weight:700;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+.vote-confirm-item-author{
+  margin-top:.25rem;
+  color:var(--ink-soft);
+  font-size:clamp(.76rem,3.05vmin,.96rem);
+  line-height:1.45;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+.vote-confirm-actions{
+  margin-top:clamp(1rem,4vmin,1.5rem);
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(.55rem,2.5vw,.9rem);
+}
+
+.vote-confirm-submit-button,
+.vote-confirm-back-button{
+  min-width:0;
+  min-height:var(--tap-min);
+  padding:clamp(.72rem,3vmin,.95rem);
+  border-radius:999px;
+  font-size:clamp(.86rem,3.4vmin,1.05rem);
+  line-height:1.2;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.vote-confirm-submit-button{
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#fff;
+}
+
+.vote-confirm-back-button{
+  border:1px solid var(--line-strong);
+  background:var(--surface-strong);
+  color:var(--ink);
 }
 
 .max-vote-error-panel{
