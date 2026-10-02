@@ -116,6 +116,38 @@
       </div>
     </section>
 
+    <section class="panel panel-wide">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">SECURITY</span>
+          <h2>管理コード変更</h2>
+        </div>
+      </div>
+
+      <form id="adminCodeForm" class="work-editor" autocomplete="off">
+        <label>
+          <span>現在の管理コード</span>
+          <input id="currentAdminCode" type="password" inputmode="numeric" minlength="4" maxlength="12" required>
+        </label>
+
+        <label>
+          <span>新しい管理コード</span>
+          <input id="newAdminCode" type="password" inputmode="numeric" minlength="4" maxlength="12" required>
+        </label>
+
+        <label>
+          <span>新しい管理コード（確認）</span>
+          <input id="confirmAdminCode" type="password" inputmode="numeric" minlength="4" maxlength="12" required>
+        </label>
+
+        <div class="work-editor-actions">
+          <button id="changeAdminCodeButton" type="submit">管理コードを変更</button>
+        </div>
+
+        <p id="adminCodeMessage" class="work-editor-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
     <section id="kpiGrid" class="kpi-grid" aria-label="概要指標">
       <article class="kpi-card"><span>総投票件数</span><strong id="kpiResponses">—</strong><small>投票送信件数</small></article>
       <article class="kpi-card"><span>総得票数</span><strong id="kpiVotes">—</strong><small>作品選択数の合計</small></article>

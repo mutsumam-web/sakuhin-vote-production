@@ -193,6 +193,50 @@
     showLogin('');
   }
 
+  async function changeAdminCode(event){
+    event.preventDefault();
+    if(!state.session)return;
+
+    const current=$('currentAdminCode').value.trim();
+    const next=$('newAdminCode').value.trim();
+    const confirm=$('confirmAdminCode').value.trim();
+    const message=$('adminCodeMessage');
+
+    if(!/^\d{4,12}$/.test(next)){
+      message.textContent='新しい管理コードは4〜12桁の数字で入力してください。';
+      return;
+    }
+
+    if(next!==confirm){
+      message.textContent='新しい管理コードが一致しません。';
+      return;
+    }
+
+    const button=$('changeAdminCodeButton');
+    button.disabled=true;
+    message.textContent='変更しています…';
+
+    try{
+      await adminRpc('adminChangeCode',state.session,current,next);
+      $('adminCodeForm').reset();
+      showLogin('管理コードを変更しました。新しい管理コードで再認証してください。');
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+
+      const code=String(error&&error.message?error.message:'');
+      message.textContent=code==='ADMIN_CURRENT_CODE_INVALID'
+        ?'現在の管理コードが違います。'
+        :code==='ADMIN_CODE_FORMAT_INVALID'
+          ?'新しい管理コードは4〜12桁の数字で入力してください。'
+          :'管理コードを変更できませんでした。';
+    }finally{
+      button.disabled=false;
+    }
+  }
+
   async function loadAll(manual){
     if(!state.session)return;
     setBusy(true);
@@ -870,6 +914,34 @@
     }
   }
 
+  async function deleteWork(workId){
+    const work=state.works.find(function(item){return String(item.id)===String(workId);});
+    if(!work)return;
+
+    const label=work.title||'無題';
+    if(!window.confirm('作品「'+label+'」を削除します。\nこの作品に紐づく投票データも調整されます。\n元に戻せません。'))return;
+
+    try{
+      await adminRest('/api/admin/works/'+encodeURIComponent(work.id),{
+        method:'DELETE',
+        json:{session:state.session}
+      });
+
+      if($('workId').value.trim()===String(work.id)){
+        resetWorkEditor();
+      }
+
+      await Promise.all([loadWorksManager(),loadAll(false)]);
+      showToast('作品を削除しました。');
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      showToast('作品を削除できませんでした。');
+    }
+  }
+
   async function moveWork(workId,direction){
     const list=state.works.slice();
     const index=list.findIndex(function(item){return String(item.id)===String(workId);});
@@ -951,9 +1023,14 @@
       down.textContent='↓';
       down.disabled=index===works.length-1;
       down.addEventListener('click',function(){moveWork(work.id,1);});
+      const remove=document.createElement('button');
+      remove.type='button';
+      remove.textContent='削除';
+      remove.addEventListener('click',function(){deleteWork(work.id);});
       actions.appendChild(edit);
       actions.appendChild(up);
       actions.appendChild(down);
+      actions.appendChild(remove);
 
       row.appendChild(thumb);
       row.appendChild(copy);
@@ -1004,6 +1081,7 @@
     $('newWorkButton').addEventListener('click',resetWorkEditor);
     $('clearWorkButton').addEventListener('click',resetWorkEditor);
     $('reloadWorksButton').addEventListener('click',loadWorksManager);
+    $('adminCodeForm').addEventListener('submit',changeAdminCode);
   }
 
   async function init(){
