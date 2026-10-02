@@ -18,8 +18,8 @@
   --safe-bottom:env(safe-area-inset-bottom,0px);
   --safe-left:env(safe-area-inset-left,0px);
   --content-width:min(94%,68rem);
-  --bar-height:clamp(5.2rem,23vmin,7rem);
-  --thumb-size:clamp(32px,11.5vw,3.65rem);
+  --bar-height:clamp(5.6rem,25vmin,7.6rem);
+  --thumb-size:clamp(36px,13.5vw,4.25rem);
   --radius:clamp(.45rem,1.8vmin,.9rem);
   --tap-min:44px;
 }
@@ -42,6 +42,7 @@ body{
   min-height:100vh;
   min-height:100dvh;
   color:var(--ink);
+  font-size:clamp(.9rem,3.6vmin,1rem);
   background:var(--bg);
   font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","BIZ UDPMincho","Noto Serif JP","Noto Serif CJK JP",serif;
   font-synthesis:none;
@@ -152,40 +153,6 @@ svg{
   overflow-wrap:anywhere;
 }
 
-.hero-mark{
-  position:relative;
-  flex:0 0 auto;
-  width:clamp(1.15rem,4.8vmin,1.65rem);
-  aspect-ratio:1.55/1;
-  margin-top:.05rem;
-  border-radius:55% 45% 50% 50%;
-  background:#e68036;
-  transform:rotate(-7deg);
-  box-shadow:0 .15rem .5rem rgba(0,0,0,.16);
-}
-
-.hero-mark::before{
-  content:"";
-  position:absolute;
-  right:82%;
-  top:21%;
-  width:45%;
-  height:58%;
-  background:#e68036;
-  clip-path:polygon(100% 50%,0 0,10% 100%);
-}
-
-.hero-mark::after{
-  content:"";
-  position:absolute;
-  right:17%;
-  top:24%;
-  width:12%;
-  aspect-ratio:1;
-  border-radius:50%;
-  background:#fff4df;
-}
-
 .hero-copy{
   min-width:0;
   align-self:center;
@@ -262,7 +229,7 @@ svg{
   min-width:0;
   margin:.45rem 0 0;
   color:var(--ink-soft);
-  font-size:clamp(.72rem,3vmin,.95rem);
+  font-size:clamp(.9rem,3.8vmin,1.15rem);
   line-height:1.65;
   overflow-wrap:anywhere;
 }
@@ -333,7 +300,7 @@ svg{
   top:0;
   left:0;
   right:0;
-  height:20%;
+  height:28%;
   min-width:0;
   border:0;
   border-radius:inherit inherit 0 0;
@@ -345,7 +312,7 @@ svg{
   background:rgba(17,28,23,.38);
   color:#fff;
   cursor:pointer;
-  font-size:clamp(.54rem,2.25vmin,.72rem);
+  font-size:clamp(.72rem,3.15vmin,1rem);
   line-height:1.2;
   font-weight:700;
   letter-spacing:.035em;
@@ -614,7 +581,7 @@ body.work-detail-active{
   min-width:0;
   margin:0 auto;
   display:grid;
-  grid-template-columns:minmax(3.85rem,18vw) auto minmax(4.7rem,22vw);
+  grid-template-columns:minmax(0,.82fr) auto minmax(0,1fr);
   align-items:center;
   justify-content:space-between;
   gap:clamp(.45rem,2.1vw,.9rem);
