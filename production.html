@@ -76,6 +76,21 @@
     </div>
   </section>
 
+  <section id="voteConfirmView" class="vote-confirm-view" hidden aria-hidden="true" aria-modal="true" role="dialog" aria-labelledby="voteConfirmTitle">
+    <div class="vote-confirm-panel">
+      <div class="vote-confirm-kicker">VOTE CONFIRMATION</div>
+      <h2 id="voteConfirmTitle" class="vote-confirm-title">投票内容の確認</h2>
+      <p class="vote-confirm-lead">選択した作品を確認して、投票を確定してください。</p>
+
+      <div id="voteConfirmWorks" class="vote-confirm-works" aria-label="投票する作品"></div>
+
+      <div class="vote-confirm-actions">
+        <button id="voteConfirmSubmitButton" class="vote-confirm-submit-button" type="button">投票する</button>
+        <button id="voteConfirmBackButton" class="vote-confirm-back-button" type="button">戻る</button>
+      </div>
+    </div>
+  </section>
+
   <div id="maxVoteErrorPanel" class="max-vote-error-panel" role="alert" aria-live="assertive" aria-hidden="true">
     最大3作品まで選択できます
   </div>
