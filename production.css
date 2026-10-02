@@ -366,14 +366,6 @@ svg{
 }
 
 /* Powered-by placement: each screen owns one unambiguous rule. */
-.powered-by-main{
-  position:static;
-  width:100%;
-  margin-top:clamp(1.6rem,6.5vmin,3rem);
-  padding-top:clamp(.8rem,3vmin,1.2rem);
-  border-top:1px solid var(--line);
-}
-
 .powered-by-detail{
   align-self:end;
   margin-top:auto;
