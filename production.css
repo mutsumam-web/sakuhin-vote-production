@@ -19,7 +19,7 @@
   --safe-left:env(safe-area-inset-left,0px);
   --content-width:min(94%,68rem);
   --bar-height:clamp(5.2rem,23vmin,7rem);
-  --thumb-size:clamp(2.05rem,11.5vw,3.65rem);
+  --thumb-size:clamp(32px,11.5vw,3.65rem);
   --radius:clamp(.45rem,1.8vmin,.9rem);
   --tap-min:44px;
 }
