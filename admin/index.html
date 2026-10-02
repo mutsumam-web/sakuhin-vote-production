@@ -66,6 +66,7 @@
         <div class="inline-controls">
           <button id="newWorkButton" class="button-secondary" type="button">新規作品</button>
           <button id="reloadWorksButton" class="button-secondary" type="button">作品一覧を更新</button>
+          <button id="toggleWorksListButton" class="button-secondary" type="button" aria-expanded="true" aria-controls="workListWrap">作品一覧を折りたたむ</button>
         </div>
       </div>
 
@@ -109,7 +110,7 @@
           <p id="workEditorMessage" class="work-editor-message" role="status" aria-live="polite"></p>
         </form>
 
-        <div class="work-list-wrap">
+        <div id="workListWrap" class="work-list-wrap">
           <div id="workManagerSummary" class="work-manager-summary">作品 0件</div>
           <div id="workManagerList" class="work-manager-list"></div>
         </div>

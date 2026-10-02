@@ -14,7 +14,8 @@
     voteData:null,
     systemData:null,
     showAllRanking:false,
-    works:[]
+    works:[],
+    worksListCollapsed:false
   };
 
   const $=function(id){return document.getElementById(id);};
@@ -964,6 +965,15 @@
     }
   }
 
+  function setWorksListCollapsed(collapsed){
+    state.worksListCollapsed=!!collapsed;
+    $('workListWrap').hidden=state.worksListCollapsed;
+    $('toggleWorksListButton').setAttribute('aria-expanded',state.worksListCollapsed?'false':'true');
+    $('toggleWorksListButton').textContent=state.worksListCollapsed
+      ?'作品一覧を表示'
+      :'作品一覧を折りたたむ';
+  }
+
   function renderWorksManager(){
     const list=$('workManagerList');
     const works=safeArray(state.works);
@@ -1081,6 +1091,9 @@
     $('newWorkButton').addEventListener('click',resetWorkEditor);
     $('clearWorkButton').addEventListener('click',resetWorkEditor);
     $('reloadWorksButton').addEventListener('click',loadWorksManager);
+    $('toggleWorksListButton').addEventListener('click',function(){
+      setWorksListCollapsed(!state.worksListCollapsed);
+    });
     $('adminCodeForm').addEventListener('submit',changeAdminCode);
   }
 
