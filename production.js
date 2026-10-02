@@ -52,24 +52,11 @@ function init(){
   document.getElementById('voteConfirmSubmitButton').addEventListener('click',submitVote);
   document.getElementById('voteConfirmBackButton').addEventListener('click',closeVoteConfirm);
 
-  const selectedThumbs=document.getElementById('selectedThumbs');
-  selectedThumbs.addEventListener('click',function(event){
-    const slot=event.target.closest('.selected-thumb-slot.filled');
-    if(!slot||!selectedThumbs.contains(slot))return;
-
-    const value=slot.dataset.workValue;
-    if(value)toggleSelection(value);
-  });
-
-  selectedThumbs.addEventListener('keydown',function(event){
-    if(event.key!=='Enter'&&event.key!==' ')return;
-
-    const slot=event.target.closest('.selected-thumb-slot.filled');
-    if(!slot||!selectedThumbs.contains(slot))return;
-
-    event.preventDefault();
-    const value=slot.dataset.workValue;
-    if(value)toggleSelection(value);
+  document.querySelectorAll('.selected-thumb-slot').forEach(function(slot){
+    slot.addEventListener('click',function(){
+      const value=slot.dataset.workValue;
+      if(value)toggleSelection(value);
+    });
   });
 
   const detailView=document.getElementById('workDetailView');
@@ -390,9 +377,8 @@ function renderSelectedThumbs(){
   slots.forEach(function(slot,index){
     slot.innerHTML='';
     slot.classList.remove('filled');
-    slot.removeAttribute('role');
-    slot.removeAttribute('tabindex');
     slot.removeAttribute('aria-label');
+    slot.disabled=true;
     delete slot.dataset.workValue;
 
     const value=selected[index];
@@ -407,9 +393,8 @@ function renderSelectedThumbs(){
 
     slot.classList.add('filled');
     slot.setAttribute('aria-hidden','false');
-    slot.setAttribute('role','button');
-    slot.setAttribute('tabindex','0');
     slot.setAttribute('aria-label','選択解除：'+(parsed.title||('作品 '+String(workIndex+1))));
+    slot.disabled=false;
     slot.dataset.workValue=value;
 
     if(work&&work.image){

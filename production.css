@@ -788,16 +788,23 @@ body.work-detail-active{
   position:relative;
   width:var(--thumb-size);
   aspect-ratio:1;
+  padding:0;
   overflow:hidden;
   border:1px solid rgba(31,60,49,.18);
   border-radius:clamp(.25rem,1.2vmin,.45rem);
   background:#dadbd6;
+  appearance:none;
+  -webkit-appearance:none;
 }
 
 .selected-thumb-slot.filled{
   cursor:pointer;
   touch-action:manipulation;
   transition:transform .12s ease,box-shadow .12s ease;
+}
+
+.selected-thumb-slot:disabled{
+  cursor:default;
 }
 
 .selected-thumb-slot.filled:active{
