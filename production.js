@@ -53,8 +53,7 @@ function init(){
   const detailSelectButton=document.getElementById('workDetailSelectButton');
   const detailCloseButton=document.getElementById('workDetailCloseButton');
 
-  detailView.addEventListener('click',function(event){
-    if(event.target.closest('.work-detail-actions'))return;
+  detailView.addEventListener('click',function(){
     closeWorkDetail();
   });
 
@@ -270,8 +269,13 @@ function openWorkDetail(value){
 
   document.getElementById('workDetailIndex').textContent='WORK '+String(workIndex+1).padStart(2,'0');
   document.getElementById('workDetailTitle').textContent=parsed.title||('作品 '+String(workIndex+1));
-  document.getElementById('workDetailAuthor').textContent=parsed.author||'';
-  document.getElementById('workDetailComment').textContent=parsed.comment||'';
+  const author=document.getElementById('workDetailAuthor');
+  author.textContent=parsed.author||'';
+  author.hidden=!parsed.author.trim();
+
+  const comment=document.getElementById('workDetailComment');
+  comment.textContent=parsed.comment||'';
+  comment.hidden=!parsed.comment.trim();
 
   const image=document.getElementById('workDetailImage');
   if(work.image){
