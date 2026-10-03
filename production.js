@@ -252,6 +252,8 @@ function renderWorks(){
       toggleSelection(work.value);
     });
 
+    imageWrap.appendChild(selectZone);
+
     const meta=document.createElement('div');
     meta.className='work-meta';
 
@@ -277,7 +279,6 @@ function renderWorks(){
 
     card.appendChild(imageWrap);
     card.appendChild(meta);
-    card.appendChild(selectZone);
 
     card.addEventListener('click',function(){
       openWorkDetail(work.value);
@@ -295,29 +296,7 @@ function renderWorks(){
   });
 
   container.setAttribute('aria-busy','false');
-  initGalleryPosition();
   updateUI();
-}
-
-function initGalleryPosition(){
-  const label=document.getElementById('galleryPosition');
-  const cards=Array.from(document.querySelectorAll('.work-card'));
-  if(!label||!cards.length)return;
-  const update=function(){
-    let bestIndex=0;
-    let bestDistance=Infinity;
-    cards.forEach(function(card,index){
-      const rect=card.getBoundingClientRect();
-      const distance=Math.abs(rect.top-window.innerHeight*.28);
-      if(distance<bestDistance){bestDistance=distance;bestIndex=index;}
-    });
-    label.textContent=String(bestIndex+1)+' / '+String(cards.length);
-  };
-  update();
-  if(!window.galleryPositionBound){
-    window.galleryPositionBound=true;
-    window.addEventListener('scroll',function(){requestAnimationFrame(update);},{passive:true});
-  }
 }
 
 function openWorkDetail(value){
@@ -417,7 +396,7 @@ function toggleSelection(value){
 
 function updateUI(){
   const count=selected.length;
-  document.getElementById('selectionStatus').textContent=count+' / '+MAX_VOTES+' 選択中';
+  document.getElementById('selectionStatus').textContent=count+'作品選択中';
   document.getElementById('count').textContent=String(count);
   document.getElementById('voteButton').disabled=count===0;
   renderSelectedThumbs();
@@ -552,7 +531,7 @@ function closeVoteConfirm(){
 
   const submitButton=document.getElementById('voteConfirmSubmitButton');
   submitButton.disabled=false;
-  submitButton.textContent='この内容で投票する';
+  submitButton.textContent='投票する';
   submitButton.removeAttribute('aria-busy');
 }
 
@@ -572,7 +551,7 @@ function submitVote(){
     .then(function(ok){
       if(!ok){
         button.disabled=false;
-        button.textContent='この内容で投票する';
+        button.textContent='投票する';
         button.removeAttribute('aria-busy');
         alert('投票に失敗しました。');
         return;
@@ -581,7 +560,7 @@ function submitVote(){
       markVoted();
       selected=[];
       updateUI();
-      button.textContent='この内容で投票する';
+      button.textContent='投票する';
       button.disabled=true;
       button.removeAttribute('aria-busy');
       closeVoteConfirm();
@@ -589,7 +568,7 @@ function submitVote(){
     })
     .catch(function(error){
       button.disabled=false;
-      button.textContent='この内容で投票する';
+      button.textContent='投票する';
       button.removeAttribute('aria-busy');
       alert('投票に失敗しました。\n'+error.message);
     });
