@@ -396,7 +396,7 @@ function toggleSelection(value){
 
 function updateUI(){
   const count=selected.length;
-  document.getElementById('selectionStatus').textContent=count+'作品選択中';
+  document.getElementById('selectionStatus').textContent=count+' / '+MAX_VOTES+' 選択中';
   document.getElementById('count').textContent=String(count);
   document.getElementById('voteButton').disabled=count===0;
   renderSelectedThumbs();
@@ -531,7 +531,7 @@ function closeVoteConfirm(){
 
   const submitButton=document.getElementById('voteConfirmSubmitButton');
   submitButton.disabled=false;
-  submitButton.textContent='投票する';
+  submitButton.textContent='この内容で投票する';
   submitButton.removeAttribute('aria-busy');
 }
 
@@ -551,7 +551,7 @@ function submitVote(){
     .then(function(ok){
       if(!ok){
         button.disabled=false;
-        button.textContent='投票する';
+        button.textContent='この内容で投票する';
         button.removeAttribute('aria-busy');
         alert('投票に失敗しました。');
         return;
@@ -560,7 +560,7 @@ function submitVote(){
       markVoted();
       selected=[];
       updateUI();
-      button.textContent='投票する';
+      button.textContent='この内容で投票する';
       button.disabled=true;
       button.removeAttribute('aria-busy');
       closeVoteConfirm();
@@ -568,7 +568,7 @@ function submitVote(){
     })
     .catch(function(error){
       button.disabled=false;
-      button.textContent='投票する';
+      button.textContent='この内容で投票する';
       button.removeAttribute('aria-busy');
       alert('投票に失敗しました。\n'+error.message);
     });
