@@ -79,6 +79,9 @@ function init(){
     });
   });
 
+  const detailStatus=document.getElementById('workDetailSelectionStatus');
+  if(detailStatus)detailStatus.textContent='現在 '+selected.length+' / '+MAX_VOTES+' 選択中';
+
   const detailView=document.getElementById('workDetailView');
   const detailPanel=document.getElementById('workDetailPanel');
   const detailSelectButton=document.getElementById('workDetailSelectButton');
@@ -417,7 +420,11 @@ function toggleSelection(value){
 
 function updateUI(){
   const count=selected.length;
-  document.getElementById('selectionStatus').textContent=count+' / '+MAX_VOTES+' 選択中';
+  document.getElementById('selectionStatus').textContent=count+' / '+MAX_VOTES+' SELECTED';
+  const barLabel=document.querySelector('#adminButton span');
+  if(barLabel)barLabel.textContent=count+' / '+MAX_VOTES+' 選択中';
+  const detailStatus=document.getElementById('workDetailSelectionStatus');
+  if(detailStatus)detailStatus.textContent='現在 '+count+' / '+MAX_VOTES+' 選択中';
   document.getElementById('count').textContent=String(count);
   document.getElementById('voteButton').disabled=count===0;
   renderSelectedThumbs();
