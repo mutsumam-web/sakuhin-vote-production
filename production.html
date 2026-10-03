@@ -6,8 +6,7 @@
   <meta name="theme-color" content="#eeeae0">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票</title>
-  <link rel="stylesheet" href="production.css?v=20261003-1727">
-  <link rel="stylesheet" href="production-polish.css?v=20261003-1727">
+  <link rel="stylesheet" href="production.css">
 </head>
 <body>
   <a class="skip-link" href="#works">作品一覧へ移動</a>
@@ -35,9 +34,9 @@
       <section class="gallery-intro" aria-labelledby="galleryTitle">
         <div>
           <h2 id="galleryTitle">作品展投票</h2>
-          <p><strong>お気に入りの作品を<br>1〜3作品選んでください</strong><br><span class="gallery-help">作品をタップすると大きく見ることができます。</span></p>
+          <p>気に入った作品を選択してください。<br><strong>最大3作品まで選択できます。</strong></p>
         </div>
-        <div class="gallery-status"><div id="selectionStatus" class="selection-status" aria-live="polite">0 / 3 SELECTED</div><div id="galleryPosition" class="gallery-position" aria-label="現在位置"></div></div>
+        <div id="selectionStatus" class="selection-status" aria-live="polite">0作品選択中</div>
       </section>
 
       <div id="works" class="works-grid" aria-busy="true">
@@ -59,7 +58,7 @@
         <button class="selected-thumb-slot" data-slot="2" type="button" aria-hidden="true" disabled></button>
       </div>
 
-      <button id="voteButton" class="vote-button" type="button" disabled>投票内容を確認する</button>
+      <button id="voteButton" class="vote-button" type="button" disabled>投票する</button>
       <span id="count" hidden aria-hidden="true">0</span>
     </div>
   </footer>
@@ -80,7 +79,7 @@
       </div>
       <div id="workDetailComment" class="work-detail-comment"></div>
       <div class="powered-by powered-by-detail" aria-label="powered by 駐屯地曹友会 × 厚生班">
-          <span>powered by</span>
+          <span>powerd by</span>
           <strong>駐屯地曹友会×厚生班</strong>
         </div>
     </div>
@@ -95,12 +94,12 @@
       <div id="voteConfirmWorks" class="vote-confirm-works" aria-label="投票する作品"></div>
 
       <div class="vote-confirm-actions">
-        <button id="voteConfirmSubmitButton" class="vote-confirm-submit-button" type="button">この内容で投票する</button>
-        <button id="voteConfirmBackButton" class="vote-confirm-back-button" type="button">選び直す</button>
+        <button id="voteConfirmSubmitButton" class="vote-confirm-submit-button" type="button">投票する</button>
+        <button id="voteConfirmBackButton" class="vote-confirm-back-button" type="button">戻る</button>
       </div>
 
       <div class="powered-by powered-by-confirm" aria-label="powered by 駐屯地曹友会 × 厚生班">
-          <span>powered by</span>
+          <span>powerd by</span>
           <strong>駐屯地曹友会×厚生班</strong>
         </div>
     </div>
@@ -115,17 +114,17 @@
     <div class="voted-mask-content">
       <div class="voted-mask-check" aria-hidden="true">✓</div>
       <div class="voted-mask-kicker">VOTE COMPLETE</div>
-      <div id="votedMaskTitle" class="voted-mask-title">投票を受け付けました</div>
+      <div id="votedMaskTitle" class="voted-mask-title">投票済みです</div>
       <div class="voted-mask-subtitle">ご投票ありがとうございました。</div>
       <div class="voted-mask-status">投票内容を受け付けました。<br>この端末からの追加投票はできません。</div>
       <div class="voted-mask-footer">作品展投票システム</div>
       <div class="powered-by powered-by-voted" aria-label="powered by 駐屯地曹友会 × 厚生班">
-          <span>powered by</span>
+          <span>powerd by</span>
           <strong>駐屯地曹友会×厚生班</strong>
         </div>
     </div>
   </div>
 
-  <script src="production.js?v=20261003-1727"></script>
+  <script src="production.js"></script>
 </body>
 </html>
