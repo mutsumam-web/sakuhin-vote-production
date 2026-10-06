@@ -131,6 +131,26 @@ button:focus-visible,input:focus-visible{
   color:var(--muted);
 }
 
+.button-danger{
+  min-height:2.7rem;
+  padding:.65rem 1rem;
+  border:1px solid rgba(239,123,123,.55);
+  border-radius:.55rem;
+  background:rgba(239,123,123,.1);
+  color:var(--danger);
+  font-weight:700;
+}
+
+.button-danger:hover{
+  border-color:rgba(239,123,123,.85);
+  background:rgba(239,123,123,.16);
+}
+
+.button-danger:disabled{
+  opacity:.55;
+  cursor:wait;
+}
+
 .auth-message{
   min-height:1.5em;
   margin:1rem 0 0;
@@ -591,6 +611,13 @@ th{color:var(--muted);font-weight:600}
   color:var(--muted);
   line-height:1.7;
   font-size:.8rem;
+}
+
+.reset-votes-warning{
+  margin:0 0 var(--gap);
+  color:var(--warn);
+  font-size:.78rem;
+  line-height:1.65;
 }
 
 .dashboard-footer{
