@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / ADMIN DASHBOARD</title>
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="admin.css?v=20261007-vote-reset">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -326,6 +326,21 @@
       </section>
     </div>
 
+    <section class="panel panel-wide" aria-labelledby="voteResetTitle">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">DATA MANAGEMENT</span>
+          <h2 id="voteResetTitle">投票データリセット</h2>
+        </div>
+        <p>作品・画像・管理コードは保持します。</p>
+      </div>
+      <p class="reset-votes-warning">D1に保存された投票記録をすべて削除します。この操作は元に戻せません。投票済み端末のローカル状態は変更しません。</p>
+      <div class="work-editor-actions">
+        <button id="resetVotesButton" class="button-danger" type="button">全投票データをリセット</button>
+      </div>
+      <p id="resetVotesMessage" class="work-editor-message" role="status" aria-live="polite"></p>
+    </section>
+
     <footer class="dashboard-footer">
       <p>表示データは管理者向け集計値のみ。個人追跡・個人識別情報は表示しない。</p>
       <p id="dashboardNotice"></p>
@@ -333,6 +348,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js"></script>
+  <script src="admin.js?v=20261007-vote-reset"></script>
 </body>
 </html>
