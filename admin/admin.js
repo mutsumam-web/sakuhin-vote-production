@@ -238,6 +238,57 @@
     }
   }
 
+  async function resetVotes(){
+    if(!state.session)return;
+
+    const message=$('resetVotesMessage');
+    const button=$('resetVotesButton');
+
+    if(!window.confirm('D1に保存された全投票記録を削除します。作品・画像・管理コードは残ります。続行しますか？')){
+      return;
+    }
+
+    const code=window.prompt('管理者コードを入力してください。');
+    if(code===null)return;
+
+    const current=code.trim();
+    if(!current){
+      message.textContent='管理者コードを入力してください。';
+      return;
+    }
+
+    if(!window.confirm('最終確認です。全投票データをリセットします。この操作は元に戻せません。')){
+      return;
+    }
+
+    button.disabled=true;
+    message.textContent='投票データをリセットしています…';
+
+    try{
+      const result=await adminRpc('adminResetVotes',state.session,current);
+
+      if(!result||result.ok!==true){
+        message.textContent=result&&result.error==='ADMIN_CURRENT_CODE_INVALID'
+          ?'管理者コードが違います。'
+          :'投票データをリセットできませんでした。';
+        return;
+      }
+
+      message.textContent='投票データをリセットしました。';
+      showToast('投票データをリセットしました。');
+      await loadAll(false);
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+
+      message.textContent='投票データをリセットできませんでした。';
+    }finally{
+      button.disabled=false;
+    }
+  }
+
   async function loadAll(manual){
     if(!state.session)return;
     setBusy(true);
@@ -1103,6 +1154,10 @@
       setWorksListCollapsed(!state.worksListCollapsed);
     });
     $('adminCodeForm').addEventListener('submit',changeAdminCode);
+    const resetVotesButton=$('resetVotesButton');
+    if(resetVotesButton){
+      resetVotesButton.addEventListener('click',resetVotes);
+    }
   }
 
   async function init(){
