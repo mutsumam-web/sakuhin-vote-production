@@ -14,6 +14,8 @@
     voteData:null,
     systemData:null,
     winnerSettings:null,
+    displaySettings:null,
+    displayPreviewUrl:'',
     showAllRanking:false,
     works:[],
     worksListCollapsed:false
@@ -179,7 +181,7 @@
       state.session=result.session;
       try{sessionStorage.setItem(SESSION_KEY,state.session);}catch(e){}
       showDashboard();
-      await Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings()]);
+      await Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings()]);
     }catch(error){
       $('loginMessage').textContent='認証処理に失敗しました。';
     }finally{
@@ -234,6 +236,150 @@
         :code==='ADMIN_CODE_FORMAT_INVALID'
           ?'新しい管理コードは4〜12桁の数字で入力してください。'
           :'管理コードを変更できませんでした。';
+    }finally{
+      button.disabled=false;
+    }
+  }
+
+  function displayAssetUrl(key){
+    const value=String(key||'').trim();
+    if(!value)return'';
+    return API_BASE+'/assets/'+value.split('/').map(encodeURIComponent).join('/');
+  }
+
+  function clearDisplayPreviewUrl(){
+    if(state.displayPreviewUrl){
+      URL.revokeObjectURL(state.displayPreviewUrl);
+      state.displayPreviewUrl='';
+    }
+  }
+
+  function renderDisplayImagePreview(file){
+    const image=$('displayHeaderImagePreview');
+    const note=$('displayHeaderImageNote');
+    if(!image||!note)return;
+
+    clearDisplayPreviewUrl();
+
+    if(file){
+      state.displayPreviewUrl=URL.createObjectURL(file);
+      image.src=state.displayPreviewUrl;
+      image.hidden=false;
+      note.textContent='保存後にこの画像へ切り替わります。';
+      return;
+    }
+
+    const key=$('displayHeaderImageKey').value.trim();
+    if(key){
+      image.src=displayAssetUrl(key);
+      image.hidden=false;
+      note.textContent='カスタム画像を使用中';
+      return;
+    }
+
+    image.removeAttribute('src');
+    image.hidden=true;
+    note.textContent='標準画像を使用中';
+  }
+
+  function renderDisplaySettings(settings){
+    const value=settings||{};
+    state.displaySettings=value;
+    $('displayHeroTopline').value=value.heroTopline||'';
+    $('displayHeroTitleJp').value=value.heroTitleJp||'';
+    $('displayHeroTitleEn').value=value.heroTitleEn||'';
+    $('displayHeroSide').value=value.heroSide||'';
+    $('displayHeroCaption').value=value.heroCaption||'';
+    $('displayHeaderImageKey').value=value.headerImageKey||'';
+    $('displayHeaderImage').value='';
+    $('displayFooterText').value=value.footerText||'';
+    $('displayPoweredByText').value=value.poweredByText||'';
+    $('displayThemeBg').value=value.themeBg||'#eeeae0';
+    $('displayThemeInk').value=value.themeInk||'#1f3c31';
+    $('displayThemeAccent').value=value.themeAccent||'#244f40';
+    $('displayThemeAccentStrong').value=value.themeAccentStrong||'#173b30';
+    $('displaySettingsSummary').textContent=value.updatedAt
+      ?'最終更新 '+formatDateTime(value.updatedAt)
+      :'現在のProduction表示を変更します。';
+    renderDisplayImagePreview(null);
+  }
+
+  async function loadDisplaySettings(){
+    if(!state.session||!$('displaySettingsForm'))return;
+    const message=$('displaySettingsMessage');
+    try{
+      const settings=await adminRpc('getDisplaySettings',state.session);
+      renderDisplaySettings(settings||{});
+      message.textContent='';
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      message.textContent='表示設定を取得できませんでした。';
+    }
+  }
+
+  async function saveDisplaySettings(event){
+    event.preventDefault();
+    if(!state.session)return;
+
+    const message=$('displaySettingsMessage');
+    const button=$('saveDisplaySettingsButton');
+    const file=$('displayHeaderImage').files&&$('displayHeaderImage').files[0]
+      ?$('displayHeaderImage').files[0]
+      :null;
+    let headerImageKey=$('displayHeaderImageKey').value.trim();
+
+    button.disabled=true;
+    message.textContent='保存しています…';
+
+    try{
+      if(file){
+        const ext=assetExtension(file);
+        if(!ext)throw new Error('UNSUPPORTED_ASSET_TYPE');
+        const key='display/hero/'+randomId()+'.'+ext;
+        const asset=await adminRest('/api/admin/assets/'+encodeURIComponent(key),{
+          method:'PUT',
+          headers:{
+            'X-Admin-Session':state.session,
+            'Content-Type':file.type
+          },
+          body:file
+        });
+        headerImageKey=asset.key;
+      }
+
+      const input={
+        heroTopline:$('displayHeroTopline').value.trim(),
+        heroTitleJp:$('displayHeroTitleJp').value.trim(),
+        heroTitleEn:$('displayHeroTitleEn').value.trim(),
+        heroSide:$('displayHeroSide').value.trim(),
+        heroCaption:$('displayHeroCaption').value.trim(),
+        headerImageKey:headerImageKey,
+        footerText:$('displayFooterText').value.trim(),
+        poweredByText:$('displayPoweredByText').value.trim(),
+        themeBg:$('displayThemeBg').value,
+        themeInk:$('displayThemeInk').value,
+        themeAccent:$('displayThemeAccent').value,
+        themeAccentStrong:$('displayThemeAccentStrong').value
+      };
+
+      if(!input.heroTopline||!input.heroTitleJp||!input.heroTitleEn||!input.heroSide||
+         !input.heroCaption||!input.footerText||!input.poweredByText){
+        throw new Error('DISPLAY_TEXT_REQUIRED');
+      }
+
+      const saved=await adminRpc('adminUpdateDisplaySettings',state.session,input);
+      renderDisplaySettings(saved||input);
+      message.textContent='表示設定を保存しました。';
+      showToast('表示設定を保存しました。');
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      message.textContent='表示設定を保存できませんでした。 '+String(error&&error.message?error.message:'');
     }finally{
       button.disabled=false;
     }
@@ -945,7 +1091,7 @@
     stopRefresh();
     if(!state.autoRefresh)return;
     state.timer=setInterval(function(){
-      Promise.all([loadAll(false),loadWinnerSettings()]);
+      Promise.all([loadAll(false),loadWinnerSettings(),loadDisplaySettings()]);
     },REFRESH_MS);
   }
 
@@ -1255,7 +1401,7 @@
     if(dashboardPageButton){
       dashboardPageButton.addEventListener('click',function(){window.location.href='index.html';});
     }
-    $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings()]);});
+    $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings()]);});
     $('autoRefreshButton').addEventListener('click',function(){
       state.autoRefresh=!state.autoRefresh;
       $('autoRefreshButton').setAttribute('aria-pressed',state.autoRefresh?'true':'false');
@@ -1294,6 +1440,20 @@
       setWorksListCollapsed(!state.worksListCollapsed);
     });
     $('adminCodeForm').addEventListener('submit',changeAdminCode);
+    const displaySettingsForm=$('displaySettingsForm');
+    if(displaySettingsForm){
+      displaySettingsForm.addEventListener('submit',saveDisplaySettings);
+      $('displayHeaderImage').addEventListener('change',function(){
+        const file=this.files&&this.files[0]?this.files[0]:null;
+        renderDisplayImagePreview(file);
+      });
+      $('resetDisplayHeaderImageButton').addEventListener('click',function(){
+        $('displayHeaderImageKey').value='';
+        $('displayHeaderImage').value='';
+        renderDisplayImagePreview(null);
+        $('displaySettingsMessage').textContent='標準画像へ戻す設定です。保存すると反映されます。';
+      });
+    }
     const winnerSettingsForm=$('winnerSettingsForm');
     if(winnerSettingsForm){
       winnerSettingsForm.addEventListener('submit',saveWinnerSettings);
@@ -1319,7 +1479,7 @@
     }
     state.session=saved;
     showDashboard();
-    await Promise.all([loadAll(false),loadWorksManager(),loadWinnerSettings()]);
+    await Promise.all([loadAll(false),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings()]);
   }
 
   if(document.readyState==='loading'){

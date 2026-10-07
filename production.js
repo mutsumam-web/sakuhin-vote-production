@@ -2,6 +2,21 @@ const MAX_VOTES=3;
 const STORAGE_KEY='sakuhin_vote_done_v15';
 const WINNER_KEY='sakuhin_vote_winner_v1';
 const API_BASE=(window.__SAKUHIN_API_BASE__||'https://sakuhin-vote-api.mutsumam.workers.dev').replace(/\/$/,'');
+const DEFAULT_DISPLAY_SETTINGS=Object.freeze({
+  heroTopline:'山口駐屯地創設71周年記念行事',
+  heroTitleJp:'作品展',
+  heroTitleEn:'ART EXHIBITION',
+  heroSide:'日常に、小さな美を。',
+  heroCaption:'2026.9.20 山口駐屯地グランドから朝日を望む',
+  headerImageKey:'',
+  footerText:'作品展投票システム',
+  poweredByText:'駐屯地曹友会×厚生班',
+  themeBg:'#eeeae0',
+  themeInk:'#1f3c31',
+  themeAccent:'#244f40',
+  themeAccentStrong:'#173b30'
+});
+let displaySettings={...DEFAULT_DISPLAY_SETTINGS};
 
 async function rpcCall(method){
   const args=[].slice.call(arguments,1);
@@ -25,6 +40,84 @@ async function rpcCall(method){
 let works=[];
 let selected=[];
 let activeDetailValue='';
+
+function displayAssetUrl(key){
+  const value=String(key||'').trim();
+  if(!value)return'';
+  return API_BASE+'/assets/'+value.split('/').map(encodeURIComponent).join('/');
+}
+
+function normalizeDisplaySettings(value){
+  const source=value&&typeof value==='object'?value:{};
+  const text=function(key,fallback){
+    const result=String(source[key]==null?'':source[key]).trim();
+    return result||fallback;
+  };
+  const color=function(key,fallback){
+    const result=String(source[key]||'').trim();
+    return /^#[0-9a-fA-F]{6}$/.test(result)?result:fallback;
+  };
+  return{
+    heroTopline:text('heroTopline',DEFAULT_DISPLAY_SETTINGS.heroTopline),
+    heroTitleJp:text('heroTitleJp',DEFAULT_DISPLAY_SETTINGS.heroTitleJp),
+    heroTitleEn:text('heroTitleEn',DEFAULT_DISPLAY_SETTINGS.heroTitleEn),
+    heroSide:text('heroSide',DEFAULT_DISPLAY_SETTINGS.heroSide),
+    heroCaption:text('heroCaption',DEFAULT_DISPLAY_SETTINGS.heroCaption),
+    headerImageKey:String(source.headerImageKey||'').trim(),
+    footerText:text('footerText',DEFAULT_DISPLAY_SETTINGS.footerText),
+    poweredByText:text('poweredByText',DEFAULT_DISPLAY_SETTINGS.poweredByText),
+    themeBg:color('themeBg',DEFAULT_DISPLAY_SETTINGS.themeBg),
+    themeInk:color('themeInk',DEFAULT_DISPLAY_SETTINGS.themeInk),
+    themeAccent:color('themeAccent',DEFAULT_DISPLAY_SETTINGS.themeAccent),
+    themeAccentStrong:color('themeAccentStrong',DEFAULT_DISPLAY_SETTINGS.themeAccentStrong)
+  };
+}
+
+function applyDisplaySettings(value){
+  displaySettings=normalizeDisplaySettings(value);
+  const setText=function(id,text){
+    const el=document.getElementById(id);
+    if(el)el.textContent=text;
+  };
+
+  setText('heroTopline',displaySettings.heroTopline);
+  setText('heroTitleJp',displaySettings.heroTitleJp);
+  setText('heroTitleEn',displaySettings.heroTitleEn);
+  setText('heroSide',displaySettings.heroSide);
+  setText('heroCaption',displaySettings.heroCaption);
+
+  const heroTitle=document.querySelector('.hero-title');
+  if(heroTitle)heroTitle.setAttribute('aria-label',displaySettings.heroTitleJp+' / '+displaySettings.heroTitleEn);
+
+  document.querySelectorAll('.powered-by strong').forEach(function(el){
+    el.textContent=displaySettings.poweredByText;
+  });
+
+  const root=document.documentElement;
+  root.style.setProperty('--bg',displaySettings.themeBg);
+  root.style.setProperty('--ink',displaySettings.themeInk);
+  root.style.setProperty('--accent',displaySettings.themeAccent);
+  root.style.setProperty('--accent-strong',displaySettings.themeAccentStrong);
+
+  const themeMeta=document.querySelector('meta[name="theme-color"]');
+  if(themeMeta)themeMeta.setAttribute('content',displaySettings.themeBg);
+
+  const heroVisual=document.querySelector('.hero-visual');
+  if(heroVisual){
+    heroVisual.style.backgroundImage=displaySettings.headerImageKey
+      ?'url("'+displayAssetUrl(displaySettings.headerImageKey).replace(/"/g,'%22')+'")'
+      :'';
+  }
+
+  const mask=document.getElementById('votedMask');
+  if(mask&&!mask.hidden)applyVotedMaskCopy(storedWinner());
+}
+
+function loadDisplaySettings(){
+  return rpcCall('getDisplaySettings')
+    .then(function(settings){applyDisplaySettings(settings);})
+    .catch(function(error){console.error('表示設定を取得できませんでした。',error);});
+}
 
 function setCookie(name,value,days){
   const date=new Date();
@@ -91,7 +184,7 @@ function applyVotedMaskCopy(result){
   title.textContent='投票済みです';
   subtitle.textContent='ご投票ありがとうございました。';
   status.innerHTML='投票内容を受け付けました。<br>この端末からの追加投票はできません。';
-  footer.textContent='作品展投票システム';
+  footer.textContent=displaySettings.footerText;
 }
 
 function showVotedMask(result){
@@ -165,6 +258,7 @@ function init(){
     });
   }
 
+  loadDisplaySettings();
   loadWorks();
 
   if(hasVoted())showVotedMask(storedWinner());

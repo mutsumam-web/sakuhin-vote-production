@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / ADMIN DASHBOARD</title>
-  <link rel="stylesheet" href="admin.css?v=20261007-prize-winner-hotfix">
+  <link rel="stylesheet" href="admin.css?v=20261007-display-settings-v1">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -326,6 +326,90 @@
       </section>
     </div>
 
+    <section class="panel panel-wide" aria-labelledby="displaySettingsTitle">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">DISPLAY SETTINGS</span>
+          <h2 id="displaySettingsTitle">表示設定</h2>
+        </div>
+        <p id="displaySettingsSummary">現在のProduction表示を変更します。</p>
+      </div>
+
+      <form id="displaySettingsForm" class="work-editor display-settings-form">
+        <label>
+          <span>ヘッダー上段</span>
+          <input id="displayHeroTopline" type="text" maxlength="120" required>
+        </label>
+
+        <label>
+          <span>ヘッダー和文タイトル</span>
+          <input id="displayHeroTitleJp" type="text" maxlength="80" required>
+        </label>
+
+        <label>
+          <span>ヘッダー英文タイトル</span>
+          <input id="displayHeroTitleEn" type="text" maxlength="80" required>
+        </label>
+
+        <label>
+          <span>ヘッダー右側コピー</span>
+          <input id="displayHeroSide" type="text" maxlength="120" required>
+        </label>
+
+        <label class="work-editor-wide">
+          <span>ヘッダー写真キャプション</span>
+          <input id="displayHeroCaption" type="text" maxlength="160" required>
+        </label>
+
+        <div class="display-image-field">
+          <span>ヘッダー画像</span>
+          <input id="displayHeaderImageKey" type="hidden">
+          <input id="displayHeaderImage" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+          <div class="display-image-preview">
+            <img id="displayHeaderImagePreview" alt="現在のヘッダー画像プレビュー" hidden>
+            <span id="displayHeaderImageNote">標準画像を使用中</span>
+          </div>
+          <button id="resetDisplayHeaderImageButton" class="button-ghost" type="button">標準画像に戻す</button>
+          <small>新しい画像を選択して保存するとProductionへ反映します。未選択なら現在の画像を保持します。</small>
+        </div>
+
+        <label>
+          <span>投票完了画面フッター</span>
+          <input id="displayFooterText" type="text" maxlength="120" required>
+        </label>
+
+        <label>
+          <span>powered by 表示</span>
+          <input id="displayPoweredByText" type="text" maxlength="120" required>
+        </label>
+
+        <label>
+          <span>背景色</span>
+          <input id="displayThemeBg" class="display-color-input" type="color">
+        </label>
+
+        <label>
+          <span>文字色</span>
+          <input id="displayThemeInk" class="display-color-input" type="color">
+        </label>
+
+        <label>
+          <span>メインカラー</span>
+          <input id="displayThemeAccent" class="display-color-input" type="color">
+        </label>
+
+        <label>
+          <span>メイン濃色</span>
+          <input id="displayThemeAccentStrong" class="display-color-input" type="color">
+        </label>
+
+        <div class="work-editor-actions">
+          <button id="saveDisplaySettingsButton" class="button-secondary" type="submit">表示設定を保存</button>
+        </div>
+        <p id="displaySettingsMessage" class="work-editor-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
     <section class="panel panel-wide" aria-labelledby="winnerSettingsTitle">
       <div class="panel-heading">
         <div>
@@ -392,6 +476,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=20261007-prize-winner-hotfix"></script>
+  <script src="admin.js?v=20261007-display-settings-v1"></script>
 </body>
 </html>

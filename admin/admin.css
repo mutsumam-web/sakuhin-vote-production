@@ -741,6 +741,70 @@ th{color:var(--muted);font-weight:600}
   font-size:.76rem;
 }
 
+.display-settings-form{
+  margin-top:.35rem;
+}
+
+.display-settings-form .display-color-input{
+  min-height:2.7rem;
+  padding:.25rem;
+  cursor:pointer;
+}
+
+.display-image-field{
+  grid-column:1/-1;
+  display:grid;
+  gap:.45rem;
+  min-width:0;
+}
+
+.display-image-field>span{
+  color:var(--muted);
+  font-size:.72rem;
+  letter-spacing:.04em;
+}
+
+.display-image-field>small{
+  color:var(--muted);
+  font-size:.68rem;
+  line-height:1.5;
+}
+
+.display-image-field input[type="file"]{
+  width:100%;
+  min-height:2.7rem;
+  padding:.45rem;
+  border:1px solid var(--line);
+  border-radius:.5rem;
+  background:#0d1218;
+  color:var(--text);
+  font-size:.78rem;
+}
+
+.display-image-field .button-ghost{
+  width:max-content;
+}
+
+.display-image-preview{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:.75rem;
+  min-height:3rem;
+  padding:.6rem;
+  border:1px dashed var(--line);
+  border-radius:.55rem;
+  color:var(--muted);
+  font-size:.72rem;
+}
+
+.display-image-preview img{
+  width:min(100%,18rem);
+  aspect-ratio:16/6;
+  object-fit:cover;
+  border-radius:.4rem;
+}
+
 .winner-settings-form{
   margin-top:.35rem;
 }
