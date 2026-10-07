@@ -1,0 +1,26 @@
+{
+  "collectedAt": "2026-10-07T22:57:47.322Z",
+  "githubActions": {
+    "usedMinutes": 368,
+    "limitMinutes": 2000,
+    "scope": "repo_estimate",
+    "plan": "unknown"
+  },
+  "workers": {
+    "requestsToday": 2644,
+    "limitRequests": 100000
+  },
+  "d1": {
+    "rowsReadToday": 535610,
+    "rowsReadLimit": 5000000,
+    "rowsWrittenToday": 16143,
+    "rowsWrittenLimit": 100000,
+    "storageBytes": 679936,
+    "storageLimitBytes": 5368709120
+  },
+  "r2": {
+    "storageBytes": 115352784,
+    "storageLimitBytes": 10737418240
+  },
+  "errors": []
+}
