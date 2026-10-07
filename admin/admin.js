@@ -758,6 +758,7 @@
   function renderSystemFailure(error){
     $('processApiState').textContent='実行履歴を取得できません';
     $('systemTrendChart').innerHTML='<div class="chart-empty">システム実行情報取得エラー</div>';
+    renderUsageQuota(null);
     $('dashboardNotice').textContent='システム実行情報の取得に失敗しました。 '+String(error&&error.message?error.message:'');
   }
 
@@ -812,6 +813,86 @@
 
     renderStatusBreakdown(data.statusCounts);
     renderFunctionStats(data.functionStats);
+    renderUsageQuota(data.usage||null);
+  }
+
+  function quotaPercent(used,limit){
+    const u=Number(used);
+    const l=Number(limit);
+    if(!Number.isFinite(u)||u<0||!Number.isFinite(l)||l<=0)return null;
+    return Math.max(0,u/l*100);
+  }
+
+  function formatBytes(value){
+    const n=Number(value);
+    if(!Number.isFinite(n)||n<0)return'—';
+    if(n<1024)return formatNumber(n)+' B';
+    if(n<1024*1024)return (n/1024).toFixed(1)+' KB';
+    if(n<1024*1024*1024)return (n/(1024*1024)).toFixed(1)+' MB';
+    return (n/(1024*1024*1024)).toFixed(2)+' GB';
+  }
+
+  function setUsageMeter(prefix,percent){
+    const badge=$(prefix+'Badge');
+    const bar=$(prefix+'Bar');
+    if(!badge||!bar)return;
+    if(percent==null){
+      badge.textContent='未取得';
+      badge.className='usage-badge';
+      bar.style.width='0%';
+      return;
+    }
+    const shown=Math.min(999,percent);
+    badge.textContent=shown.toFixed(shown>=10?0:1)+'%';
+    badge.className='usage-badge '+(percent>=90?'usage-danger':percent>=70?'usage-caution':'usage-normal');
+    bar.className=percent>=90?'usage-danger':percent>=70?'usage-caution':'usage-normal';
+    bar.style.width=Math.min(100,percent)+'%';
+  }
+
+  function renderUsageQuota(usage){
+    if(!$('usageQuotaGrid'))return;
+    const data=usage&&typeof usage==='object'?usage:{};
+    $('usageQuotaUpdated').textContent=data.collectedAt
+      ?'最終取得 '+formatDateTime(data.collectedAt)
+      :'利用量スナップショット未取得';
+
+    const github=data.githubActions||{};
+    const githubPercent=quotaPercent(github.used,github.limit);
+    $('usageGithubValue').textContent=github.used==null
+      ?'—'
+      :formatNumber(Math.ceil(Number(github.used)))+' / '+formatNumber(github.limit||2000)+' min';
+    $('usageGithubMeta').textContent=github.scope==='account_exact'
+      ?'月間利用量 / アカウント実測'
+      :'月間利用量 / このrepoの概算';
+    setUsageMeter('usageGithub',githubPercent);
+
+    const workers=data.workers||{};
+    const workerPercent=quotaPercent(workers.used,workers.limit);
+    $('usageWorkersValue').textContent=workers.used==null
+      ?'—'
+      :formatNumber(workers.used)+' / '+formatNumber(workers.limit||100000);
+    setUsageMeter('usageWorkers',workerPercent);
+
+    const d1=data.d1||{};
+    const readPercent=quotaPercent(d1.rowsRead,d1.rowsReadLimit);
+    const writePercent=quotaPercent(d1.rowsWritten,d1.rowsWrittenLimit);
+    const storagePercent=quotaPercent(d1.storageBytes,d1.storageLimitBytes);
+    const d1Percents=[readPercent,writePercent,storagePercent].filter(function(value){return value!=null;});
+    const d1Percent=d1Percents.length?Math.max.apply(null,d1Percents):null;
+    $('usageD1Value').textContent=
+      'R '+(d1.rowsRead==null?'—':formatNumber(d1.rowsRead))+
+      ' / W '+(d1.rowsWritten==null?'—':formatNumber(d1.rowsWritten));
+    $('usageD1Meta').textContent=
+      'Read 500万/日・Write 10万/日・Storage '+
+      (d1.storageBytes==null?'—':formatBytes(d1.storageBytes))+' / 5 GB';
+    setUsageMeter('usageD1',d1Percent);
+
+    const r2=data.r2||{};
+    const r2Percent=quotaPercent(r2.storageBytes,r2.storageLimitBytes);
+    $('usageR2Value').textContent=r2.storageBytes==null
+      ?'—'
+      :formatBytes(r2.storageBytes)+' / 10 GB';
+    setUsageMeter('usageR2',r2Percent);
   }
 
   function rangeLabel(range){

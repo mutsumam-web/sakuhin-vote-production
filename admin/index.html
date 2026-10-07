@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / ADMIN DASHBOARD</title>
-  <link rel="stylesheet" href="admin.css?v=7a3d44d823cc">
+  <link rel="stylesheet" href="admin.css?v=8ab9cdd55d28">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -282,6 +282,42 @@
       </section>
     </div>
 
+    <section class="panel panel-wide" aria-labelledby="usageQuotaTitle">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">FREE TIER USAGE</span>
+          <h2 id="usageQuotaTitle">無料枠使用状況</h2>
+        </div>
+        <p id="usageQuotaUpdated">未取得</p>
+      </div>
+      <div id="usageQuotaGrid" class="usage-quota-grid">
+        <article class="usage-card">
+          <div class="usage-card-heading"><strong>GitHub Actions</strong><span id="usageGithubBadge" class="usage-badge">—</span></div>
+          <div id="usageGithubValue" class="usage-value">—</div>
+          <div class="usage-meter" aria-hidden="true"><i id="usageGithubBar"></i></div>
+          <small id="usageGithubMeta">月間利用量</small>
+        </article>
+        <article class="usage-card">
+          <div class="usage-card-heading"><strong>Cloudflare Workers</strong><span id="usageWorkersBadge" class="usage-badge">—</span></div>
+          <div id="usageWorkersValue" class="usage-value">—</div>
+          <div class="usage-meter" aria-hidden="true"><i id="usageWorkersBar"></i></div>
+          <small>UTC日次 / 無料枠 100,000 requests</small>
+        </article>
+        <article class="usage-card">
+          <div class="usage-card-heading"><strong>Cloudflare D1</strong><span id="usageD1Badge" class="usage-badge">—</span></div>
+          <div id="usageD1Value" class="usage-value usage-value-small">—</div>
+          <div class="usage-meter" aria-hidden="true"><i id="usageD1Bar"></i></div>
+          <small id="usageD1Meta">Read / Write / Storage</small>
+        </article>
+        <article class="usage-card">
+          <div class="usage-card-heading"><strong>Cloudflare R2</strong><span id="usageR2Badge" class="usage-badge">—</span></div>
+          <div id="usageR2Value" class="usage-value">—</div>
+          <div class="usage-meter" aria-hidden="true"><i id="usageR2Bar"></i></div>
+          <small>現在保存量 / 無料枠 10 GB-monthとの目安比較</small>
+        </article>
+      </div>
+    </section>
+
     <section class="panel panel-wide">
       <div class="panel-heading">
         <div>
@@ -504,6 +540,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=7a3d44d823cc"></script>
+  <script src="admin.js?v=8ab9cdd55d28"></script>
 </body>
 </html>
