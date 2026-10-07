@@ -714,7 +714,8 @@
     setBusy(true);
     const votePromise=adminRpc('getAdminDashboardData',state.session,state.range);
     const systemPromise=adminRpc('getAdminSystemMetrics',state.session);
-    const results=await Promise.allSettled([votePromise,systemPromise]);
+    const usagePromise=loadUsageQuota();
+    const results=await Promise.allSettled([votePromise,systemPromise,usagePromise]);
     let authFailure=false;
 
     if(results[0].status==='fulfilled'){
@@ -758,7 +759,6 @@
   function renderSystemFailure(error){
     $('processApiState').textContent='実行履歴を取得できません';
     $('systemTrendChart').innerHTML='<div class="chart-empty">システム実行情報取得エラー</div>';
-    renderUsageQuota(null);
     $('dashboardNotice').textContent='システム実行情報の取得に失敗しました。 '+String(error&&error.message?error.message:'');
   }
 
@@ -813,7 +813,42 @@
 
     renderStatusBreakdown(data.statusCounts);
     renderFunctionStats(data.functionStats);
-    renderUsageQuota(data.usage||null);
+  }
+
+  async function loadUsageQuota(){
+    if(!$('usageQuotaGrid'))return;
+    try{
+      const response=await fetch('usage.json?ts='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw new Error('HTTP_'+response.status);
+      const raw=await response.json();
+      renderUsageQuota({
+        collectedAt:raw&&raw.collectedAt?raw.collectedAt:'',
+        githubActions:{
+          used:raw&&raw.githubActions?raw.githubActions.usedMinutes:null,
+          limit:raw&&raw.githubActions?raw.githubActions.limitMinutes:null,
+          scope:raw&&raw.githubActions?raw.githubActions.scope:'repo_estimate'
+        },
+        workers:{
+          used:raw&&raw.workers?raw.workers.requestsToday:null,
+          limit:raw&&raw.workers?raw.workers.limitRequests:null
+        },
+        d1:{
+          rowsRead:raw&&raw.d1?raw.d1.rowsReadToday:null,
+          rowsReadLimit:raw&&raw.d1?raw.d1.rowsReadLimit:null,
+          rowsWritten:raw&&raw.d1?raw.d1.rowsWrittenToday:null,
+          rowsWrittenLimit:raw&&raw.d1?raw.d1.rowsWrittenLimit:null,
+          storageBytes:raw&&raw.d1?raw.d1.storageBytes:null,
+          storageLimitBytes:raw&&raw.d1?raw.d1.storageLimitBytes:null
+        },
+        r2:{
+          storageBytes:raw&&raw.r2?raw.r2.storageBytes:null,
+          storageLimitBytes:raw&&raw.r2?raw.r2.storageLimitBytes:null
+        }
+      });
+    }catch(error){
+      renderUsageQuota(null);
+      console.error('無料枠使用状況を取得できませんでした。',error);
+    }
   }
 
   function quotaPercent(used,limit){
