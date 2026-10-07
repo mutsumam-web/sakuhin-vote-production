@@ -239,13 +239,55 @@
     }
   }
 
-  function parseWinnerMilestonesInput(value){
+  function readWinnerMilestones(){
     return [...new Set(
-      String(value||'')
-        .split(',')
-        .map(function(item){return Number(item.trim());})
+      [...document.querySelectorAll('.winner-milestone-input')]
+        .map(function(input){return Number(String(input.value||'').trim());})
         .filter(function(item){return Number.isInteger(item)&&item>0&&item<=1000000;})
     )].sort(function(a,b){return a-b;});
+  }
+
+  function addWinnerMilestoneRow(value){
+    const list=$('winnerMilestoneList');
+    if(!list)return;
+
+    const row=document.createElement('div');
+    row.className='winner-milestone-row';
+
+    const input=document.createElement('input');
+    input.type='number';
+    input.className='winner-milestone-input';
+    input.inputMode='numeric';
+    input.min='1';
+    input.max='1000000';
+    input.step='1';
+    input.placeholder='例：71';
+    input.value=value==null?'':String(value);
+
+    const remove=document.createElement('button');
+    remove.type='button';
+    remove.className='button-ghost winner-remove-button';
+    remove.textContent='削除';
+    remove.addEventListener('click',function(){
+      row.remove();
+      if(!list.querySelector('.winner-milestone-input'))addWinnerMilestoneRow('');
+    });
+
+    row.appendChild(input);
+    row.appendChild(remove);
+    list.appendChild(row);
+  }
+
+  function renderWinnerMilestoneRows(values){
+    const list=$('winnerMilestoneList');
+    if(!list)return;
+    list.innerHTML='';
+    const rows=safeArray(values);
+    if(!rows.length){
+      addWinnerMilestoneRow('');
+      return;
+    }
+    rows.forEach(function(value){addWinnerMilestoneRow(value);});
   }
 
   function renderWinnerSettingsSummary(){
@@ -274,7 +316,7 @@
       state.winnerSettings=settings||null;
       $('winnerEnabled').checked=!!(settings&&settings.enabled);
       $('winnerEventLabel').value=settings&&settings.eventLabel?settings.eventLabel:'';
-      $('winnerMilestones').value=safeArray(settings&&settings.milestones).join(',');
+      renderWinnerMilestoneRows(settings&&settings.milestones);
       $('winnerTitle').value=settings&&settings.winnerTitle?settings.winnerTitle:'';
       $('winnerMessage').value=settings&&settings.winnerMessage?settings.winnerMessage:'';
       message.textContent='';
@@ -292,7 +334,7 @@
     event.preventDefault();
     if(!state.session)return;
 
-    const milestones=parseWinnerMilestonesInput($('winnerMilestones').value);
+    const milestones=readWinnerMilestones();
     const message=$('winnerSettingsMessage');
     const button=$('saveWinnerSettingsButton');
 
@@ -321,7 +363,7 @@
       const saved=await adminRpc('adminUpdateWinnerSettings',state.session,input);
       const current=state.winnerSettings&&Number(state.winnerSettings.currentVoteCount)||0;
       state.winnerSettings=Object.assign({},saved,{currentVoteCount:current});
-      $('winnerMilestones').value=safeArray(saved&&saved.milestones).join(',');
+      renderWinnerMilestoneRows(saved&&saved.milestones);
       message.textContent='当選設定を保存しました。';
       renderWinnerSettingsSummary();
       showToast('当選設定を保存しました。');
@@ -1255,6 +1297,10 @@
     const winnerSettingsForm=$('winnerSettingsForm');
     if(winnerSettingsForm){
       winnerSettingsForm.addEventListener('submit',saveWinnerSettings);
+    }
+    const addWinnerMilestoneButton=$('addWinnerMilestoneButton');
+    if(addWinnerMilestoneButton){
+      addWinnerMilestoneButton.addEventListener('click',function(){addWinnerMilestoneRow('');});
     }
 
     const resetVotesButton=$('resetVotesButton');

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / ADMIN DASHBOARD</title>
-  <link rel="stylesheet" href="admin.css?v=20261007-prize-winner">
+  <link rel="stylesheet" href="admin.css?v=20261007-prize-winner-hotfix">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -346,11 +346,12 @@
           <input id="winnerEventLabel" type="text" maxlength="80" placeholder="例：71周年記念">
         </label>
 
-        <label>
+        <div class="winner-milestones-field">
           <span>当選する投票番号</span>
-          <input id="winnerMilestones" type="text" inputmode="numeric" maxlength="120" placeholder="例：71,710">
-          <small>投票完了1回を1件として数えます。複数指定はカンマ区切り。</small>
-        </label>
+          <div id="winnerMilestoneList" class="winner-milestone-list"></div>
+          <button id="addWinnerMilestoneButton" class="button-ghost winner-add-button" type="button">当選番号を追加</button>
+          <small>投票完了1回を1件として数えます。番号は1件ずつ入力できます。</small>
+        </div>
 
         <label>
           <span>当選見出し</span>
@@ -391,6 +392,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=20261007-prize-winner"></script>
+  <script src="admin.js?v=20261007-prize-winner-hotfix"></script>
 </body>
 </html>

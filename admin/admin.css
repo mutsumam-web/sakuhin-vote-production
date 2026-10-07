@@ -771,6 +771,52 @@ th{color:var(--muted);font-weight:600}
   min-height:5rem;
 }
 
+.winner-milestones-field{
+  display:grid;
+  gap:.4rem;
+  min-width:0;
+}
+
+.winner-milestones-field>span{
+  color:var(--muted);
+  font-size:.72rem;
+  letter-spacing:.04em;
+}
+
+.winner-milestones-field>small{
+  color:var(--muted);
+  font-size:.68rem;
+  line-height:1.5;
+}
+
+.winner-milestone-list{
+  display:grid;
+  gap:.5rem;
+}
+
+.winner-milestone-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:.5rem;
+  align-items:center;
+}
+
+.winner-milestone-row input{
+  width:100%;
+  min-height:2.7rem;
+  padding:.62rem .72rem;
+  border:1px solid var(--line);
+  border-radius:.5rem;
+  background:#0d1218;
+  color:var(--text);
+}
+
+.winner-add-button,
+.winner-remove-button{
+  min-height:2.7rem;
+  padding:.55rem .8rem;
+}
+
 .work-list-wrap{
   min-width:0;
 }
