@@ -27,6 +27,7 @@
     systemData:null,
     winnerSettings:null,
     displaySettings:null,
+    voteCycleSettings:null,
     displayPreviewUrl:'',
     showAllRanking:false,
     works:[],
@@ -193,7 +194,7 @@
       state.session=result.session;
       try{sessionStorage.setItem(SESSION_KEY,state.session);}catch(e){}
       showDashboard();
-      await Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings()]);
+      await Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings(),loadVoteCycleSettings()]);
     }catch(error){
       $('loginMessage').textContent='認証処理に失敗しました。';
     }finally{
@@ -342,6 +343,76 @@
     $('displayThemeAccent').value=theme.accent;
     $('displayThemeAccentStrong').value=theme.accentStrong;
     renderDisplayThemePreview();
+  }
+
+  function renderVoteCycleSettings(settings){
+    const value=settings&&typeof settings==='object'?settings:{};
+    state.voteCycleSettings=value;
+    $('voteCycleId').value=value.voteCycleId||'2026';
+    $('voteCycleSummary').textContent=value.updatedAt
+      ?'最終更新 '+formatDateTime(value.updatedAt)+' / '+String(value.voteCycleId||'2026')
+      :'現在の投票サイクル '+String(value.voteCycleId||'2026');
+  }
+
+  async function loadVoteCycleSettings(){
+    if(!state.session||!$('voteCycleSettingsForm'))return;
+    const message=$('voteCycleSettingsMessage');
+    try{
+      const settings=await adminRpc('getVoteCycleSettings',state.session);
+      renderVoteCycleSettings(settings||{});
+      message.textContent='';
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      message.textContent='投票サイクルを取得できませんでした。';
+    }
+  }
+
+  async function saveVoteCycleSettings(event){
+    event.preventDefault();
+    if(!state.session)return;
+
+    const input=String($('voteCycleId').value||'').trim().toLowerCase();
+    const message=$('voteCycleSettingsMessage');
+    const button=$('saveVoteCycleSettingsButton');
+
+    if(!/^[a-z0-9][a-z0-9_-]{0,39}$/.test(input)){
+      message.textContent='投票サイクルIDは半角英数字で始め、半角英数字・-・_ の40文字以内で入力してください。';
+      return;
+    }
+
+    const before=state.voteCycleSettings&&state.voteCycleSettings.voteCycleId
+      ?String(state.voteCycleSettings.voteCycleId)
+      :'';
+
+    if(before&&before!==input){
+      const ok=window.confirm(
+        '投票サイクルを「'+before+'」から「'+input+'」へ変更します。\n'+
+        '端末の投票済み判定は新しいサイクルへ切り替わります。\n'+
+        'D1の投票データは削除されません。続行しますか？'
+      );
+      if(!ok)return;
+    }
+
+    button.disabled=true;
+    message.textContent='保存しています…';
+
+    try{
+      const saved=await adminRpc('adminUpdateVoteCycleSettings',state.session,{voteCycleId:input});
+      renderVoteCycleSettings(saved||{voteCycleId:input});
+      message.textContent='投票サイクルを保存しました。';
+      showToast('投票サイクルを保存しました。');
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      message.textContent='投票サイクルを保存できませんでした。';
+    }finally{
+      button.disabled=false;
+    }
   }
 
   function renderDisplaySettings(settings){
@@ -1154,7 +1225,7 @@
     stopRefresh();
     if(!state.autoRefresh)return;
     state.timer=setInterval(function(){
-      Promise.all([loadAll(false),loadWinnerSettings(),loadDisplaySettings()]);
+      Promise.all([loadAll(false),loadWinnerSettings(),loadDisplaySettings(),loadVoteCycleSettings()]);
     },REFRESH_MS);
   }
 
@@ -1468,7 +1539,7 @@
     if(settingsPageButton){
       settingsPageButton.addEventListener('click',function(){window.location.href='settings.html';});
     }
-    $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings()]);});
+    $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings(),loadVoteCycleSettings()]);});
     $('autoRefreshButton').addEventListener('click',function(){
       state.autoRefresh=!state.autoRefresh;
       $('autoRefreshButton').setAttribute('aria-pressed',state.autoRefresh?'true':'false');
@@ -1507,6 +1578,10 @@
       setWorksListCollapsed(!state.worksListCollapsed);
     });
     $('adminCodeForm').addEventListener('submit',changeAdminCode);
+    const voteCycleSettingsForm=$('voteCycleSettingsForm');
+    if(voteCycleSettingsForm){
+      voteCycleSettingsForm.addEventListener('submit',saveVoteCycleSettings);
+    }
     const displaySettingsForm=$('displaySettingsForm');
     if(displaySettingsForm){
       displaySettingsForm.addEventListener('submit',saveDisplaySettings);
@@ -1559,7 +1634,7 @@
     }
     state.session=saved;
     showDashboard();
-    await Promise.all([loadAll(false),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings()]);
+    await Promise.all([loadAll(false),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings(),loadVoteCycleSettings()]);
   }
 
   if(document.readyState==='loading'){

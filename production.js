@@ -1,6 +1,6 @@
 const MAX_VOTES=3;
-const STORAGE_KEY='sakuhin_vote_done_v15';
-const WINNER_KEY='sakuhin_vote_winner_v1';
+const DEFAULT_VOTE_CYCLE_ID='2026';
+let voteCycleId=DEFAULT_VOTE_CYCLE_ID;
 const API_BASE=(window.__SAKUHIN_API_BASE__||'https://sakuhin-vote-api.mutsumam.workers.dev').replace(/\/$/,'');
 const DEFAULT_DISPLAY_SETTINGS=Object.freeze({
   heroTopline:'山口駐屯地創設71周年記念行事',
@@ -233,26 +233,55 @@ function getCookie(name){
   return item?decodeURIComponent(item.split('=').slice(1).join('=')):'';
 }
 
+function normalizeVoteCycleId(value){
+  const text=String(value==null?'':value).trim().toLowerCase();
+  return /^[a-z0-9][a-z0-9_-]{0,39}$/.test(text)?text:DEFAULT_VOTE_CYCLE_ID;
+}
+
+function voteDoneKey(){
+  return'sakuhin_vote_done_'+voteCycleId;
+}
+
+function winnerKey(){
+  return'sakuhin_vote_winner_'+voteCycleId;
+}
+
+function applyVoteCycleSettings(settings){
+  voteCycleId=normalizeVoteCycleId(settings&&settings.voteCycleId);
+}
+
+function loadVoteCycleSettings(){
+  return rpcCall('getVoteCycleSettings')
+    .then(function(settings){applyVoteCycleSettings(settings);})
+    .catch(function(error){
+      voteCycleId=DEFAULT_VOTE_CYCLE_ID;
+      console.error('投票サイクルを取得できませんでした。',error);
+    });
+}
+
 function hasVoted(){
-  return localStorage.getItem(STORAGE_KEY)==='1'||getCookie('sakuhin_vote_done')==='1';
+  const key=voteDoneKey();
+  return localStorage.getItem(key)==='1'||getCookie(key)==='1';
 }
 
 function markVoted(result){
-  localStorage.setItem(STORAGE_KEY,'1');
-  setCookie('sakuhin_vote_done','1',3650);
+  const doneKey=voteDoneKey();
+  const prizeKey=winnerKey();
+  localStorage.setItem(doneKey,'1');
+  setCookie(doneKey,'1',3650);
 
   try{
     if(result&&result.winner===true){
-      localStorage.setItem(WINNER_KEY,JSON.stringify(result));
+      localStorage.setItem(prizeKey,JSON.stringify(result));
     }else{
-      localStorage.removeItem(WINNER_KEY);
+      localStorage.removeItem(prizeKey);
     }
   }catch(e){}
 }
 
 function storedWinner(){
   try{
-    const raw=localStorage.getItem(WINNER_KEY);
+    const raw=localStorage.getItem(winnerKey());
     if(!raw)return null;
     const value=JSON.parse(raw);
     return value&&value.winner===true?value:null;
@@ -360,10 +389,11 @@ function init(){
   }
 
   loadDisplaySettings();
-  loadWorks();
-
-  if(hasVoted())showVotedMask(storedWinner());
-  else hideVotedMask();
+  loadVoteCycleSettings().then(function(){
+    loadWorks();
+    if(hasVoted())showVotedMask(storedWinner());
+    else hideVotedMask();
+  });
 }
 
 function loadWorks(){
@@ -831,9 +861,10 @@ function adminReset(code){
         return;
       }
 
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(WINNER_KEY);
-      document.cookie='sakuhin_vote_done=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+      const doneKey=voteDoneKey();
+      localStorage.removeItem(doneKey);
+      localStorage.removeItem(winnerKey());
+      document.cookie=doneKey+'=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
       hideMaxVoteError();
       closeWorkDetail();
       closeVoteConfirm();

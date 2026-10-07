@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / SETTINGS</title>
-  <link rel="stylesheet" href="admin.css?v=544c325bbaad">
+  <link rel="stylesheet" href="admin.css?v=7a3d44d823cc">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -125,6 +125,30 @@
         <h2>システム設定</h2>
         <p>Productionの表示、当選機能、管理・データ操作を設定します。</p>
       </div>
+    </section>
+
+    <section class="panel panel-wide" aria-labelledby="voteCycleTitle">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">VOTE CYCLE</span>
+          <h2 id="voteCycleTitle">投票サイクル</h2>
+        </div>
+        <p id="voteCycleSummary">現在の投票サイクルを設定します。</p>
+      </div>
+
+      <form id="voteCycleSettingsForm" class="work-editor">
+        <label>
+          <span>投票サイクルID</span>
+          <input id="voteCycleId" type="text" maxlength="40" pattern="[A-Za-z0-9][A-Za-z0-9_-]{0,39}" placeholder="例：2026" required>
+        </label>
+        <div class="work-editor-wide">
+          <small>半角英数字・ハイフン・アンダースコアが使えます。IDを変更すると、その端末は新しいサイクルでは未投票扱いになります。D1の投票データは自動では削除されません。</small>
+        </div>
+        <div class="work-editor-actions">
+          <button id="saveVoteCycleSettingsButton" class="button-secondary" type="submit">投票サイクルを保存</button>
+        </div>
+        <p id="voteCycleSettingsMessage" class="work-editor-message" role="status" aria-live="polite"></p>
+      </form>
     </section>
 
     <section class="panel panel-wide" aria-labelledby="displaySettingsTitle">
@@ -514,6 +538,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=544c325bbaad"></script>
+  <script src="admin.js?v=7a3d44d823cc"></script>
 </body>
 </html>
