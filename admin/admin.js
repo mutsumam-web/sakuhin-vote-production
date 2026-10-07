@@ -5,6 +5,18 @@
   const CLIENT_KEY='sakuhin_admin_client_v1';
   const REFRESH_MS=60000;
   const TZ='Asia/Tokyo';
+  const DISPLAY_THEME_PRESETS=Object.freeze({
+    standard:{label:'標準',bg:'#eeeae0',ink:'#1f3c31',accent:'#244f40',accentStrong:'#173b30'},
+    urban:{label:'アーバン',bg:'#eceff1',ink:'#263238',accent:'#455a64',accentStrong:'#263238'},
+    cyber:{label:'サイバー',bg:'#eefbff',ink:'#102a43',accent:'#007f99',accentStrong:'#005466'},
+    gallery:{label:'ギャラリー',bg:'#f2efe9',ink:'#2f2a26',accent:'#7a1f2b',accentStrong:'#4b121a'},
+    atelier:{label:'アトリエ',bg:'#f4eadf',ink:'#3b2a20',accent:'#a44a2d',accentStrong:'#6f2f1f'},
+    indigo:{label:'藍',bg:'#edf1f7',ink:'#1e2f45',accent:'#2f4b7c',accentStrong:'#1d2f55'},
+    botanical:{label:'ボタニカル',bg:'#edf3eb',ink:'#2d3b2f',accent:'#4f6f52',accentStrong:'#314d36'},
+    monochrome:{label:'モノクローム',bg:'#f1f1ef',ink:'#242424',accent:'#5b5b5b',accentStrong:'#2f2f2f'},
+    museum:{label:'ミュージアム',bg:'#f3f2ee',ink:'#252a34',accent:'#36558f',accentStrong:'#1f355f'},
+    amber:{label:'アンバー',bg:'#f5eddc',ink:'#3b3024',accent:'#9a5c12',accentStrong:'#6a3d0b'}
+  });
 
   const state={
     session:'',
@@ -282,6 +294,56 @@
     note.textContent='標準画像を使用中';
   }
 
+  function currentDisplayThemeColors(){
+    return{
+      bg:String($('displayThemeBg').value||'').toLowerCase(),
+      ink:String($('displayThemeInk').value||'').toLowerCase(),
+      accent:String($('displayThemeAccent').value||'').toLowerCase(),
+      accentStrong:String($('displayThemeAccentStrong').value||'').toLowerCase()
+    };
+  }
+
+  function findDisplayThemePresetKey(){
+    const current=currentDisplayThemeColors();
+    return Object.keys(DISPLAY_THEME_PRESETS).find(function(key){
+      const theme=DISPLAY_THEME_PRESETS[key];
+      return theme.bg===current.bg&&
+        theme.ink===current.ink&&
+        theme.accent===current.accent&&
+        theme.accentStrong===current.accentStrong;
+    })||'custom';
+  }
+
+  function renderDisplayThemePreview(){
+    const colors=currentDisplayThemeColors();
+    const map={
+      displayThemePreviewBg:colors.bg,
+      displayThemePreviewInk:colors.ink,
+      displayThemePreviewAccent:colors.accent,
+      displayThemePreviewAccentStrong:colors.accentStrong
+    };
+    Object.keys(map).forEach(function(id){
+      const el=$(id);
+      if(el)el.style.backgroundColor=map[id];
+    });
+
+    const key=findDisplayThemePresetKey();
+    const preset=$('displayThemePreset');
+    if(preset)preset.value=key;
+    const label=$('displayThemePresetLabel');
+    if(label)label.textContent=key==='custom'?'カスタム':DISPLAY_THEME_PRESETS[key].label;
+  }
+
+  function applyDisplayThemePreset(key){
+    const theme=DISPLAY_THEME_PRESETS[key];
+    if(!theme)return;
+    $('displayThemeBg').value=theme.bg;
+    $('displayThemeInk').value=theme.ink;
+    $('displayThemeAccent').value=theme.accent;
+    $('displayThemeAccentStrong').value=theme.accentStrong;
+    renderDisplayThemePreview();
+  }
+
   function renderDisplaySettings(settings){
     const value=settings||{};
     state.displaySettings=value;
@@ -298,6 +360,7 @@
     $('displayThemeInk').value=value.themeInk||'#1f3c31';
     $('displayThemeAccent').value=value.themeAccent||'#244f40';
     $('displayThemeAccentStrong').value=value.themeAccentStrong||'#173b30';
+    renderDisplayThemePreview();
     $('displaySettingsSummary').textContent=value.updatedAt
       ?'最終更新 '+formatDateTime(value.updatedAt)
       :'現在のProduction表示を変更します。';
@@ -1443,6 +1506,19 @@
     const displaySettingsForm=$('displaySettingsForm');
     if(displaySettingsForm){
       displaySettingsForm.addEventListener('submit',saveDisplaySettings);
+      $('displayThemePreset').addEventListener('change',function(){
+        const key=this.value;
+        if(key==='custom'){
+          renderDisplayThemePreview();
+          return;
+        }
+        applyDisplayThemePreset(key);
+        $('displaySettingsMessage').textContent='テーマ「'+DISPLAY_THEME_PRESETS[key].label+'」を選択中です。保存するとProductionへ反映されます。';
+      });
+      ['displayThemeBg','displayThemeInk','displayThemeAccent','displayThemeAccentStrong'].forEach(function(id){
+        $(id).addEventListener('input',renderDisplayThemePreview);
+        $(id).addEventListener('change',renderDisplayThemePreview);
+      });
       $('displayHeaderImage').addEventListener('change',function(){
         const file=this.files&&this.files[0]?this.files[0]:null;
         renderDisplayImagePreview(file);

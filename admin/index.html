@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / ADMIN DASHBOARD</title>
-  <link rel="stylesheet" href="admin.css?v=20261007-display-settings-v1">
+  <link rel="stylesheet" href="admin.css?v=20261007-theme-presets-v1">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -383,6 +383,33 @@
           <input id="displayPoweredByText" type="text" maxlength="120" required>
         </label>
 
+        <div class="display-theme-field">
+          <span>テーマプリセット</span>
+          <div class="display-theme-controls">
+            <select id="displayThemePreset" aria-label="テーマプリセット">
+              <option value="standard">標準</option>
+              <option value="urban">アーバン</option>
+              <option value="cyber">サイバー</option>
+              <option value="gallery">ギャラリー</option>
+              <option value="atelier">アトリエ</option>
+              <option value="indigo">藍</option>
+              <option value="botanical">ボタニカル</option>
+              <option value="monochrome">モノクローム</option>
+              <option value="museum">ミュージアム</option>
+              <option value="amber">アンバー</option>
+              <option value="custom">カスタム</option>
+            </select>
+            <strong id="displayThemePresetLabel">標準</strong>
+          </div>
+          <div class="display-theme-preview" aria-label="テーマ配色プレビュー">
+            <div><span id="displayThemePreviewBg" class="display-theme-swatch"></span><small>背景</small></div>
+            <div><span id="displayThemePreviewInk" class="display-theme-swatch"></span><small>文字</small></div>
+            <div><span id="displayThemePreviewAccent" class="display-theme-swatch"></span><small>メイン</small></div>
+            <div><span id="displayThemePreviewAccentStrong" class="display-theme-swatch"></span><small>濃色</small></div>
+          </div>
+          <small>プリセット選択後も下の4色を個別調整できます。調整すると「カスタム」になります。</small>
+        </div>
+
         <label>
           <span>背景色</span>
           <input id="displayThemeBg" class="display-color-input" type="color">
@@ -476,6 +503,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=20261007-display-settings-v1"></script>
+  <script src="admin.js?v=20261007-theme-presets-v1"></script>
 </body>
 </html>
