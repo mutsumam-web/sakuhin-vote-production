@@ -1,5 +1,6 @@
 const MAX_VOTES=3;
 const STORAGE_KEY='sakuhin_vote_done_v15';
+const WINNER_KEY='sakuhin_vote_winner_v1';
 const API_BASE=(window.__SAKUHIN_API_BASE__||'https://sakuhin-vote-api.mutsumam.workers.dev').replace(/\/$/,'');
 
 async function rpcCall(method){
@@ -42,16 +43,63 @@ function hasVoted(){
   return localStorage.getItem(STORAGE_KEY)==='1'||getCookie('sakuhin_vote_done')==='1';
 }
 
-function markVoted(){
+function markVoted(result){
   localStorage.setItem(STORAGE_KEY,'1');
   setCookie('sakuhin_vote_done','1',3650);
+
+  try{
+    if(result&&result.winner===true){
+      localStorage.setItem(WINNER_KEY,JSON.stringify(result));
+    }else{
+      localStorage.removeItem(WINNER_KEY);
+    }
+  }catch(e){}
 }
 
-function showVotedMask(){
+function storedWinner(){
+  try{
+    const raw=localStorage.getItem(WINNER_KEY);
+    if(!raw)return null;
+    const value=JSON.parse(raw);
+    return value&&value.winner===true?value:null;
+  }catch(e){
+    return null;
+  }
+}
+
+function applyVotedMaskCopy(result){
+  const winner=result&&result.winner===true&&result.winnerInfo;
+  const check=document.querySelector('.voted-mask-check');
+  const kicker=document.querySelector('.voted-mask-kicker');
+  const title=document.getElementById('votedMaskTitle');
+  const subtitle=document.querySelector('.voted-mask-subtitle');
+  const status=document.querySelector('.voted-mask-status');
+  const footer=document.querySelector('.voted-mask-footer');
+
+  if(winner){
+    check.textContent='★';
+    kicker.textContent='PRIZE WINNER';
+    title.textContent=String(result.winnerInfo.title||'当選しました！');
+    subtitle.textContent=String(result.winnerInfo.eventLabel||'');
+    status.textContent='第'+String(result.winnerNumber)+'投票の当選です。';
+    footer.textContent=String(result.winnerInfo.message||'係員にこの画面を提示してください。');
+    return;
+  }
+
+  check.textContent='✓';
+  kicker.textContent='VOTE COMPLETE';
+  title.textContent='投票済みです';
+  subtitle.textContent='ご投票ありがとうございました。';
+  status.innerHTML='投票内容を受け付けました。<br>この端末からの追加投票はできません。';
+  footer.textContent='作品展投票システム';
+}
+
+function showVotedMask(result){
   closeWorkDetail();
   closeVoteConfirm();
   const mask=document.getElementById('votedMask');
   if(!mask)return;
+  applyVotedMaskCopy(result||storedWinner());
   mask.hidden=false;
   mask.setAttribute('aria-hidden','false');
   document.body.classList.add('voted-mask-active');
@@ -119,7 +167,7 @@ function init(){
 
   loadWorks();
 
-  if(hasVoted())showVotedMask();
+  if(hasVoted())showVotedMask(storedWinner());
   else hideVotedMask();
 }
 
@@ -557,14 +605,14 @@ function submitVote(){
         return;
       }
 
-      markVoted();
+      markVoted(ok);
       selected=[];
       updateUI();
       button.textContent='投票する';
       button.disabled=true;
       button.removeAttribute('aria-busy');
       closeVoteConfirm();
-      showVotedMask();
+      showVotedMask(ok);
     })
     .catch(function(error){
       button.disabled=false;
@@ -589,6 +637,7 @@ function adminReset(code){
       }
 
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(WINNER_KEY);
       document.cookie='sakuhin_vote_done=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
       hideMaxVoteError();
       closeWorkDetail();

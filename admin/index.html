@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / ADMIN DASHBOARD</title>
-  <link rel="stylesheet" href="admin.css?v=20261007-vote-reset">
+  <link rel="stylesheet" href="admin.css?v=20261007-prize-winner">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -326,6 +326,49 @@
       </section>
     </div>
 
+    <section class="panel panel-wide" aria-labelledby="winnerSettingsTitle">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">PRIZE WINNER</span>
+          <h2 id="winnerSettingsTitle">当選投票設定</h2>
+        </div>
+        <p id="winnerSettingsSummary">—</p>
+      </div>
+
+      <form id="winnerSettingsForm" class="work-editor winner-settings-form">
+        <label class="winner-toggle">
+          <input id="winnerEnabled" type="checkbox">
+          <span>当選機能を有効にする</span>
+        </label>
+
+        <label>
+          <span>記念表示</span>
+          <input id="winnerEventLabel" type="text" maxlength="80" placeholder="例：71周年記念">
+        </label>
+
+        <label>
+          <span>当選する投票番号</span>
+          <input id="winnerMilestones" type="text" inputmode="numeric" maxlength="120" placeholder="例：71,710">
+          <small>投票完了1回を1件として数えます。複数指定はカンマ区切り。</small>
+        </label>
+
+        <label>
+          <span>当選見出し</span>
+          <input id="winnerTitle" type="text" maxlength="80" placeholder="例：当選しました！">
+        </label>
+
+        <label>
+          <span>当選時の案内</span>
+          <textarea id="winnerMessage" maxlength="240" rows="3" placeholder="例：景品をお渡しします。係員にこの画面を提示してください。"></textarea>
+        </label>
+
+        <div class="work-editor-actions">
+          <button id="saveWinnerSettingsButton" class="button-secondary" type="submit">当選設定を保存</button>
+        </div>
+        <p id="winnerSettingsMessage" class="work-editor-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
     <section class="panel panel-wide" aria-labelledby="voteResetTitle">
       <div class="panel-heading">
         <div>
@@ -348,6 +391,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=20261007-vote-reset"></script>
+  <script src="admin.js?v=20261007-prize-winner"></script>
 </body>
 </html>

@@ -13,6 +13,7 @@
     timer:null,
     voteData:null,
     systemData:null,
+    winnerSettings:null,
     showAllRanking:false,
     works:[],
     worksListCollapsed:false
@@ -178,7 +179,7 @@
       state.session=result.session;
       try{sessionStorage.setItem(SESSION_KEY,state.session);}catch(e){}
       showDashboard();
-      await Promise.all([loadAll(true),loadWorksManager()]);
+      await Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings()]);
     }catch(error){
       $('loginMessage').textContent='認証処理に失敗しました。';
     }finally{
@@ -238,6 +239,103 @@
     }
   }
 
+  function parseWinnerMilestonesInput(value){
+    return [...new Set(
+      String(value||'')
+        .split(',')
+        .map(function(item){return Number(item.trim());})
+        .filter(function(item){return Number.isInteger(item)&&item>0&&item<=1000000;})
+    )].sort(function(a,b){return a-b;});
+  }
+
+  function renderWinnerSettingsSummary(){
+    const el=$('winnerSettingsSummary');
+    if(!el)return;
+    const settings=state.winnerSettings;
+    if(!settings){
+      el.textContent='—';
+      return;
+    }
+
+    const current=Number(settings.currentVoteCount)||0;
+    const milestones=safeArray(settings.milestones);
+    const next=milestones.find(function(item){return Number(item)>current;});
+    el.textContent=(settings.enabled?'有効':'無効')
+      +' / 現在 '+formatNumber(current)+'件'
+      +(next?' / 次回 '+formatNumber(next)+'件目':' / 次回設定なし');
+  }
+
+  async function loadWinnerSettings(){
+    if(!state.session||!$('winnerSettingsForm'))return;
+
+    const message=$('winnerSettingsMessage');
+    try{
+      const settings=await adminRpc('getWinnerSettings',state.session);
+      state.winnerSettings=settings||null;
+      $('winnerEnabled').checked=!!(settings&&settings.enabled);
+      $('winnerEventLabel').value=settings&&settings.eventLabel?settings.eventLabel:'';
+      $('winnerMilestones').value=safeArray(settings&&settings.milestones).join(',');
+      $('winnerTitle').value=settings&&settings.winnerTitle?settings.winnerTitle:'';
+      $('winnerMessage').value=settings&&settings.winnerMessage?settings.winnerMessage:'';
+      message.textContent='';
+      renderWinnerSettingsSummary();
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      message.textContent='当選設定を取得できませんでした。';
+    }
+  }
+
+  async function saveWinnerSettings(event){
+    event.preventDefault();
+    if(!state.session)return;
+
+    const milestones=parseWinnerMilestonesInput($('winnerMilestones').value);
+    const message=$('winnerSettingsMessage');
+    const button=$('saveWinnerSettingsButton');
+
+    if(!milestones.length){
+      message.textContent='当選する投票番号を1件以上入力してください。';
+      return;
+    }
+
+    const input={
+      enabled:$('winnerEnabled').checked,
+      eventLabel:$('winnerEventLabel').value.trim(),
+      milestones:milestones,
+      winnerTitle:$('winnerTitle').value.trim(),
+      winnerMessage:$('winnerMessage').value.trim()
+    };
+
+    if(!input.winnerTitle||!input.winnerMessage){
+      message.textContent='当選見出しと案内文を入力してください。';
+      return;
+    }
+
+    button.disabled=true;
+    message.textContent='保存しています…';
+
+    try{
+      const saved=await adminRpc('adminUpdateWinnerSettings',state.session,input);
+      const current=state.winnerSettings&&Number(state.winnerSettings.currentVoteCount)||0;
+      state.winnerSettings=Object.assign({},saved,{currentVoteCount:current});
+      $('winnerMilestones').value=safeArray(saved&&saved.milestones).join(',');
+      message.textContent='当選設定を保存しました。';
+      renderWinnerSettingsSummary();
+      showToast('当選設定を保存しました。');
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      message.textContent='当選設定を保存できませんでした。';
+    }finally{
+      button.disabled=false;
+    }
+  }
+
   async function resetVotes(){
     if(!state.session)return;
 
@@ -276,7 +374,7 @@
 
       message.textContent='投票データをリセットしました。';
       showToast('投票データをリセットしました。');
-      await loadAll(false);
+      await Promise.all([loadAll(false),loadWinnerSettings()]);
     }catch(error){
       if(isAuthError(error)){
         showLogin('セッションの有効期限が切れました。再認証してください。');
@@ -805,7 +903,7 @@
     stopRefresh();
     if(!state.autoRefresh)return;
     state.timer=setInterval(function(){
-      loadAll(false);
+      Promise.all([loadAll(false),loadWinnerSettings()]);
     },REFRESH_MS);
   }
 
@@ -1115,7 +1213,7 @@
     if(dashboardPageButton){
       dashboardPageButton.addEventListener('click',function(){window.location.href='index.html';});
     }
-    $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager()]);});
+    $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings()]);});
     $('autoRefreshButton').addEventListener('click',function(){
       state.autoRefresh=!state.autoRefresh;
       $('autoRefreshButton').setAttribute('aria-pressed',state.autoRefresh?'true':'false');
@@ -1154,6 +1252,11 @@
       setWorksListCollapsed(!state.worksListCollapsed);
     });
     $('adminCodeForm').addEventListener('submit',changeAdminCode);
+    const winnerSettingsForm=$('winnerSettingsForm');
+    if(winnerSettingsForm){
+      winnerSettingsForm.addEventListener('submit',saveWinnerSettings);
+    }
+
     const resetVotesButton=$('resetVotesButton');
     if(resetVotesButton){
       resetVotesButton.addEventListener('click',resetVotes);
@@ -1170,7 +1273,7 @@
     }
     state.session=saved;
     showDashboard();
-    await Promise.all([loadAll(false),loadWorksManager()]);
+    await Promise.all([loadAll(false),loadWorksManager(),loadWinnerSettings()]);
   }
 
   if(document.readyState==='loading'){

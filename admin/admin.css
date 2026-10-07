@@ -741,6 +741,36 @@ th{color:var(--muted);font-weight:600}
   font-size:.76rem;
 }
 
+.winner-settings-form{
+  margin-top:.35rem;
+}
+
+.winner-settings-form .winner-toggle{
+  grid-column:1/-1;
+  display:flex;
+  grid-template-columns:none;
+  flex-direction:row;
+  align-items:center;
+  gap:.65rem;
+}
+
+.winner-settings-form .winner-toggle input{
+  width:auto;
+  min-height:0;
+  margin:0;
+  accent-color:var(--accent);
+}
+
+.winner-settings-form label small{
+  color:var(--muted);
+  font-size:.68rem;
+  line-height:1.5;
+}
+
+.winner-settings-form textarea{
+  min-height:5rem;
+}
+
 .work-list-wrap{
   min-width:0;
 }
