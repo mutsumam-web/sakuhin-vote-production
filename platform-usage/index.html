@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Platform Usage Monitor</title>
+  <link rel="stylesheet" href="./style.css?v=cbc9fde4e2eb">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">CENTRAL OBSERVABILITY</p>
+        <h1>PLATFORM USAGE MONITOR</h1>
+        <p class="lead">GitHub / Cloudflare account-wide usage</p>
+      </div>
+      <div class="hero-status">
+        <span id="overallBadge" class="badge">LOADING</span>
+        <small id="updatedAt">取得中…</small>
+      </div>
+    </header>
+
+    <section class="cards" aria-label="Platform usage">
+      <article class="card">
+        <div class="card-head"><strong>GitHub Actions</strong><span id="githubBadge" class="badge">—</span></div>
+        <div id="githubValue" class="value">—</div>
+        <div class="meter"><i id="githubBar"></i></div>
+        <p id="githubMeta">アカウント実測のみ</p>
+      </article>
+      <article class="card">
+        <div class="card-head"><strong>Cloudflare Workers</strong><span id="workersBadge" class="badge">—</span></div>
+        <div id="workersValue" class="value">—</div>
+        <div class="meter"><i id="workersBar"></i></div>
+        <p>アカウント全体 / UTC日次</p>
+      </article>
+      <article class="card">
+        <div class="card-head"><strong>Cloudflare D1</strong><span id="d1Badge" class="badge">—</span></div>
+        <div id="d1Value" class="value value-small">—</div>
+        <div class="meter"><i id="d1Bar"></i></div>
+        <p id="d1Meta">Read / Write / Storage</p>
+      </article>
+      <article class="card">
+        <div class="card-head"><strong>Cloudflare R2</strong><span id="r2Badge" class="badge">—</span></div>
+        <div id="r2Value" class="value">—</div>
+        <div class="meter"><i id="r2Bar"></i></div>
+        <p>アカウント全体の現在保存量</p>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">GITHUB ACTIONS</p>
+          <h2>Repository breakdown</h2>
+        </div>
+        <span id="repoState" class="muted">—</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Repository</th><th>Minutes</th><th>Visibility</th></tr></thead>
+          <tbody id="repoRows"><tr><td colspan="3">取得中…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <span>Source of truth: account-wide exact usage only.</span>
+      <a href="./POLICY.md">Policy</a>
+    </footer>
+  </main>
+  <script src="./app.js?v=cbc9fde4e2eb"></script>
+</body>
+</html>

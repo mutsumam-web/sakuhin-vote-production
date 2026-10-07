@@ -818,7 +818,7 @@
   async function loadUsageQuota(){
     if(!$('usageQuotaGrid'))return;
     try{
-      const response=await fetch('usage.json?ts='+Date.now(),{cache:'no-store'});
+      const response=await fetch('../platform-usage/latest.json?ts='+Date.now(),{cache:'no-store'});
       if(!response.ok)throw new Error('HTTP_'+response.status);
       const raw=await response.json();
       renderUsageQuota({
@@ -896,9 +896,9 @@
     $('usageGithubValue').textContent=github.used==null
       ?'—'
       :formatNumber(Math.ceil(Number(github.used)))+' / '+formatNumber(github.limit||2000)+' min';
-    $('usageGithubMeta').textContent=github.scope==='account_exact'
-      ?'月間利用量 / アカウント実測'
-      :'月間利用量 / このrepoの概算';
+    $('usageGithubMeta').textContent=github.used==null
+      ?'月間利用量 / アカウント実測のみ・未取得'
+      :'月間利用量 / 全repoアカウント実測';
     setUsageMeter('usageGithub',githubPercent);
 
     const workers=data.workers||{};
