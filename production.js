@@ -73,6 +73,90 @@ function normalizeDisplaySettings(value){
   };
 }
 
+function hexToRgb(value){
+  const match=/^#([0-9a-f]{6})$/i.exec(String(value||'').trim());
+  if(!match)return{r:0,g:0,b:0};
+  const hex=match[1];
+  return{
+    r:parseInt(hex.slice(0,2),16),
+    g:parseInt(hex.slice(2,4),16),
+    b:parseInt(hex.slice(4,6),16)
+  };
+}
+
+function rgbToHex(rgb){
+  const part=function(value){
+    return Math.max(0,Math.min(255,Math.round(value))).toString(16).padStart(2,'0');
+  };
+  return'#'+part(rgb.r)+part(rgb.g)+part(rgb.b);
+}
+
+function mixHex(from,to,ratio){
+  const a=hexToRgb(from);
+  const b=hexToRgb(to);
+  const t=Math.max(0,Math.min(1,Number(ratio)||0));
+  return rgbToHex({
+    r:a.r+(b.r-a.r)*t,
+    g:a.g+(b.g-a.g)*t,
+    b:a.b+(b.b-a.b)*t
+  });
+}
+
+function rgbaHex(value,alpha){
+  const rgb=hexToRgb(value);
+  return'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+alpha+')';
+}
+
+function displayThemeSurfaces(settings){
+  const isStandard=
+    settings.themeBg===DEFAULT_DISPLAY_SETTINGS.themeBg&&
+    settings.themeInk===DEFAULT_DISPLAY_SETTINGS.themeInk&&
+    settings.themeAccent===DEFAULT_DISPLAY_SETTINGS.themeAccent&&
+    settings.themeAccentStrong===DEFAULT_DISPLAY_SETTINGS.themeAccentStrong;
+
+  if(isStandard){
+    return{
+      surface:'#f7f5ef',
+      surfaceStrong:'#fffefa',
+      barBg:'rgba(239,238,232,.97)',
+      screenBg:'rgba(238,234,224,.985)',
+      maskBg:'rgba(236,234,225,.97)',
+      cardBg:'rgba(255,254,250,.58)',
+      cardSelectedBg:'rgba(247,245,239,.78)',
+      imagePlaceholder:'#deddd7',
+      imageCanvas:'#e9e7e1',
+      slotBg:'#dadbd6',
+      slotImageBg:'#e4e3dd',
+      selectZoneBg:'rgba(17,28,23,.38)',
+      selectedZoneBg:'rgba(31,60,49,.72)',
+      selectedMaskBg:'rgba(31,60,49,.28)',
+      thumbIndexBg:'rgba(20,34,28,.72)'
+    };
+  }
+
+  const bg=settings.themeBg;
+  const ink=settings.themeInk;
+  const accent=settings.themeAccent;
+
+  return{
+    surface:mixHex(bg,'#ffffff',.52),
+    surfaceStrong:mixHex(bg,'#ffffff',.92),
+    barBg:rgbaHex(mixHex(bg,'#ffffff',.18),.97),
+    screenBg:rgbaHex(bg,.985),
+    maskBg:rgbaHex(mixHex(bg,'#ffffff',.04),.97),
+    cardBg:rgbaHex(mixHex(bg,'#ffffff',.88),.62),
+    cardSelectedBg:rgbaHex(mixHex(bg,'#ffffff',.52),.82),
+    imagePlaceholder:mixHex(bg,ink,.09),
+    imageCanvas:mixHex(bg,'#ffffff',.12),
+    slotBg:mixHex(bg,ink,.08),
+    slotImageBg:mixHex(bg,'#ffffff',.08),
+    selectZoneBg:rgbaHex(mixHex(ink,'#000000',.18),.38),
+    selectedZoneBg:rgbaHex(accent,.72),
+    selectedMaskBg:rgbaHex(accent,.28),
+    thumbIndexBg:rgbaHex(mixHex(ink,'#000000',.12),.72)
+  };
+}
+
 function applyDisplaySettings(value){
   displaySettings=normalizeDisplaySettings(value);
   const setText=function(id,text){
@@ -98,6 +182,23 @@ function applyDisplaySettings(value){
   root.style.setProperty('--ink',displaySettings.themeInk);
   root.style.setProperty('--accent',displaySettings.themeAccent);
   root.style.setProperty('--accent-strong',displaySettings.themeAccentStrong);
+
+  const surfaces=displayThemeSurfaces(displaySettings);
+  root.style.setProperty('--surface',surfaces.surface);
+  root.style.setProperty('--surface-strong',surfaces.surfaceStrong);
+  root.style.setProperty('--bar-bg',surfaces.barBg);
+  root.style.setProperty('--screen-bg',surfaces.screenBg);
+  root.style.setProperty('--mask-bg',surfaces.maskBg);
+  root.style.setProperty('--card-bg',surfaces.cardBg);
+  root.style.setProperty('--card-selected-bg',surfaces.cardSelectedBg);
+  root.style.setProperty('--image-placeholder',surfaces.imagePlaceholder);
+  root.style.setProperty('--image-canvas',surfaces.imageCanvas);
+  root.style.setProperty('--slot-bg',surfaces.slotBg);
+  root.style.setProperty('--slot-image-bg',surfaces.slotImageBg);
+  root.style.setProperty('--select-zone-bg',surfaces.selectZoneBg);
+  root.style.setProperty('--selected-zone-bg',surfaces.selectedZoneBg);
+  root.style.setProperty('--selected-mask-bg',surfaces.selectedMaskBg);
+  root.style.setProperty('--thumb-index-bg',surfaces.thumbIndexBg);
 
   const themeMeta=document.querySelector('meta[name="theme-color"]');
   if(themeMeta)themeMeta.setAttribute('content',displaySettings.themeBg);
