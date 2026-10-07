@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "source": "platform-usage-monitor",
+  "collectedAt": "2026-10-07T23:33:31.681Z",
+  "githubActions": {
+    "status": "unavailable",
+    "exact": false,
+    "usedMinutes": null,
+    "repositoryMinutesTotal": null,
+    "reconciliationDelta": null,
+    "limitMinutes": null,
+    "scope": "account_exact",
+    "plan": "unknown",
+    "repositoriesComplete": false
+  },
+  "repositories": [],
+  "workers": {
+    "requestsToday": 2714,
+    "limitRequests": 100000,
+    "scope": "account_exact"
+  },
+  "d1": {
+    "rowsReadToday": 561580,
+    "rowsReadLimit": 5000000,
+    "rowsWrittenToday": 16416,
+    "rowsWrittenLimit": 100000,
+    "storageBytes": 696320,
+    "storageLimitBytes": 5368709120,
+    "scope": "account_exact"
+  },
+  "r2": {
+    "storageBytes": 115352784,
+    "storageLimitBytes": 10737418240,
+    "scope": "account_exact"
+  },
+  "errors": [
+    "github_actions:PLATFORM_USAGE_GITHUB_TOKEN_MISSING"
+  ]
+}
