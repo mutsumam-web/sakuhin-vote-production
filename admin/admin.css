@@ -302,6 +302,27 @@ button:focus-visible,input:focus-visible{
   font-size:.68rem;
 }
 
+.settings-intro{
+  margin-top:var(--gap);
+  padding:var(--pad);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:linear-gradient(135deg,rgba(117,167,255,.08),rgba(120,214,162,.05)),var(--surface);
+  box-shadow:var(--shadow);
+}
+
+.settings-intro h2{
+  margin:.25rem 0 0;
+  font-size:clamp(1.05rem,2.4vmin,1.35rem);
+}
+
+.settings-intro p{
+  margin:.45rem 0 0;
+  color:var(--muted);
+  font-size:.78rem;
+  line-height:1.7;
+}
+
 .panel{
   min-width:0;
   padding:var(--pad);

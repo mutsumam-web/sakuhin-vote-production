@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / ADMIN DASHBOARD</title>
-  <link rel="stylesheet" href="admin.css?v=20261007-theme-presets-v1">
+  <link rel="stylesheet" href="admin.css?v=20261007-admin-settings-page-v1">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -31,7 +31,8 @@
       </div>
       <div class="topbar-actions">
         <span id="systemStatus" class="status-badge status-neutral">SYSTEM —</span>
-        <button id="worksPageButton" class="button-secondary" type="button">作品管理</button>
+        <button id="worksPageButton" class="button-secondary" type="button">WORKS</button>
+        <button id="settingsPageButton" class="button-secondary" type="button">SETTINGS</button>
         <button id="refreshButton" class="button-secondary" type="button">更新</button>
         <button id="logoutButton" class="button-ghost" type="button">ログアウト</button>
       </div>
@@ -326,7 +327,7 @@
       </section>
     </div>
 
-    <section class="panel panel-wide" aria-labelledby="displaySettingsTitle">
+    <section class="panel panel-wide" hidden aria-labelledby="displaySettingsTitle">
       <div class="panel-heading">
         <div>
           <span class="panel-kicker">DISPLAY SETTINGS</span>
@@ -437,7 +438,7 @@
       </form>
     </section>
 
-    <section class="panel panel-wide" aria-labelledby="winnerSettingsTitle">
+    <section class="panel panel-wide" hidden aria-labelledby="winnerSettingsTitle">
       <div class="panel-heading">
         <div>
           <span class="panel-kicker">PRIZE WINNER</span>
@@ -481,7 +482,7 @@
       </form>
     </section>
 
-    <section class="panel panel-wide" aria-labelledby="voteResetTitle">
+    <section class="panel panel-wide" hidden aria-labelledby="voteResetTitle">
       <div class="panel-heading">
         <div>
           <span class="panel-kicker">DATA MANAGEMENT</span>
@@ -503,6 +504,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=20261007-theme-presets-v1"></script>
+  <script src="admin.js?v=20261007-admin-settings-page-v1"></script>
 </body>
 </html>

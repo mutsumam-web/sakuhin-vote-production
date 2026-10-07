@@ -1464,6 +1464,10 @@
     if(dashboardPageButton){
       dashboardPageButton.addEventListener('click',function(){window.location.href='index.html';});
     }
+    const settingsPageButton=$('settingsPageButton');
+    if(settingsPageButton){
+      settingsPageButton.addEventListener('click',function(){window.location.href='settings.html';});
+    }
     $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings()]);});
     $('autoRefreshButton').addEventListener('click',function(){
       state.autoRefresh=!state.autoRefresh;
