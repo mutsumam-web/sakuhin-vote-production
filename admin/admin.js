@@ -824,9 +824,11 @@
       renderUsageQuota({
         collectedAt:raw&&raw.collectedAt?raw.collectedAt:'',
         githubActions:{
-          used:raw&&raw.githubActions?raw.githubActions.usedMinutes:null,
+          used:raw&&raw.githubActions?raw.githubActions.quotaUsedMinutes:null,
+          total:raw&&raw.githubActions?raw.githubActions.usedMinutes:null,
           limit:raw&&raw.githubActions?raw.githubActions.limitMinutes:null,
-          scope:raw&&raw.githubActions?raw.githubActions.scope:'repo_estimate'
+          metadataComplete:Boolean(raw&&raw.githubActions&&raw.githubActions.repositoryMetadataComplete),
+          scope:raw&&raw.githubActions?raw.githubActions.scope:'account_exact'
         },
         workers:{
           used:raw&&raw.workers?raw.workers.requestsToday:null,
@@ -894,11 +896,13 @@
     const github=data.githubActions||{};
     const githubPercent=quotaPercent(github.used,github.limit);
     $('usageGithubValue').textContent=github.used==null
-      ?'—'
+      ?'無料枠 未判定'
       :formatNumber(Math.ceil(Number(github.used)))+' / '+formatNumber(github.limit||2000)+' min';
     $('usageGithubMeta').textContent=github.used==null
-      ?'月間利用量 / アカウント実測のみ・未取得'
-      :'月間利用量 / 全repoアカウント実測';
+      ?(github.total==null
+        ?'GitHub Actions / アカウント実測 未取得'
+        :'全repo実測 '+formatNumber(Math.ceil(Number(github.total)))+' min / repo公開区分 未取得')
+      :'Private repo無料枠 / 全repo実測 '+formatNumber(Math.ceil(Number(github.total)||0))+' min';
     setUsageMeter('usageGithub',githubPercent);
 
     const workers=data.workers||{};

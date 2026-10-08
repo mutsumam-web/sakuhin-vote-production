@@ -57,3 +57,11 @@ Platform Usage Monitorはアプリとして独立させる。現在の公開ホ�
 `sakuhin-vote-production/platform-usage/` を使用するが、各プロジェクトからは中央データ契約だけを参照し、作品展固有ロジックへ依存しない。
 
 将来専用repo `platform-usage-monitor` を作成した場合も、schemaと利用規約を維持して移行する。
+
+## 9. GitHub Actions無料枠の判定
+
+- GitHub Actionsの「全repo実測合計」と「無料枠消費量」は分離する。
+- Public repositoryの標準GitHub-hosted runner利用は無料枠2,000分の消費量へ含めない。
+- 無料枠消費量はPrivate repositoryの公式Billing実測を集計して表示する。
+- repoのPrivate/Public判定が取得できない場合、無料枠使用率は「未判定」とし、全repo合計を2,000分へ誤って当てはめない。
+- 中央PATには User permissions: Plan = Read-only に加え、Repository permissions: Metadata = Read-only を付与する。

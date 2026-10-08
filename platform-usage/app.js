@@ -46,13 +46,15 @@
       :'未取得';
 
     const gh=data.githubActions||{};
-    $('githubValue').textContent=gh.usedMinutes==null
-      ?'未取得'
-      :nf.format(Math.ceil(gh.usedMinutes))+' / '+(gh.limitMinutes==null?'—':nf.format(gh.limitMinutes))+' min';
+    $('githubValue').textContent=gh.quotaUsedMinutes==null
+      ?'無料枠 未判定'
+      :nf.format(Math.ceil(gh.quotaUsedMinutes))+' / '+(gh.limitMinutes==null?'—':nf.format(gh.limitMinutes))+' min';
     $('githubMeta').textContent=gh.status==='ok'&&gh.exact===true
-      ?'全repoアカウント実測 / '+String(gh.plan||'unknown')
+      ?(gh.repositoryMetadataComplete===true
+        ?'Private repo無料枠 / 全repo実測 '+nf.format(Math.ceil(num(gh.usedMinutes)||0))+' min'
+        :'全repo実測 '+nf.format(Math.ceil(num(gh.usedMinutes)||0))+' min / repo公開区分 未取得')
       :'公式Billing API実測のみ・現在未取得';
-    setMeter('github',percent(gh.usedMinutes,gh.limitMinutes));
+    setMeter('github',percent(gh.quotaUsedMinutes,gh.limitMinutes));
 
     const workers=data.workers||{};
     $('workersValue').textContent=workers.requestsToday==null
@@ -75,7 +77,7 @@
 
     const repos=Array.isArray(data.repositories)?data.repositories:[];
     $('repoState').textContent=gh.repositoriesComplete===true
-      ?nf.format(repos.length)+' repositories / exact'
+      ?nf.format(repos.length)+' repositories / exact'+(gh.repositoryMetadataComplete===true?'':' / visibility incomplete')
       :'repo内訳 未取得';
     $('repoRows').innerHTML='';
     if(!repos.length){
@@ -97,7 +99,7 @@
     }
 
     const pcts=[
-      percent(gh.usedMinutes,gh.limitMinutes),
+      percent(gh.quotaUsedMinutes,gh.limitMinutes),
       percent(workers.requestsToday,workers.limitRequests),
       ...(d1p.length?[Math.max(...d1p)]:[]),
       percent(r2.storageBytes,r2.storageLimitBytes)
