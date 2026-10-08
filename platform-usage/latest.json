@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-08T00:45:06.900Z",
+  "collectedAt": "2026-10-08T06:42:30.266Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 1166,
-    "quotaUsedMinutes": 927,
-    "privateRepoMinutes": 927,
-    "publicRepoMinutes": 240,
+    "usedMinutes": 1229,
+    "quotaUsedMinutes": 979,
+    "privateRepoMinutes": 979,
+    "publicRepoMinutes": 250,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 1167,
-    "reconciliationDelta": -1,
+    "repositoryMinutesTotal": 1229,
+    "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -23,7 +23,7 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 627
+      "minutes": 679
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -35,7 +35,7 @@
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 238
+      "minutes": 248
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
@@ -48,24 +48,30 @@
       "private": false,
       "archived": false,
       "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/soyukai-site",
+      "private": false,
+      "archived": false,
+      "minutes": 0
     }
   ],
   "workers": {
-    "requestsToday": 30,
+    "requestsToday": 1030,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 81,
+    "rowsReadToday": 184975,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 108,
+    "rowsWrittenToday": 6913,
     "rowsWrittenLimit": 100000,
-    "storageBytes": 708608,
+    "storageBytes": 831488,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 115352784,
+    "storageBytes": 116302644,
     "storageLimitBytes": 10737418240,
     "scope": "account_exact"
   },
