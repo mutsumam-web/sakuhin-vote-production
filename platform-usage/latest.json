@@ -1,39 +1,80 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-07T23:33:31.681Z",
+  "collectedAt": "2026-10-08T00:14:13.416Z",
   "githubActions": {
-    "status": "unavailable",
-    "exact": false,
-    "usedMinutes": null,
-    "repositoryMinutesTotal": null,
-    "reconciliationDelta": null,
-    "limitMinutes": null,
+    "status": "ok",
+    "exact": true,
+    "usedMinutes": 1119,
+    "repositoryMinutesTotal": 1119,
+    "reconciliationDelta": 0,
+    "limitMinutes": 2000,
     "scope": "account_exact",
-    "plan": "unknown",
-    "repositoriesComplete": false
+    "plan": "free",
+    "repositoriesComplete": true
   },
-  "repositories": [],
+  "repositories": [
+    {
+      "repository": "sakuhin-vote-system",
+      "private": null,
+      "archived": null,
+      "minutes": 595
+    },
+    {
+      "repository": "hiro-ai-line-bot",
+      "private": null,
+      "archived": null,
+      "minutes": 300
+    },
+    {
+      "repository": "sakuhin-vote-production",
+      "private": null,
+      "archived": null,
+      "minutes": 222
+    },
+    {
+      "repository": "sakuhin-vote-cyber",
+      "private": null,
+      "archived": null,
+      "minutes": 2
+    },
+    {
+      "repository": "mutsumam-web/register",
+      "private": false,
+      "archived": false,
+      "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-cyber",
+      "private": false,
+      "archived": false,
+      "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-production",
+      "private": false,
+      "archived": false,
+      "minutes": 0
+    }
+  ],
   "workers": {
-    "requestsToday": 2714,
+    "requestsToday": 28,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 561580,
+    "rowsReadToday": 73,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 16416,
+    "rowsWrittenToday": 108,
     "rowsWrittenLimit": 100000,
-    "storageBytes": 696320,
+    "storageBytes": 708608,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 115352784,
+    "storageBytes": null,
     "storageLimitBytes": 10737418240,
     "scope": "account_exact"
   },
-  "errors": [
-    "github_actions:PLATFORM_USAGE_GITHUB_TOKEN_MISSING"
-  ]
+  "errors": []
 }
