@@ -9,6 +9,9 @@ const DEFAULT_DISPLAY_SETTINGS=Object.freeze({
   heroSide:'日常に、小さな美を。',
   heroCaption:'2026.9.20 山口駐屯地グランドから朝日を望む',
   headerImageKey:'',
+  headerLayout:'standard',
+  heroTitleScale:100,
+  heroCopyScale:100,
   footerText:'作品展投票システム',
   poweredByText:'駐屯地曹友会×厚生班',
   themeBg:'#eeeae0',
@@ -64,6 +67,11 @@ function normalizeDisplaySettings(value){
     heroSide:text('heroSide',DEFAULT_DISPLAY_SETTINGS.heroSide),
     heroCaption:text('heroCaption',DEFAULT_DISPLAY_SETTINGS.heroCaption),
     headerImageKey:String(source.headerImageKey||'').trim(),
+    headerLayout:['standard','mosaic','editorial','solar'].includes(source.headerLayout)?source.headerLayout:'standard',
+    heroTitleScale:Number.isFinite(Number(source.heroTitleScale))&&source.heroTitleScale!=null
+      ?Math.max(75,Math.min(125,Math.round(Number(source.heroTitleScale)))):100,
+    heroCopyScale:Number.isFinite(Number(source.heroCopyScale))&&source.heroCopyScale!=null
+      ?Math.max(75,Math.min(125,Math.round(Number(source.heroCopyScale)))):100,
     footerText:text('footerText',DEFAULT_DISPLAY_SETTINGS.footerText),
     poweredByText:text('poweredByText',DEFAULT_DISPLAY_SETTINGS.poweredByText),
     themeBg:color('themeBg',DEFAULT_DISPLAY_SETTINGS.themeBg),
@@ -169,6 +177,23 @@ function applyDisplaySettings(value){
   setText('heroTitleEn',displaySettings.heroTitleEn);
   setText('heroSide',displaySettings.heroSide);
   setText('heroCaption',displaySettings.heroCaption);
+
+  const appHeader=document.querySelector('.app-header');
+  if(appHeader){
+    appHeader.dataset.headerLayout=displaySettings.headerLayout;
+    if(displaySettings.heroTitleScale!==100){
+      appHeader.dataset.headerTitleCustom='true';
+    }else{
+      delete appHeader.dataset.headerTitleCustom;
+    }
+    if(displaySettings.heroCopyScale!==100){
+      appHeader.dataset.headerCopyCustom='true';
+    }else{
+      delete appHeader.dataset.headerCopyCustom;
+    }
+    appHeader.style.setProperty('--header-title-scale',String(displaySettings.heroTitleScale/100));
+    appHeader.style.setProperty('--header-copy-scale',String(displaySettings.heroCopyScale/100));
+  }
 
   const heroTitle=document.querySelector('.hero-title');
   if(heroTitle)heroTitle.setAttribute('aria-label',displaySettings.heroTitleJp+' / '+displaySettings.heroTitleEn);

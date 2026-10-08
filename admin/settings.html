@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / SETTINGS</title>
-  <link rel="stylesheet" href="admin.css?v=c29a14d3d793">
+  <link rel="stylesheet" href="admin.css?v=d0666b532c69">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -185,6 +185,35 @@
           <span>ヘッダー写真キャプション</span>
           <input id="displayHeroCaption" type="text" maxlength="160" required>
         </label>
+
+        <div class="display-layout-field">
+          <label for="displayHeaderLayout">ヘッダーレイアウト</label>
+          <select id="displayHeaderLayout">
+            <option value="standard">標準（現在のレイアウト）</option>
+            <option value="mosaic">D-1 / アシンメトリック・モザイク</option>
+            <option value="editorial">E-1 / ギャラリー・ステージ</option>
+            <option value="solar">E-4 / ソーラー・アンカー</option>
+          </select>
+          <small>写真は現在のヘッダー画像を共用します。レイアウトごとに文字の位置・基本サイズを自動調整します。</small>
+          <div class="display-layout-typography">
+            <label for="displayHeroTitleScale">
+              <span>タイトルの大きさ <output id="displayHeroTitleScaleValue" for="displayHeroTitleScale">100%</output></span>
+              <input id="displayHeroTitleScale" type="range" min="75" max="125" step="5" value="100">
+            </label>
+            <label for="displayHeroCopyScale">
+              <span>その他の文字の大きさ <output id="displayHeroCopyScaleValue" for="displayHeroCopyScale">100%</output></span>
+              <input id="displayHeroCopyScale" type="range" min="75" max="125" step="5" value="100">
+            </label>
+          </div>
+          <div id="displayLayoutPreview" class="display-layout-demo" data-layout="standard" aria-label="レイアウトと文字サイズの簡易プレビュー">
+            <div class="display-layout-demo-panels" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="display-layout-demo-text">
+              <strong id="displayLayoutSampleTitle">作品展</strong>
+              <span id="displayLayoutSampleCopy">日常に、小さな美を。</span>
+            </div>
+          </div>
+          <small>簡易プレビューです。実際の写真の切り抜きと文字配置はProductionの画面幅に連動します。</small>
+        </div>
 
         <div class="display-image-field">
           <span>ヘッダー画像</span>
@@ -538,6 +567,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=c29a14d3d793"></script>
+  <script src="admin.js?v=d0666b532c69"></script>
 </body>
 </html>

@@ -415,6 +415,21 @@
     }
   }
 
+  function renderDisplayLayoutPreview(){
+    const preview=$('displayLayoutPreview');
+    if(!preview)return;
+    const layout=$('displayHeaderLayout').value;
+    const title=Number($('displayHeroTitleScale').value)||100;
+    const copy=Number($('displayHeroCopyScale').value)||100;
+    preview.dataset.layout=layout;
+    preview.style.setProperty('--preview-title-scale',String(title/100));
+    preview.style.setProperty('--preview-copy-scale',String(copy/100));
+    $('displayHeroTitleScaleValue').textContent=title+'%';
+    $('displayHeroCopyScaleValue').textContent=copy+'%';
+    $('displayLayoutSampleTitle').textContent=$('displayHeroTitleJp').value||'作品展';
+    $('displayLayoutSampleCopy').textContent=$('displayHeroSide').value||'日常に、小さな美を。';
+  }
+
   function renderDisplaySettings(settings){
     const value=settings||{};
     state.displaySettings=value;
@@ -424,6 +439,13 @@
     $('displayHeroSide').value=value.heroSide||'';
     $('displayHeroCaption').value=value.heroCaption||'';
     $('displayHeaderImageKey').value=value.headerImageKey||'';
+    if($('displayHeaderLayout')&&$('displayHeroTitleScale')&&$('displayHeroCopyScale')){
+      $('displayHeaderLayout').value=['standard','mosaic','editorial','solar'].includes(value.headerLayout)
+        ?value.headerLayout:'standard';
+      $('displayHeroTitleScale').value=String(value.heroTitleScale??100);
+      $('displayHeroCopyScale').value=String(value.heroCopyScale??100);
+      renderDisplayLayoutPreview();
+    }
     $('displayHeaderImage').value='';
     $('displayFooterText').value=value.footerText||'';
     $('displayPoweredByText').value=value.poweredByText||'';
@@ -491,6 +513,9 @@
         heroSide:$('displayHeroSide').value.trim(),
         heroCaption:$('displayHeroCaption').value.trim(),
         headerImageKey:headerImageKey,
+        headerLayout:$('displayHeaderLayout')?$('displayHeaderLayout').value:(state.displaySettings?.headerLayout||'standard'),
+        heroTitleScale:$('displayHeroTitleScale')?Number($('displayHeroTitleScale').value):(state.displaySettings?.heroTitleScale||100),
+        heroCopyScale:$('displayHeroCopyScale')?Number($('displayHeroCopyScale').value):(state.displaySettings?.heroCopyScale||100),
         footerText:$('displayFooterText').value.trim(),
         poweredByText:$('displayPoweredByText').value.trim(),
         themeBg:$('displayThemeBg').value,
@@ -1641,12 +1666,16 @@
   }
 
   function bind(){
-    $('loginForm').addEventListener('submit',function(event){
+    const on=(id,type,listener)=>{
+      const element=$(id);
+      if(element)element.addEventListener(type,listener);
+    };
+    on('loginForm','submit',function(event){
       event.preventDefault();
       login($('adminCode').value.trim());
     });
 
-    $('logoutButton').addEventListener('click',logout);
+    on('logoutButton','click',logout);
     const worksPageButton=$('worksPageButton');
     if(worksPageButton){
       worksPageButton.addEventListener('click',function(){window.location.href='works.html';});
@@ -1659,8 +1688,8 @@
     if(settingsPageButton){
       settingsPageButton.addEventListener('click',function(){window.location.href='settings.html';});
     }
-    $('refreshButton').addEventListener('click',function(){Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings(),loadVoteCycleSettings()]);});
-    $('autoRefreshButton').addEventListener('click',function(){
+    on('refreshButton','click',function(){Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings(),loadVoteCycleSettings()]);});
+    on('autoRefreshButton','click',function(){
       state.autoRefresh=!state.autoRefresh;
       $('autoRefreshButton').setAttribute('aria-pressed',state.autoRefresh?'true':'false');
       $('autoRefreshButton').textContent=state.autoRefresh?'ON / 60s':'OFF';
@@ -1677,27 +1706,27 @@
       });
     });
 
-    $('rankingSearch').addEventListener('input',function(){
+    on('rankingSearch','input',function(){
       renderRanking(state.voteData&&state.voteData.ranking);
     });
 
-    $('rankingLimitButton').addEventListener('click',function(){
+    on('rankingLimitButton','click',function(){
       state.showAllRanking=!state.showAllRanking;
       $('rankingLimitButton').setAttribute('aria-pressed',state.showAllRanking?'true':'false');
       $('rankingLimitButton').textContent=state.showAllRanking?'ALL':'TOP 10';
       renderRanking(state.voteData&&state.voteData.ranking);
     });
 
-    $('exportCsvButton').addEventListener('click',exportCsv);
-    $('printButton').addEventListener('click',function(){window.print();});
-    $('workEditorForm').addEventListener('submit',saveWork);
-    $('newWorkButton').addEventListener('click',resetWorkEditor);
-    $('clearWorkButton').addEventListener('click',resetWorkEditor);
-    $('reloadWorksButton').addEventListener('click',loadWorksManager);
-    $('toggleWorksListButton').addEventListener('click',function(){
+    on('exportCsvButton','click',exportCsv);
+    on('printButton','click',function(){window.print();});
+    on('workEditorForm','submit',saveWork);
+    on('newWorkButton','click',resetWorkEditor);
+    on('clearWorkButton','click',resetWorkEditor);
+    on('reloadWorksButton','click',loadWorksManager);
+    on('toggleWorksListButton','click',function(){
       setWorksListCollapsed(!state.worksListCollapsed);
     });
-    $('adminCodeForm').addEventListener('submit',changeAdminCode);
+    on('adminCodeForm','submit',changeAdminCode);
     const voteCycleSettingsForm=$('voteCycleSettingsForm');
     if(voteCycleSettingsForm){
       voteCycleSettingsForm.addEventListener('submit',saveVoteCycleSettings);
@@ -1705,7 +1734,18 @@
     const displaySettingsForm=$('displaySettingsForm');
     if(displaySettingsForm){
       displaySettingsForm.addEventListener('submit',saveDisplaySettings);
-      $('displayThemePreset').addEventListener('change',function(){
+      ['displayHeaderLayout','displayHeroTitleScale','displayHeroCopyScale'].forEach(function(id){
+        const element=$(id);
+        if(element){
+          element.addEventListener('input',renderDisplayLayoutPreview);
+          element.addEventListener('change',renderDisplayLayoutPreview);
+        }
+      });
+      ['displayHeroTitleJp','displayHeroSide'].forEach(function(id){
+        const element=$(id);
+        if(element)element.addEventListener('input',renderDisplayLayoutPreview);
+      });
+      on('displayThemePreset','change',function(){
         const key=this.value;
         if(key==='custom'){
           renderDisplayThemePreview();
@@ -1718,11 +1758,11 @@
         $(id).addEventListener('input',renderDisplayThemePreview);
         $(id).addEventListener('change',renderDisplayThemePreview);
       });
-      $('displayHeaderImage').addEventListener('change',function(){
+      on('displayHeaderImage','change',function(){
         const file=this.files&&this.files[0]?this.files[0]:null;
         renderDisplayImagePreview(file);
       });
-      $('resetDisplayHeaderImageButton').addEventListener('click',function(){
+      on('resetDisplayHeaderImageButton','click',function(){
         $('displayHeaderImageKey').value='';
         $('displayHeaderImage').value='';
         renderDisplayImagePreview(null);

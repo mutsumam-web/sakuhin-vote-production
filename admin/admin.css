@@ -845,6 +845,118 @@ th{color:var(--muted);font-weight:600}
   margin-top:.35rem;
 }
 
+.display-layout-field{
+  grid-column:1/-1;
+  display:grid;
+  gap:.65rem;
+  min-width:0;
+}
+.display-layout-field>label,
+.display-layout-field>small{
+  color:var(--muted);
+  font-size:.74rem;
+}
+.display-layout-field>small{line-height:1.5}
+.display-layout-field>select{
+  min-height:2.7rem;
+  width:100%;
+  padding:.6rem .7rem;
+  border:1px solid var(--line);
+  border-radius:.5rem;
+  color:var(--text);
+  background:#0d1218;
+}
+.display-layout-typography{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));
+  gap:.8rem;
+}
+.display-layout-typography label{
+  display:grid;
+  gap:.4rem;
+  min-width:0;
+}
+.display-layout-typography label span{
+  display:flex;
+  justify-content:space-between;
+  gap:.4rem;
+  color:var(--muted);
+  font-size:.73rem;
+}
+.display-layout-typography output{
+  color:var(--accent);
+  font-variant-numeric:tabular-nums;
+}
+.display-layout-typography input{width:100%;min-height:2rem;accent-color:var(--accent)}
+.display-layout-demo{
+  position:relative;
+  isolation:isolate;
+  display:grid;
+  align-content:center;
+  min-height:clamp(6rem,24vw,9rem);
+  padding:clamp(.65rem,2vw,1rem);
+  overflow:hidden;
+  background:#eeeae0;
+  border:1px solid var(--line);
+  border-radius:.5rem;
+}
+.display-layout-demo-panels{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:#eeeae0;
+}
+.display-layout-demo-panels i{
+  position:absolute;
+  display:none;
+  background:linear-gradient(165deg,#426a7b 0%,#a5b7ab 38%,#f4b958 62%,#263d37 84%);
+}
+.display-layout-demo[data-layout="standard"] .display-layout-demo-panels i:first-child{
+  display:block;inset:0;
+}
+.display-layout-demo[data-layout="mosaic"] .display-layout-demo-panels i,
+.display-layout-demo[data-layout="solar"] .display-layout-demo-panels i,
+.display-layout-demo[data-layout="editorial"] .display-layout-demo-panels i{display:block}
+.display-layout-demo[data-layout="mosaic"] .display-layout-demo-panels i:nth-child(1){left:0;top:18%;width:17%;height:77%}
+.display-layout-demo[data-layout="mosaic"] .display-layout-demo-panels i:nth-child(2){left:18%;top:3%;width:25%;height:82%}
+.display-layout-demo[data-layout="mosaic"] .display-layout-demo-panels i:nth-child(3){left:44%;top:15%;width:12%;height:80%}
+.display-layout-demo[data-layout="mosaic"] .display-layout-demo-panels i:nth-child(4){left:57%;top:1%;width:26%;height:89%}
+.display-layout-demo[data-layout="mosaic"] .display-layout-demo-panels i:nth-child(5){left:84%;top:18%;width:16%;height:76%}
+.display-layout-demo[data-layout="solar"] .display-layout-demo-panels i:nth-child(1){left:0;top:8%;width:50%;height:88%}
+.display-layout-demo[data-layout="solar"] .display-layout-demo-panels i:nth-child(2){left:51%;top:1%;width:20%;height:45%}
+.display-layout-demo[data-layout="solar"] .display-layout-demo-panels i:nth-child(3){left:51%;top:49%;width:19%;height:46%}
+.display-layout-demo[data-layout="solar"] .display-layout-demo-panels i:nth-child(4){left:72%;top:13%;width:28%;height:80%}
+.display-layout-demo[data-layout="solar"] .display-layout-demo-panels i:nth-child(5){display:none}
+.display-layout-demo[data-layout="editorial"] .display-layout-demo-panels i:nth-child(1){left:41%;top:15%;width:12%;height:81%}
+.display-layout-demo[data-layout="editorial"] .display-layout-demo-panels i:nth-child(2){left:54%;top:3%;width:27%;height:85%}
+.display-layout-demo[data-layout="editorial"] .display-layout-demo-panels i:nth-child(3){left:82%;top:12%;width:18%;height:83%}
+.display-layout-demo[data-layout="editorial"] .display-layout-demo-panels i:nth-child(n+4){display:none}
+.display-layout-demo-text{
+  display:grid;
+  gap:.28rem;
+  width:60%;
+  padding:.4rem;
+  color:#fff;
+  text-shadow:0 1px .35rem #132a24;
+  background:linear-gradient(90deg,rgba(15,35,28,.52),transparent);
+}
+.display-layout-demo-text strong{
+  font-size:calc(clamp(1.2rem,5vw,2rem) * var(--preview-title-scale,1));
+  line-height:1.1;
+}
+.display-layout-demo-text span{
+  font-size:calc(clamp(.65rem,2vw,.86rem) * var(--preview-copy-scale,1));
+}
+.display-layout-demo[data-layout="editorial"] .display-layout-demo-text{
+  width:39%;
+  color:#243d33;
+  background:none;
+  text-shadow:none;
+}
+.display-layout-demo[data-layout="editorial"] .display-layout-demo-text strong{
+  font-size:calc(clamp(1rem,3.6vw,1.7rem) * var(--preview-title-scale,1));
+}
+
 .display-theme-field{
   grid-column:1/-1;
   display:grid;
