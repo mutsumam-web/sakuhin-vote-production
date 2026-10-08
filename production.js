@@ -115,6 +115,11 @@ function rgbaHex(value,alpha){
   return'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+alpha+')';
 }
 
+function themeIsDark(hex){
+  const rgb=hexToRgb(hex);
+  return rgb.r*.2126+rgb.g*.7152+rgb.b*.0722<85;
+}
+
 function displayThemeSurfaces(settings){
   const isStandard=
     settings.themeBg===DEFAULT_DISPLAY_SETTINGS.themeBg&&
@@ -145,6 +150,27 @@ function displayThemeSurfaces(settings){
   const bg=settings.themeBg;
   const ink=settings.themeInk;
   const accent=settings.themeAccent;
+  const isDark=themeIsDark(bg);
+
+  if(isDark){
+    return{
+      surface:mixHex(bg,'#ffffff',.09),
+      surfaceStrong:mixHex(bg,'#ffffff',.15),
+      barBg:rgbaHex(mixHex(bg,'#ffffff',.07),.97),
+      screenBg:rgbaHex(bg,.985),
+      maskBg:rgbaHex(mixHex(bg,'#ffffff',.04),.97),
+      cardBg:rgbaHex(mixHex(bg,'#ffffff',.09),.94),
+      cardSelectedBg:rgbaHex(mixHex(bg,accent,.20),.96),
+      imagePlaceholder:mixHex(bg,'#ffffff',.13),
+      imageCanvas:mixHex(bg,'#ffffff',.06),
+      slotBg:mixHex(bg,'#ffffff',.15),
+      slotImageBg:mixHex(bg,'#ffffff',.09),
+      selectZoneBg:rgbaHex(mixHex(bg,'#000000',.22),.85),
+      selectedZoneBg:rgbaHex(mixHex(accent,'#000000',.55),.9),
+      selectedMaskBg:rgbaHex(accent,.18),
+      thumbIndexBg:'rgba(10,16,22,.84)'
+    };
+  }
 
   return{
     surface:mixHex(bg,'#ffffff',.52),
@@ -207,6 +233,23 @@ function applyDisplaySettings(value){
   root.style.setProperty('--ink',displaySettings.themeInk);
   root.style.setProperty('--accent',displaySettings.themeAccent);
   root.style.setProperty('--accent-strong',displaySettings.themeAccentStrong);
+
+  const isDark=themeIsDark(displaySettings.themeBg);
+  root.classList.toggle('theme-dark',isDark);
+  const darkVars=isDark?{
+    '--ink-soft':mixHex(displaySettings.themeInk,displaySettings.themeBg,.25),
+    '--muted':mixHex(displaySettings.themeInk,displaySettings.themeBg,.42),
+    '--line':rgbaHex(displaySettings.themeInk,.2),
+    '--line-strong':rgbaHex(displaySettings.themeInk,.34),
+    '--disabled':mixHex(displaySettings.themeBg,'#ffffff',.2),
+    '--disabled-ink':mixHex(displaySettings.themeInk,displaySettings.themeBg,.50),
+    '--danger':'#ff9992',
+    '--accent-contrast':'#101820'
+  }:{};
+  ['--ink-soft','--muted','--line','--line-strong','--disabled','--disabled-ink','--danger','--accent-contrast'].forEach(function(name){
+    if(isDark)root.style.setProperty(name,darkVars[name]);
+    else root.style.removeProperty(name);
+  });
 
   const surfaces=displayThemeSurfaces(displaySettings);
   root.style.setProperty('--surface',surfaces.surface);

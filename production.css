@@ -414,6 +414,44 @@ svg{
   font-size:calc(clamp(.5rem,1.9vmin,.7rem) * var(--header-copy-scale,1));
 }
 
+/* Dark palettes: theme-only contrast fixes. Standard and existing presets are unchanged. */
+.theme-dark .skip-link{
+  background:var(--surface-strong);
+  color:var(--ink);
+}
+.theme-dark :focus-visible{
+  outline-color:var(--accent);
+}
+.theme-dark .work-card{
+  border-color:var(--line);
+  box-shadow:0 .28rem 1.05rem rgba(0,0,0,.22);
+}
+.theme-dark .work-card.selected{
+  border-color:var(--accent);
+  box-shadow:0 .38rem 1.3rem rgba(0,0,0,.28);
+}
+.theme-dark .work-image-wrap{
+  border-color:var(--line);
+}
+.theme-dark .selection-bar{
+  border-top-color:var(--line);
+}
+.theme-dark .selected-thumb-slot{
+  border-color:var(--line);
+}
+.theme-dark .selected-thumb-slot::after{
+  border-color:var(--line);
+}
+.theme-dark .vote-button:not(:disabled),
+.theme-dark .work-detail-select-button,
+.theme-dark .vote-confirm-submit-button{
+  color:var(--accent-contrast);
+}
+.theme-dark .max-vote-error-panel{
+  background:var(--surface-strong);
+  border-color:rgba(255,153,146,.42);
+}
+
 .gallery-shell{
   width:var(--content-width);
   min-width:0;

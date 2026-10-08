@@ -15,7 +15,17 @@
     botanical:{label:'ボタニカル',bg:'#edf3eb',ink:'#2d3b2f',accent:'#4f6f52',accentStrong:'#314d36'},
     monochrome:{label:'モノクローム',bg:'#f1f1ef',ink:'#242424',accent:'#5b5b5b',accentStrong:'#2f2f2f'},
     museum:{label:'ミュージアム',bg:'#f3f2ee',ink:'#252a34',accent:'#36558f',accentStrong:'#1f355f'},
-    amber:{label:'アンバー',bg:'#f5eddc',ink:'#3b3024',accent:'#9a5c12',accentStrong:'#6a3d0b'}
+    amber:{label:'アンバー',bg:'#f5eddc',ink:'#3b3024',accent:'#9a5c12',accentStrong:'#6a3d0b'},
+    midnight:{label:'ミッドナイト',bg:'#0e1625',ink:'#f4f6ff',accent:'#84a9ff',accentStrong:'#4d78db'},
+    obsidian:{label:'オブシディアン',bg:'#101214',ink:'#f4f4f0',accent:'#c0bdaf',accentStrong:'#827e75'},
+    deepsea:{label:'ディープシー',bg:'#071e2a',ink:'#e9f7ff',accent:'#55c7df',accentStrong:'#177c9a'},
+    nightforest:{label:'フォレストナイト',bg:'#0c201a',ink:'#e9f5ec',accent:'#80caa2',accentStrong:'#397d5e'},
+    plumnoir:{label:'プラムノワール',bg:'#211222',ink:'#f8eefa',accent:'#d49bda',accentStrong:'#98639f'},
+    bordeaux:{label:'ボルドー',bg:'#260f18',ink:'#fbeef2',accent:'#df97b0',accentStrong:'#a15270'},
+    copper:{label:'コッパー',bg:'#211814',ink:'#f9f1e8',accent:'#e9aa79',accentStrong:'#a76c47'},
+    navygold:{label:'ネイビーゴールド',bg:'#101c31',ink:'#f6f1e6',accent:'#d8bc78',accentStrong:'#9b7a38'},
+    charcoal:{label:'チャコール',bg:'#1c2126',ink:'#f3f6f7',accent:'#a4c4c8',accentStrong:'#5b8790'},
+    twilight:{label:'トワイライト',bg:'#1a1835',ink:'#f3f1ff',accent:'#b8a7ff',accentStrong:'#7464bf'}
   });
 
   const state={
