@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-08T00:14:13.416Z",
+  "collectedAt": "2026-10-08T00:18:35.374Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 1119,
-    "repositoryMinutesTotal": 1119,
-    "reconciliationDelta": 0,
+    "usedMinutes": 1123,
+    "repositoryMinutesTotal": 1127,
+    "reconciliationDelta": -4,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -15,43 +15,31 @@
   },
   "repositories": [
     {
-      "repository": "sakuhin-vote-system",
+      "repository": "mutsumam-web/sakuhin-vote-system",
       "private": null,
       "archived": null,
-      "minutes": 595
+      "minutes": 600
     },
     {
-      "repository": "hiro-ai-line-bot",
+      "repository": "mutsumam-web/hiro-ai-line-bot",
       "private": null,
       "archived": null,
       "minutes": 300
     },
     {
-      "repository": "sakuhin-vote-production",
-      "private": null,
-      "archived": null,
-      "minutes": 222
-    },
-    {
-      "repository": "sakuhin-vote-cyber",
-      "private": null,
-      "archived": null,
-      "minutes": 2
-    },
-    {
-      "repository": "mutsumam-web/register",
+      "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 0
+      "minutes": 225
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
       "private": false,
       "archived": false,
-      "minutes": 0
+      "minutes": 2
     },
     {
-      "repository": "mutsumam-web/sakuhin-vote-production",
+      "repository": "mutsumam-web/register",
       "private": false,
       "archived": false,
       "minutes": 0
@@ -72,7 +60,7 @@
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": null,
+    "storageBytes": 1545633,
     "storageLimitBytes": 10737418240,
     "scope": "account_exact"
   },
