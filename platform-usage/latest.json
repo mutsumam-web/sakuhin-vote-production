@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-08T00:30:19.487Z",
+  "collectedAt": "2026-10-08T00:43:52.450Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 1147,
-    "quotaUsedMinutes": null,
-    "privateRepoMinutes": null,
-    "publicRepoMinutes": null,
-    "unknownVisibilityMinutes": 920,
-    "repositoryMetadataComplete": false,
-    "repositoryMinutesTotal": 1152,
-    "reconciliationDelta": -5,
+    "usedMinutes": 1162,
+    "quotaUsedMinutes": 926,
+    "privateRepoMinutes": 926,
+    "publicRepoMinutes": 236,
+    "unknownVisibilityMinutes": 0,
+    "repositoryMetadataComplete": true,
+    "repositoryMinutesTotal": 1162,
+    "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -21,21 +21,21 @@
   "repositories": [
     {
       "repository": "mutsumam-web/sakuhin-vote-system",
-      "private": null,
-      "archived": null,
-      "minutes": 620
+      "private": true,
+      "archived": false,
+      "minutes": 626
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
-      "private": null,
-      "archived": null,
+      "private": true,
+      "archived": false,
       "minutes": 300
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 230
+      "minutes": 234
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
@@ -51,7 +51,7 @@
     }
   ],
   "workers": {
-    "requestsToday": 29,
+    "requestsToday": 30,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
