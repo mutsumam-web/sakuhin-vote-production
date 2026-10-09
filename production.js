@@ -246,7 +246,9 @@ function applyDisplaySettings(value){
   root.style.setProperty('--ink',displaySettings.themeInk);
   root.style.setProperty('--accent',displaySettings.themeAccent);
   root.style.setProperty('--accent-strong',displaySettings.themeAccentStrong);
-  if(displaySettings.backgroundMode==='gradient'){
+  const gradientEnabled=displaySettings.backgroundMode==='gradient';
+  root.classList.toggle('theme-gradient',gradientEnabled);
+  if(gradientEnabled){
     root.style.setProperty('--page-gradient',displayBackgroundGradient(displaySettings.themeBg,displaySettings.themeAccent));
   }else{
     root.style.removeProperty('--page-gradient');

@@ -331,6 +331,24 @@ svg{
   clip-path:url(#headerClipSolar);
 }
 
+/* In gradient mode, reveal the same page background through header panel gaps.
+   A short image-edge fade softens the photo-to-page seam without altering the
+   asymmetric clipping, copy positioning, or existing solid-mode appearance. */
+:root.theme-gradient .app-header[data-header-layout="mosaic"],
+:root.theme-gradient .app-header[data-header-layout="editorial"],
+:root.theme-gradient .app-header[data-header-layout="solar"]{
+  background:transparent;
+}
+
+:root.theme-gradient .app-header[data-header-layout="mosaic"] .hero-visual,
+:root.theme-gradient .app-header[data-header-layout="editorial"] .hero-visual,
+:root.theme-gradient .app-header[data-header-layout="solar"] .hero-visual,
+:root.theme-gradient .app-header[data-header-layout="mosaic"]::after,
+:root.theme-gradient .app-header[data-header-layout="solar"]::after{
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 91%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 91%,transparent 100%);
+}
+
 .app-header[data-header-layout="mosaic"]::after,
 .app-header[data-header-layout="solar"]::after{
   background:linear-gradient(90deg,rgba(12,22,20,.7),rgba(12,22,20,.2) 64%,rgba(12,22,20,.08));
