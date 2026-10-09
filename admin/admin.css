@@ -957,6 +957,51 @@ th{color:var(--muted);font-weight:600}
   font-size:calc(clamp(1rem,3.6vw,1.7rem) * var(--preview-title-scale,1));
 }
 
+.display-background-control{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.55rem;
+  min-width:0;
+  margin-top:.6rem;
+  padding:clamp(.6rem,1.8vw,1rem);
+  border:1px solid var(--line);
+  border-radius:.65rem;
+}
+.display-background-control>label{
+  color:var(--muted);
+  font-size:.74rem;
+}
+.display-background-control>select{
+  min-height:2.7rem;
+  width:100%;
+  padding:.6rem .7rem;
+  border:1px solid var(--line);
+  border-radius:.5rem;
+  background:#0d1218;
+  color:var(--text);
+}
+.display-background-control>small{
+  color:var(--muted);
+  font-size:.68rem;
+  line-height:1.6;
+}
+.display-background-preview{
+  min-height:clamp(5.8rem,21vw,8rem);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:.45rem;
+  padding:clamp(.8rem,2.6vw,1.2rem);
+  border:1px solid rgba(128,128,128,.16);
+  border-radius:.6rem;
+}
+.display-background-preview strong{
+  font-size:clamp(1.15rem,4vw,1.65rem);
+}
+.display-background-preview span{
+  font-size:clamp(.66rem,2.2vw,.78rem);
+}
+
 .display-theme-field{
   grid-column:1/-1;
   display:grid;

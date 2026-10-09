@@ -15,6 +15,7 @@ const DEFAULT_DISPLAY_SETTINGS=Object.freeze({
   footerText:'作品展投票システム',
   poweredByText:'駐屯地曹友会×厚生班',
   themeBg:'#eeeae0',
+  backgroundMode:'solid',
   themeInk:'#1f3c31',
   themeAccent:'#244f40',
   themeAccentStrong:'#173b30'
@@ -75,6 +76,7 @@ function normalizeDisplaySettings(value){
     footerText:text('footerText',DEFAULT_DISPLAY_SETTINGS.footerText),
     poweredByText:text('poweredByText',DEFAULT_DISPLAY_SETTINGS.poweredByText),
     themeBg:color('themeBg',DEFAULT_DISPLAY_SETTINGS.themeBg),
+    backgroundMode:source.backgroundMode==='gradient'?'gradient':'solid',
     themeInk:color('themeInk',DEFAULT_DISPLAY_SETTINGS.themeInk),
     themeAccent:color('themeAccent',DEFAULT_DISPLAY_SETTINGS.themeAccent),
     themeAccentStrong:color('themeAccentStrong',DEFAULT_DISPLAY_SETTINGS.themeAccentStrong)
@@ -118,6 +120,16 @@ function rgbaHex(value,alpha){
 function themeIsDark(hex){
   const rgb=hexToRgb(hex);
   return rgb.r*.2126+rgb.g*.7152+rgb.b*.0722<85;
+}
+
+// Static gradient derived from existing theme colours, shared with Admin preview.
+function displayBackgroundGradient(bg,accent){
+  const dark=themeIsDark(bg);
+  const highlight=mixHex(bg,'#ffffff',dark?.065:.11);
+  const glow=mixHex(bg,accent,dark?.15:.065);
+  const lower=mixHex(bg,dark?'#000000':'#ffffff',dark?.10:.035);
+  return 'radial-gradient(ellipse at 84% 8%,'+glow+' 0%,transparent 58%),'
+    +'linear-gradient(145deg,'+highlight+' 0%,'+bg+' 56%,'+lower+' 100%)';
 }
 
 function displayThemeSurfaces(settings){
@@ -233,6 +245,11 @@ function applyDisplaySettings(value){
   root.style.setProperty('--ink',displaySettings.themeInk);
   root.style.setProperty('--accent',displaySettings.themeAccent);
   root.style.setProperty('--accent-strong',displaySettings.themeAccentStrong);
+  if(displaySettings.backgroundMode==='gradient'){
+    root.style.setProperty('--page-gradient',displayBackgroundGradient(displaySettings.themeBg,displaySettings.themeAccent));
+  }else{
+    root.style.removeProperty('--page-gradient');
+  }
 
   const isDark=themeIsDark(displaySettings.themeBg);
   root.classList.toggle('theme-dark',isDark);

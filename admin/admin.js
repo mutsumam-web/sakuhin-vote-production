@@ -325,6 +325,33 @@
     })||'custom';
   }
 
+  function displayBackgroundPreviewGradient(bg,accent){
+    const rgb=(hex)=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
+    const toHex=(values)=>'#'+values.map(value=>Math.round(value).toString(16).padStart(2,'0')).join('');
+    const mix=(left,right,ratio)=>{
+      const a=rgb(left),b=rgb(right);
+      return toHex(a.map((value,i)=>value+(b[i]-value)*ratio));
+    };
+    const values=rgb(bg);
+    const dark=values[0]*.2126+values[1]*.7152+values[2]*.0722<85;
+    const highlight=mix(bg,'#ffffff',dark?.065:.11);
+    const glow=mix(bg,accent,dark?.15:.065);
+    const lower=mix(bg,dark?'#000000':'#ffffff',dark?.10:.035);
+    return 'radial-gradient(ellipse at 84% 8%,'+glow+' 0%,transparent 58%),'
+      +'linear-gradient(145deg,'+highlight+' 0%,'+bg+' 56%,'+lower+' 100%)';
+  }
+
+  function renderDisplayBackgroundPreview(){
+    const preview=$('displayBackgroundPreview');
+    if(!preview)return;
+    const colors=currentDisplayThemeColors();
+    const mode=$('displayBackgroundMode').value;
+    preview.style.backgroundColor=colors.bg;
+    preview.style.backgroundImage=mode==='gradient'
+      ?displayBackgroundPreviewGradient(colors.bg,colors.accent):'none';
+    preview.style.color=colors.ink;
+  }
+
   function renderDisplayThemePreview(){
     const colors=currentDisplayThemeColors();
     const map={
@@ -343,6 +370,7 @@
     if(preset)preset.value=key;
     const label=$('displayThemePresetLabel');
     if(label)label.textContent=key==='custom'?'カスタム':DISPLAY_THEME_PRESETS[key].label;
+    renderDisplayBackgroundPreview();
   }
 
   function applyDisplayThemePreset(key){
@@ -459,6 +487,7 @@
     $('displayHeaderImage').value='';
     $('displayFooterText').value=value.footerText||'';
     $('displayPoweredByText').value=value.poweredByText||'';
+    if($('displayBackgroundMode'))$('displayBackgroundMode').value=value.backgroundMode==='gradient'?'gradient':'solid';
     $('displayThemeBg').value=value.themeBg||'#eeeae0';
     $('displayThemeInk').value=value.themeInk||'#1f3c31';
     $('displayThemeAccent').value=value.themeAccent||'#244f40';
@@ -529,6 +558,7 @@
         footerText:$('displayFooterText').value.trim(),
         poweredByText:$('displayPoweredByText').value.trim(),
         themeBg:$('displayThemeBg').value,
+        backgroundMode:$('displayBackgroundMode')?$('displayBackgroundMode').value:(state.displaySettings?.backgroundMode||'solid'),
         themeInk:$('displayThemeInk').value,
         themeAccent:$('displayThemeAccent').value,
         themeAccentStrong:$('displayThemeAccentStrong').value
@@ -1744,6 +1774,7 @@
     const displaySettingsForm=$('displaySettingsForm');
     if(displaySettingsForm){
       displaySettingsForm.addEventListener('submit',saveDisplaySettings);
+      if($('displayBackgroundMode'))$('displayBackgroundMode').addEventListener('change',renderDisplayBackgroundPreview);
       ['displayHeaderLayout','displayHeroTitleScale','displayHeroCopyScale'].forEach(function(id){
         const element=$(id);
         if(element){
