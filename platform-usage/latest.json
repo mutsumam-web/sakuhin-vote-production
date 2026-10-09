@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-09T12:40:42.103Z",
+  "collectedAt": "2026-10-09T18:37:51.630Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 1474,
-    "quotaUsedMinutes": 1198,
-    "privateRepoMinutes": 1198,
-    "publicRepoMinutes": 276,
+    "usedMinutes": 1479,
+    "quotaUsedMinutes": 1199,
+    "privateRepoMinutes": 1199,
+    "publicRepoMinutes": 280,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 1474,
+    "repositoryMinutesTotal": 1479,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,7 +23,7 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 714
+      "minutes": 715
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -35,7 +35,7 @@
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 274
+      "minutes": 278
     },
     {
       "repository": "mutsumam-web/soyukai-site",
@@ -57,7 +57,7 @@
     }
   ],
   "workers": {
-    "requestsToday": 1698,
+    "requestsToday": 1704,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
