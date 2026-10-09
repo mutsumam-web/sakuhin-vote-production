@@ -334,11 +334,12 @@
     };
     const values=rgb(bg);
     const dark=values[0]*.2126+values[1]*.7152+values[2]*.0722<85;
-    const highlight=mix(bg,'#ffffff',dark?.065:.11);
-    const glow=mix(bg,accent,dark?.15:.065);
-    const lower=mix(bg,dark?'#000000':'#ffffff',dark?.10:.035);
-    return 'radial-gradient(ellipse at 84% 8%,'+glow+' 0%,transparent 58%),'
-      +'linear-gradient(145deg,'+highlight+' 0%,'+bg+' 56%,'+lower+' 100%)';
+    const highlight=mix(bg,'#ffffff',dark?.12:.18);
+    const glow=mix(bg,accent,dark?.32:.18);
+    const lower=mix(bg,dark?'#000000':'#ffffff',dark?.20:.08);
+    return 'radial-gradient(ellipse at 84% 8%,'+glow+' 0%,transparent 46%),'
+      +'radial-gradient(ellipse at 16% 100%,'+highlight+' 0%,transparent 52%),'
+      +'linear-gradient(145deg,'+highlight+' 0%,'+bg+' 48%,'+lower+' 100%)';
   }
 
   function renderDisplayBackgroundPreview(){
