@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-09T00:47:44.491Z",
+  "collectedAt": "2026-10-09T06:42:42.960Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 1362,
-    "quotaUsedMinutes": 1102,
-    "privateRepoMinutes": 1102,
-    "publicRepoMinutes": 260,
+    "usedMinutes": 1406,
+    "quotaUsedMinutes": 1133,
+    "privateRepoMinutes": 1133,
+    "publicRepoMinutes": 273,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 1362,
+    "repositoryMinutesTotal": 1406,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,7 +23,7 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 682
+      "minutes": 713
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -35,7 +35,7 @@
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 258
+      "minutes": 271
     },
     {
       "repository": "mutsumam-web/soyukai-site",
@@ -57,21 +57,21 @@
     }
   ],
   "workers": {
-    "requestsToday": 147,
+    "requestsToday": 860,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 20435,
+    "rowsReadToday": 66584,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 3031,
+    "rowsWrittenToday": 8373,
     "rowsWrittenLimit": 100000,
-    "storageBytes": 1105920,
+    "storageBytes": 1204224,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 116302644,
+    "storageBytes": 117378129,
     "storageLimitBytes": 10737418240,
     "scope": "account_exact"
   },
