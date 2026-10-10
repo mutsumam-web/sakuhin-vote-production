@@ -34,6 +34,18 @@
   --thumb-size:clamp(36px,13vw,4.1rem);
   --radius:clamp(.45rem,1.8vmin,.9rem);
   --tap-min:44px;
+  --gallery-columns:2;
+  --gallery-gap:clamp(.75rem,3vw,1.5rem);
+  --gallery-title-size:clamp(.96rem,4.15vmin,1.36rem);
+  --gallery-author-size:clamp(.74rem,3.05vmin,.98rem);
+}
+
+/* A 3-column grid remains available at every viewport width, including phones. */
+:root[data-gallery-columns="3"]{
+  --gallery-columns:3;
+  --gallery-gap:clamp(.35rem,1.8vw,1rem);
+  --gallery-title-size:clamp(.76rem,2.95vmin,1.1rem);
+  --gallery-author-size:clamp(.68rem,2.55vmin,.9rem);
 }
 
 *,
@@ -608,9 +620,9 @@ svg{
 .works-grid{
   min-width:0;
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(var(--gallery-columns),minmax(0,1fr));
   align-items:start;
-  gap:clamp(.75rem,3vw,1.5rem);
+  gap:var(--gallery-gap);
 }
 
 .works-loading{
@@ -760,7 +772,7 @@ svg{
   min-width:0;
   margin:0;
   color:var(--ink);
-  font-size:clamp(.96rem,4.15vmin,1.36rem);
+  font-size:var(--gallery-title-size);
   line-height:1.42;
   font-weight:650;
   letter-spacing:-.02em;
@@ -772,7 +784,7 @@ svg{
   min-width:0;
   margin-top:.3rem;
   color:var(--ink-soft);
-  font-size:clamp(.74rem,3.05vmin,.98rem);
+  font-size:var(--gallery-author-size);
   line-height:1.45;
   overflow-wrap:anywhere;
   word-break:break-word;

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / SETTINGS</title>
-  <link rel="stylesheet" href="admin.css?v=02b9a4e6a2af">
+  <link rel="stylesheet" href="admin.css?v=7719ce220092">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -213,6 +213,15 @@
             </div>
           </div>
           <small>簡易プレビューです。実際の写真の切り抜きと文字配置はProductionの画面幅に連動します。</small>
+        </div>
+
+        <div class="display-layout-field">
+          <label for="displayGalleryColumns">作品一覧のカラム数</label>
+          <select id="displayGalleryColumns" aria-label="作品一覧のカラム数">
+            <option value="2">2カラム（従来表示）</option>
+            <option value="3">3カラム（スマートフォンを含む全画面）</option>
+          </select>
+          <small>スマートフォンでも3カラムを選択できます。作品の選択・詳細表示・投票操作は従来どおりです。初期値は2カラムです。</small>
         </div>
 
         <div class="display-image-field">
@@ -593,6 +602,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=02b9a4e6a2af"></script>
+  <script src="admin.js?v=7719ce220092"></script>
 </body>
 </html>

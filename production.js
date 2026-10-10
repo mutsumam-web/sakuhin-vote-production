@@ -16,6 +16,7 @@ const DEFAULT_DISPLAY_SETTINGS=Object.freeze({
   poweredByText:'駐屯地曹友会×厚生班',
   themeBg:'#eeeae0',
   backgroundMode:'solid',
+  galleryColumns:2,
   themeInk:'#1f3c31',
   themeAccent:'#244f40',
   themeAccentStrong:'#173b30'
@@ -77,6 +78,7 @@ function normalizeDisplaySettings(value){
     poweredByText:text('poweredByText',DEFAULT_DISPLAY_SETTINGS.poweredByText),
     themeBg:color('themeBg',DEFAULT_DISPLAY_SETTINGS.themeBg),
     backgroundMode:['gradient','landscape','photoreal_forest'].includes(source.backgroundMode)?source.backgroundMode:'solid',
+    galleryColumns:Number(source.galleryColumns)===3?3:2,
     themeInk:color('themeInk',DEFAULT_DISPLAY_SETTINGS.themeInk),
     themeAccent:color('themeAccent',DEFAULT_DISPLAY_SETTINGS.themeAccent),
     themeAccentStrong:color('themeAccentStrong',DEFAULT_DISPLAY_SETTINGS.themeAccentStrong)
@@ -245,6 +247,7 @@ function applyDisplaySettings(value){
   });
 
   const root=document.documentElement;
+  root.dataset.galleryColumns=String(displaySettings.galleryColumns);
   root.style.setProperty('--bg',displaySettings.themeBg);
   root.style.setProperty('--ink',displaySettings.themeInk);
   root.style.setProperty('--accent',displaySettings.themeAccent);
