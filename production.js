@@ -125,12 +125,15 @@ function themeIsDark(hex){
 // Static gradient derived from existing theme colours, shared with Admin preview.
 function displayBackgroundGradient(bg,accent){
   const dark=themeIsDark(bg);
-  const highlight=mixHex(bg,'#ffffff',dark?.12:.18);
-  const glow=mixHex(bg,accent,dark?.32:.18);
-  const lower=mixHex(bg,dark?'#000000':'#ffffff',dark?.20:.08);
-  return 'radial-gradient(ellipse at 84% 8%,'+glow+' 0%,transparent 46%),'
-    +'radial-gradient(ellipse at 16% 100%,'+highlight+' 0%,transparent 52%),'
-    +'linear-gradient(145deg,'+highlight+' 0%,'+bg+' 48%,'+lower+' 100%)';
+  const highlight=mixHex(bg,'#ffffff',dark?.15:.24);
+  const glow=mixHex(bg,accent,dark?.42:.25);
+  const middle=mixHex(bg,dark?'#ffffff':accent,dark?.09:.10);
+  const lower=mixHex(bg,dark?'#000000':'#ffffff',dark?.22:.13);
+  // Each layer spans the entire document: a continuous atmospheric canvas, never tiles.
+  return 'radial-gradient(ellipse 85% 22% at 14% 10%,'+highlight+' 0%,transparent 100%),'
+    +'radial-gradient(ellipse 78% 27% at 92% 45%,'+glow+' 0%,transparent 100%),'
+    +'radial-gradient(ellipse 95% 24% at 10% 85%,'+middle+' 0%,transparent 100%),'
+    +'linear-gradient(165deg,'+highlight+' 0%,'+bg+' 30%,'+middle+' 66%,'+lower+' 100%)';
 }
 
 function displayThemeSurfaces(settings){
