@@ -65,6 +65,14 @@ body{
   text-rendering:optimizeLegibility;
 }
 
+:root.theme-gradient body{
+  /* SVG is a transparent artistic layer; the theme gradient remains the base. */
+  background-image:url("assets/wa-silk.svg"),var(--page-gradient,none);
+  background-position:center top,center top;
+  background-size:100% 100%,100% 100%;
+  background-repeat:no-repeat,no-repeat;
+}
+
 button,
 input,
 select,

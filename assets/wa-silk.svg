@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 3200" preserveAspectRatio="none" aria-hidden="true">
+<defs>
+ <linearGradient id="silk" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff9e9" stop-opacity=".62"/><stop offset=".45" stop-color="#f3e4cc" stop-opacity=".30"/><stop offset="1" stop-color="#d2e5e5" stop-opacity=".24"/></linearGradient>
+ <linearGradient id="silk2" x1=".1" y1="0" x2=".8" y2="1"><stop stop-color="#fff" stop-opacity=".08"/><stop offset=".48" stop-color="#fff" stop-opacity=".34"/><stop offset="1" stop-color="#d9e6e6" stop-opacity=".05"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b58a45" stop-opacity="0"/><stop offset=".3" stop-color="#b58a45" stop-opacity=".35"/><stop offset=".72" stop-color="#b58a45" stop-opacity=".42"/><stop offset="1" stop-color="#b58a45" stop-opacity="0"/></linearGradient>
+ <pattern id="grain" width="73" height="79" patternUnits="userSpaceOnUse"><circle cx="12" cy="17" r=".9" fill="#9c8265" opacity=".13"/><circle cx="57" cy="66" r=".8" fill="#fff" opacity=".27"/><circle cx="42" cy="31" r=".65" fill="#9c8265" opacity=".1"/></pattern>
+</defs>
+<!-- The artwork is transparent and follows the full page height. No tile repeat. -->
+<path d="M-230 180 C210 -140 570 130 1230 30 L1430 720 C930 570 690 820 260 710 C-90 610 -230 440 -230 180Z" fill="url(#silk)"/>
+<path d="M-150 260 C280 40 610 280 1340 150" fill="none" stroke="url(#gold)" stroke-width="3"/>
+<path d="M-160 330 C240 120 720 410 1320 210" fill="none" stroke="#fffaf0" stroke-opacity=".52" stroke-width="5"/>
+<path d="M1250 430 C630 730 760 1020 -180 1200 L-170 1880 C500 1590 670 1550 1320 1360Z" fill="url(#silk2)"/>
+<path d="M1320 540 C810 770 770 1090 -100 1270" fill="none" stroke="url(#gold)" stroke-width="3"/>
+<path d="M1300 650 C720 880 860 1130 -140 1350" fill="none" stroke="#fff" stroke-opacity=".42" stroke-width="6"/>
+<path d="M-240 1740 C420 1360 560 1850 1320 1540 L1350 2450 C760 2240 520 2630 -170 2360Z" fill="url(#silk)"/>
+<path d="M-120 1830 C460 1520 680 1940 1310 1680" fill="none" stroke="url(#gold)" stroke-width="3"/>
+<path d="M-120 1950 C460 1630 720 2070 1320 1800" fill="none" stroke="#fff" stroke-opacity=".42" stroke-width="5"/>
+<path d="M1330 2300 C710 2110 590 2640 -130 2530 L-140 3280 L1360 3280Z" fill="url(#silk2)"/>
+<path d="M1320 2420 C760 2230 550 2780 -110 2680" fill="none" stroke="url(#gold)" stroke-width="3"/>
+<path d="M1320 2540 C720 2350 600 2890 -120 2800" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="5"/>
+<rect width="1200" height="3200" fill="url(#grain)"/>
+</svg>

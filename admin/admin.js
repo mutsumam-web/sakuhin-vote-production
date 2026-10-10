@@ -351,7 +351,9 @@
     const mode=$('displayBackgroundMode').value;
     preview.style.backgroundColor=colors.bg;
     preview.style.backgroundImage=mode==='gradient'
-      ?displayBackgroundPreviewGradient(colors.bg,colors.accent):'none';
+      ?'url("../assets/wa-silk.svg"),'+displayBackgroundPreviewGradient(colors.bg,colors.accent):'none';
+    preview.style.backgroundSize=mode==='gradient'?'100% 100%,100% 100%':'auto';
+    preview.style.backgroundRepeat='no-repeat';
     preview.style.color=colors.ink;
   }
 
