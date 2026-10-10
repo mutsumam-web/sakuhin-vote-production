@@ -350,10 +350,12 @@
     const colors=currentDisplayThemeColors();
     const mode=$('displayBackgroundMode').value;
     preview.style.backgroundColor=colors.bg;
-    preview.style.backgroundImage=mode==='landscape'
-      ?'url("../assets/scenic-landscape.svg")'
+    preview.style.backgroundImage=mode==='photoreal_forest'
+      ?'url("../assets/photoreal-forest-top.webp")'
+      :mode==='landscape'?'url("../assets/scenic-landscape.svg")'
       :mode==='gradient'?'url("../assets/wa-silk.svg"),'+displayBackgroundPreviewGradient(colors.bg,colors.accent):'none';
-    preview.style.backgroundSize=mode==='landscape'?'100% 100%':mode==='gradient'?'100% 100%,100% 100%':'auto';
+    preview.style.backgroundSize=mode==='photoreal_forest'?'cover':mode==='landscape'?'100% 100%':mode==='gradient'?'100% 100%,100% 100%':'auto';
+    preview.style.backgroundPosition='center top';
     preview.style.backgroundRepeat='no-repeat';
     preview.style.color=colors.ink;
   }
@@ -493,7 +495,7 @@
     $('displayHeaderImage').value='';
     $('displayFooterText').value=value.footerText||'';
     $('displayPoweredByText').value=value.poweredByText||'';
-    if($('displayBackgroundMode'))$('displayBackgroundMode').value=['gradient','landscape'].includes(value.backgroundMode)?value.backgroundMode:'solid';
+    if($('displayBackgroundMode'))$('displayBackgroundMode').value=['gradient','landscape','photoreal_forest'].includes(value.backgroundMode)?value.backgroundMode:'solid';
     $('displayThemeBg').value=value.themeBg||'#eeeae0';
     $('displayThemeInk').value=value.themeInk||'#1f3c31';
     $('displayThemeAccent').value=value.themeAccent||'#244f40';
