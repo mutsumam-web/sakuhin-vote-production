@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 3200" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="sky" x2="0" y2="1"><stop stop-color="#47738d"/><stop offset=".12" stop-color="#f8c88d"/><stop offset=".28" stop-color="#f6e2c2"/><stop offset=".51" stop-color="#d6dfd9"/><stop offset=".73" stop-color="#f1cf9f"/><stop offset="1" stop-color="#1e4553"/></linearGradient>
+<radialGradient id="sun"><stop stop-color="#fffaf0" stop-opacity=".98"/><stop offset=".13" stop-color="#ffe2a2" stop-opacity=".8"/><stop offset=".52" stop-color="#f6bc73" stop-opacity=".27"/><stop offset="1" stop-color="#f6bc73" stop-opacity="0"/></radialGradient>
+<linearGradient id="ridge" x2="0" y2="1"><stop stop-color="#486e7c"/><stop offset="1" stop-color="#b6bdad"/></linearGradient>
+<linearGradient id="ridge2" x2="0" y2="1"><stop stop-color="#365c68"/><stop offset="1" stop-color="#d5d5bd"/></linearGradient>
+<linearGradient id="mist" x2="0" y2="1"><stop stop-color="#fff4df" stop-opacity=".04"/><stop offset=".5" stop-color="#fff5df" stop-opacity=".77"/><stop offset="1" stop-color="#fff5df" stop-opacity=".08"/></linearGradient>
+<linearGradient id="ribbon" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".05"/><stop offset=".48" stop-color="#fffaf0" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity=".05"/></linearGradient>
+<linearGradient id="gold" x2="0" y2="1"><stop stop-color="#e2ac53" stop-opacity="0"/><stop offset=".48" stop-color="#f5d99a" stop-opacity=".65"/><stop offset="1" stop-color="#d4a355" stop-opacity="0"/></linearGradient>
+<pattern id="dust" width="61" height="83" patternUnits="userSpaceOnUse"><circle cx="10" cy="25" r=".8" fill="#fff" opacity=".36"/><circle cx="44" cy="67" r=".6" fill="#c5a477" opacity=".27"/></pattern>
+</defs>
+<rect width="900" height="3200" fill="url(#sky)"/>
+<circle cx="645" cy="345" r="520" fill="url(#sun)"/>
+<circle cx="645" cy="345" r="25" fill="#fff5dc" opacity=".94"/>
+<g opacity=".72" fill="#718fa0"><path d="M0 540L90 494 160 519 240 452 322 512 420 462 490 508 600 426 690 499 790 452 900 510V690H0Z"/><path d="M0 800L110 728 205 759 290 685 410 750 540 665 665 748 775 680 900 749V930H0Z" opacity=".6"/></g>
+<path d="M0 960L120 840 215 884 330 758 445 834 580 715 705 803 795 725 900 812V1260H0Z" fill="url(#ridge)" opacity=".65"/>
+<path d="M0 1300L135 1180 250 1235 370 1100 485 1180 615 1050 735 1175 840 1100 900 1130V1610H0Z" fill="url(#ridge2)" opacity=".46"/>
+<path d="M0 1710L95 1550 225 1610 345 1430 470 1560 605 1400 730 1515 855 1370 900 1420V2020H0Z" fill="url(#ridge)" opacity=".53"/>
+<path d="M0 2260L130 2070 280 2180 400 1980 520 2090 640 1940 775 2030 900 1870V2530H0Z" fill="url(#ridge2)" opacity=".74"/>
+<path d="M0 2820L110 2630 225 2750 355 2450 490 2590 630 2410 750 2540 900 2340V3200H0Z" fill="#204d5c" opacity=".83"/>
+<g fill="url(#mist)"><ellipse cx="460" cy="775" rx="690" ry="145"/><ellipse cx="410" cy="1150" rx="710" ry="175"/><ellipse cx="490" cy="1500" rx="720" ry="155"/><ellipse cx="430" cy="2000" rx="720" ry="160"/><ellipse cx="400" cy="2500" rx="740" ry="150"/></g>
+<path d="M1030 540C430 880 800 1280-110 1650L-120 2110C580 1760 570 1510 1010 1400Z" fill="url(#ribbon)" opacity=".8"/>
+<path d="M1010 630C520 920 780 1310-90 1700" fill="none" stroke="url(#gold)" stroke-width="4"/>
+<path d="M1010 725C510 1040 780 1410-100 1810" fill="none" stroke="#fff" stroke-opacity=".52" stroke-width="5"/>
+<path d="M-130 2230C400 1900 600 2440 1020 2150L1020 2750C480 2500 300 2920-130 2710Z" fill="url(#ribbon)" opacity=".86"/>
+<path d="M-120 2300C420 2010 610 2510 1000 2270" fill="none" stroke="url(#gold)" stroke-width="4"/>
+<path d="M-120 2400C410 2130 630 2640 1000 2390" fill="none" stroke="#fff" stroke-opacity=".46" stroke-width="5"/>
+<g fill="#183f43" opacity=".65"><path d="M0 1780Q55 1690 80 1590Q95 1710 175 1740Q120 1740 100 1830Q65 1760 0 1780Z"/><path d="M900 2600Q800 2510 780 2410Q765 2540 670 2600Q790 2590 820 2710Q850 2610 900 2600Z"/><path d="M0 3010Q95 2910 120 2760Q150 2940 260 3000Q140 2980 125 3180Q90 3030 0 3010Z"/></g>
+<rect width="900" height="3200" fill="url(#dust)"/>
+</svg>

@@ -76,7 +76,7 @@ function normalizeDisplaySettings(value){
     footerText:text('footerText',DEFAULT_DISPLAY_SETTINGS.footerText),
     poweredByText:text('poweredByText',DEFAULT_DISPLAY_SETTINGS.poweredByText),
     themeBg:color('themeBg',DEFAULT_DISPLAY_SETTINGS.themeBg),
-    backgroundMode:source.backgroundMode==='gradient'?'gradient':'solid',
+    backgroundMode:['gradient','landscape'].includes(source.backgroundMode)?source.backgroundMode:'solid',
     themeInk:color('themeInk',DEFAULT_DISPLAY_SETTINGS.themeInk),
     themeAccent:color('themeAccent',DEFAULT_DISPLAY_SETTINGS.themeAccent),
     themeAccentStrong:color('themeAccentStrong',DEFAULT_DISPLAY_SETTINGS.themeAccentStrong)
@@ -249,8 +249,9 @@ function applyDisplaySettings(value){
   root.style.setProperty('--ink',displaySettings.themeInk);
   root.style.setProperty('--accent',displaySettings.themeAccent);
   root.style.setProperty('--accent-strong',displaySettings.themeAccentStrong);
-  const gradientEnabled=displaySettings.backgroundMode==='gradient';
+  const gradientEnabled=displaySettings.backgroundMode!=='solid';
   root.classList.toggle('theme-gradient',gradientEnabled);
+  root.classList.toggle('theme-landscape',displaySettings.backgroundMode==='landscape');
   if(gradientEnabled){
     root.style.setProperty('--page-gradient',displayBackgroundGradient(displaySettings.themeBg,displaySettings.themeAccent));
   }else{

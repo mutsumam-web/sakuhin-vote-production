@@ -73,6 +73,16 @@ body{
   background-repeat:no-repeat,no-repeat;
 }
 
+:root.theme-landscape body{
+  background-image:url("assets/scenic-landscape.svg");
+  background-size:100% 100%;
+  background-position:center top;
+  background-repeat:no-repeat;
+}
+@media (max-width:600px){
+  :root.theme-landscape body{background-size:100% 100%}
+}
+
 button,
 input,
 select,

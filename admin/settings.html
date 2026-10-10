@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / SETTINGS</title>
-  <link rel="stylesheet" href="admin.css?v=5736032a14ec">
+  <link rel="stylesheet" href="admin.css?v=060634dd4e04">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -278,12 +278,13 @@
             <select id="displayBackgroundMode" aria-label="背景スタイル">
               <option value="solid">単色（従来表示）</option>
               <option value="gradient">和モダン・シルク（ON）</option>
+              <option value="landscape">風景アート背景（ON）</option>
             </select>
             <div id="displayBackgroundPreview" class="display-background-preview" aria-label="背景グラデーションプレビュー">
               <strong>作品展</strong>
               <span>選択中のテーマカラーで背景を表示</span>
             </div>
-            <small>透明な曲線・シルク・金色の光を重ねた縦長アート背景です。全20テーマとカスタム配色に対応。タイル表示なし。初期値は単色です。</small>
+            <small>単色／和モダン・シルク／風景アート背景から選択。風景アートは朝日・山並み・霧・シルクを組み合わせた縦長の非反復背景です。初期値は単色です。</small>
           </div>
           <small>プリセット選択後も下の4色を個別調整できます。調整すると「カスタム」になります。</small>
         </div>
@@ -591,6 +592,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=5736032a14ec"></script>
+  <script src="admin.js?v=060634dd4e04"></script>
 </body>
 </html>
