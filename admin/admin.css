@@ -566,7 +566,7 @@ button:focus-visible,input:focus-visible{
 
 .live-panel{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr));
   gap:.7rem;
 }
 
@@ -1317,6 +1317,96 @@ th{color:var(--muted);font-weight:600}
 .work-manager-actions button:hover{
   color:var(--text);
   border-color:#465565;
+}
+
+
+/* Settings-category navigation and collapsible display controls only. */
+.settings-category-nav{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));
+  gap:clamp(.4rem,1.4vmin,.75rem);
+  margin-top:var(--gap);
+}
+.settings-category-nav button{
+  min-height:clamp(2.8rem,7vmin,3.4rem);
+  padding:.65rem .5rem;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--surface);
+  color:var(--muted);
+  font-weight:700;
+}
+.settings-category-nav button[aria-pressed="true"]{
+  border-color:var(--accent);
+  background:var(--surface-2);
+  color:var(--accent);
+}
+.settings-category-nav button:focus-visible,
+.settings-overview-card button:focus-visible,
+.settings-fold summary:focus-visible{
+  outline:.18rem solid var(--accent-2);
+  outline-offset:.15rem;
+}
+.settings-overview-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));
+  gap:var(--gap);
+}
+.settings-overview-card{
+  display:flex;
+  flex-direction:column;
+  gap:.55rem;
+  min-width:0;
+  padding:var(--pad);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--surface-2);
+}
+.settings-overview-card span{color:var(--muted);font-size:.78rem}
+.settings-overview-card strong{font-size:clamp(1rem,2.6vmin,1.2rem);overflow-wrap:anywhere}
+.settings-overview-card small{color:var(--muted);line-height:1.5}
+.settings-overview-card button{
+  margin-top:auto;
+  min-height:2.6rem;
+  padding:.6rem;
+  border:1px solid var(--line);
+  border-radius:.5rem;
+  background:var(--surface);
+  text-align:left;
+}
+.settings-fold{
+  grid-column:1/-1;
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:.65rem;
+  background:var(--surface);
+}
+.settings-fold summary{
+  display:grid;
+  gap:.2rem;
+  padding:clamp(.75rem,2vmin,1rem);
+  cursor:pointer;
+  list-style-position:inside;
+}
+.settings-fold summary{position:relative;padding-right:3rem}
+.settings-fold summary::after{
+  content:"+";
+  position:absolute;
+  right:1rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--accent);
+  font-size:1.35rem;
+}
+.settings-fold[open] summary::after{content:"−"}
+.settings-fold summary strong{font-size:.9rem}
+.settings-fold summary small{color:var(--muted);line-height:1.5}
+.settings-fold[open] summary{border-bottom:1px solid var(--line)}
+.settings-fold-content{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));
+  gap:.8rem;
+  padding:var(--pad);
 }
 
 @media print{

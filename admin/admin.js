@@ -398,6 +398,7 @@
     $('voteCycleSummary').textContent=value.updatedAt
       ?'最終更新 '+formatDateTime(value.updatedAt)+' / '+String(value.voteCycleId||'2026')
       :'現在の投票サイクル '+String(value.voteCycleId||'2026');
+    renderSettingsOverview();
   }
 
   async function loadVoteCycleSettings(){
@@ -507,6 +508,7 @@
       ?'最終更新 '+formatDateTime(value.updatedAt)
       :'現在のProduction表示を変更します。';
     renderDisplayImagePreview(null);
+    renderSettingsOverview();
   }
 
   async function loadDisplaySettings(){
@@ -663,6 +665,7 @@
     el.textContent=(settings.enabled?'有効':'無効')
       +' / 現在 '+formatNumber(current)+'件'
       +(next?' / 次回 '+formatNumber(next)+'件目':' / 次回設定なし');
+    renderSettingsOverview();
   }
 
   async function loadWinnerSettings(){
@@ -1718,6 +1721,65 @@
     });
   }
 
+
+  // Settings-only navigation. Existing Dashboard and Works pages remain unchanged.
+  function showSettingsCategory(category){
+    const nav=$('settingsCategoryNav');
+    if(!nav)return;
+    const selected=['overview','design','vote','system'].includes(category)?category:'overview';
+    nav.querySelectorAll('[data-settings-tab]').forEach(function(button){
+      button.setAttribute('aria-pressed',button.dataset.settingsTab===selected?'true':'false');
+    });
+    document.querySelectorAll('[data-settings-section]').forEach(function(section){
+      section.hidden=section.dataset.settingsSection!==selected;
+    });
+  }
+
+  function renderSettingsOverview(){
+    if(!$('settingsOverview'))return;
+    const display=state.displaySettings;
+    if(display){
+      $('settingsOverviewGallery').textContent=display.galleryMode==='reel'?'スロットリール'
+        :(Number(display.galleryColumns)===3?'3カラム':'2カラム');
+      const backgrounds={solid:'単色',gradient:'和モダン・シルク',landscape:'風景アート',photoreal_forest:'写実森林'};
+      const preset=Object.keys(DISPLAY_THEME_PRESETS).find(function(key){
+        const theme=DISPLAY_THEME_PRESETS[key];
+        return theme.bg===display.themeBg&&theme.ink===display.themeInk&&
+          theme.accent===display.themeAccent&&theme.accentStrong===display.themeAccentStrong;
+      });
+      $('settingsOverviewAppearance').textContent=(preset?DISPLAY_THEME_PRESETS[preset].label:'カスタム')
+        +' / '+(backgrounds[display.backgroundMode]||'単色');
+    }
+    if(state.voteCycleSettings){
+      $('settingsOverviewCycle').textContent=String(state.voteCycleSettings.voteCycleId||'2026');
+    }
+    if(state.winnerSettings){
+      $('settingsOverviewWinner').textContent=state.winnerSettings.enabled?'有効':'無効';
+    }
+  }
+
+  function bindSettingsNavigation(){
+    const nav=$('settingsCategoryNav');
+    if(!nav)return;
+    nav.querySelectorAll('[data-settings-tab]').forEach(function(button){
+      button.addEventListener('click',function(){showSettingsCategory(button.dataset.settingsTab);});
+    });
+    document.querySelectorAll('[data-settings-open]').forEach(function(button){
+      button.addEventListener('click',function(){
+        showSettingsCategory(button.dataset.settingsOpen);
+        nav.scrollIntoView({block:'start'});
+      });
+    });
+    showSettingsCategory('overview');
+    const form=$('displaySettingsForm');
+    if(form){
+      form.addEventListener('invalid',function(event){
+        const fold=event.target.closest('.settings-fold');
+        if(fold)fold.open=true;
+      },true);
+    }
+  }
+
   function bind(){
     const on=(id,type,listener)=>{
       const element=$(id);
@@ -1839,6 +1901,7 @@
   }
 
   async function init(){
+    bindSettingsNavigation();
     bind();
     let saved='';
     try{saved=sessionStorage.getItem(SESSION_KEY)||'';}catch(e){}
