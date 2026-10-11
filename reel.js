@@ -1,11 +1,12 @@
 /* Single artwork reel: document scrolling is the only scroll container.
    The hero remains in normal flow; the sticky reel stage occupies the gallery.
-   Only five artwork cards are mounted at any time. */
+   Only three artwork cards (current and neighbours) are mounted at once.
+   Geometry is cached: scrolling reads scrollY, not bounding boxes. */
 (function(){
   'use strict';
 
   let current=null;
-  const WINDOW_RADIUS=2;
+  const WINDOW_RADIUS=1;
 
   function destroy(){
     if(!current)return;
@@ -72,9 +73,10 @@
       createCard:options.createCard,
       cards:new Map(),
       center:-1,
-      progress:0,
+      progress:NaN,
       step:1,
       start:0,
+      radius:0,
       frame:0,
       snapTimer:0,
       reducedMotion,
@@ -84,11 +86,12 @@
     current=state;
 
     function measure(){
-      // CSS owns sizing. JS reads the resolved track length for navigation.
-      const trackHeight=container.getBoundingClientRect().height;
-      const stageHeight=stage.getBoundingClientRect().height;
-      state.start=container.getBoundingClientRect().top+window.scrollY;
-      state.step=count>1?Math.max(1,(trackHeight-stageHeight)/(count-1)):1;
+      // Read geometry only on mount or viewport resize, never per scroll frame.
+      const track=container.getBoundingClientRect();
+      const stageHeight=stage.offsetHeight;
+      state.start=track.top+window.scrollY;
+      state.step=count>1?Math.max(1,(track.height-stageHeight)/(count-1)):1;
+      state.radius=Math.min(viewport.clientHeight*.43,300);
     }
 
     function renderWindow(center){
@@ -111,6 +114,16 @@
         viewport.appendChild(card);
         state.cards.set(index,card);
       });
+      // Focus/accessibility attributes only change when the central work changes.
+      state.cards.forEach(function(card,index){
+        const active=index===center;
+        card.classList.toggle('is-current',active);
+        card.inert=!active;
+        card.setAttribute('aria-hidden',active?'false':'true');
+        card.tabIndex=active?0:-1;
+        const zone=card.querySelector('.work-select-zone');
+        if(zone)zone.tabIndex=active?0:-1;
+      });
       counter.textContent='WORK '+String(center+1).padStart(2,'0')+' / '+String(count).padStart(2,'0');
       previous.disabled=center<=0;
       next.disabled=center>=count-1;
@@ -119,15 +132,19 @@
     function frame(){
       state.frame=0;
       if(current!==state)return;
-      measure();
       const position=(window.scrollY-state.start)/state.step;
-      state.progress=Math.max(0,Math.min(count-1,position));
-      const center=Math.round(state.progress);
+      const progress=Math.max(0,Math.min(count-1,position));
+      const center=Math.round(progress);
       renderWindow(center);
+      // No style writes if the scroll position is unchanged or outside the reel.
+      // Reduced-motion users only receive updates when the selected work changes.
+      const visualProgress=state.reducedMotion?center:progress;
+      if(Math.abs(visualProgress-state.progress)<.001)return;
+      state.progress=visualProgress;
 
-      const radius=Math.min(state.viewport.clientHeight*.43,300);
+      const radius=state.radius;
       state.cards.forEach(function(card,index){
-        const relative=index-state.progress;
+        const relative=index-visualProgress;
         const magnitude=Math.abs(relative);
         const angle=Math.max(-84,Math.min(84,relative*40));
         const radians=angle*Math.PI/180;
@@ -137,13 +154,6 @@
         card.style.transform='translate(-50%,-50%) translate3d(0,'+y.toFixed(1)+'px,'+z.toFixed(1)+'px) rotateX('+rotation.toFixed(1)+'deg)';
         card.style.opacity=String(Math.max(.04,1-magnitude*.42));
         card.style.zIndex=String(100-Math.round(magnitude*10));
-        const active=index===center;
-        card.classList.toggle('is-current',active);
-        card.inert=!active;
-        card.setAttribute('aria-hidden',active?'false':'true');
-        card.tabIndex=active?0:-1;
-        const zone=card.querySelector('.work-select-zone');
-        if(zone)zone.tabIndex=active?0:-1;
       });
     }
 
@@ -155,7 +165,6 @@
       if(current!==state||count<2)return;
       if(document.body.classList.contains('work-detail-active')||
          document.body.classList.contains('vote-confirm-active'))return;
-      measure();
       const position=(window.scrollY-state.start)/state.step;
       if(position<=0||position>=count-1)return;
       const nearest=Math.round(position);
@@ -174,11 +183,11 @@
 
     function onResize(){
       measure();
+      state.progress=NaN; // Updated radius/viewport size requires fresh transforms.
       schedule();
     }
 
     function go(delta){
-      measure();
       const target=Math.max(0,Math.min(count-1,state.center+delta));
       window.scrollTo({
         top:state.start+target*state.step,
