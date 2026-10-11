@@ -496,7 +496,8 @@
     $('displayFooterText').value=value.footerText||'';
     $('displayPoweredByText').value=value.poweredByText||'';
     if($('displayBackgroundMode'))$('displayBackgroundMode').value=['gradient','landscape','photoreal_forest'].includes(value.backgroundMode)?value.backgroundMode:'solid';
-    if($('displayGalleryColumns'))$('displayGalleryColumns').value=Number(value.galleryColumns)===3?'3':'2';
+    if($('displayGalleryColumns'))$('displayGalleryColumns').value=value.galleryMode==='reel'
+      ?'reel':(Number(value.galleryColumns)===3?'3':'2');
     $('displayThemeBg').value=value.themeBg||'#eeeae0';
     $('displayThemeInk').value=value.themeInk||'#1f3c31';
     $('displayThemeAccent').value=value.themeAccent||'#244f40';
@@ -568,7 +569,9 @@
         poweredByText:$('displayPoweredByText').value.trim(),
         themeBg:$('displayThemeBg').value,
         backgroundMode:$('displayBackgroundMode')?$('displayBackgroundMode').value:(state.displaySettings?.backgroundMode||'solid'),
-        galleryColumns:$('displayGalleryColumns')?Number($('displayGalleryColumns').value):(state.displaySettings?.galleryColumns||2),
+        galleryColumns:$('displayGalleryColumns')&&$('displayGalleryColumns').value!=='reel'
+          ?Number($('displayGalleryColumns').value):(state.displaySettings?.galleryColumns||2),
+        galleryMode:$('displayGalleryColumns')&&$('displayGalleryColumns').value==='reel'?'reel':'grid',
         themeInk:$('displayThemeInk').value,
         themeAccent:$('displayThemeAccent').value,
         themeAccentStrong:$('displayThemeAccentStrong').value

@@ -625,6 +625,142 @@ svg{
   gap:var(--gallery-gap);
 }
 
+/* Single-wheel reel mode keeps document scrolling. The sticky stage moves
+   with the normal page at the beginning/end, so the hero is never fixed. */
+.works-grid.reel-track{
+  --reel-stage-height:calc(100svh - var(--bar-height) - var(--safe-bottom) - clamp(.5rem,2vmin,1rem));
+  --reel-step:clamp(135px,34svh,320px);
+  position:relative;
+  display:block;
+  height:calc(var(--reel-stage-height) + var(--reel-step) * var(--reel-steps,0));
+  min-height:var(--reel-stage-height);
+}
+
+.reel-stage{
+  position:sticky;
+  top:0;
+  width:100%;
+  height:var(--reel-stage-height);
+  min-height:0;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(216,189,134,.48);
+  border-radius:clamp(.9rem,3.5vmin,1.5rem);
+  background:linear-gradient(180deg,rgba(9,27,20,.96),rgba(43,71,54,.94) 48%,rgba(9,27,20,.96));
+  box-shadow:0 .5rem 2.4rem rgba(12,32,22,.18);
+  color:#f4eee0;
+}
+
+.reel-stage-header,
+.reel-controls{
+  position:absolute;
+  z-index:14;
+  left:0;
+  right:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding-inline:clamp(.8rem,3.5vw,1.5rem);
+}
+
+.reel-stage-header{
+  top:clamp(.65rem,2.4vmin,1rem);
+  gap:.7rem;
+}
+
+.reel-stage-kicker{
+  font-size:clamp(.67rem,2.7vmin,.88rem);
+  font-weight:700;
+  letter-spacing:.22em;
+  color:#e5d3af;
+}
+
+.reel-stage-counter{
+  font-size:clamp(.65rem,2.5vmin,.85rem);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.1em;
+  white-space:nowrap;
+  color:#f5edda;
+}
+
+.reel-viewport{
+  position:absolute;
+  inset:clamp(2.7rem,8vmin,4.4rem) 0 clamp(3.65rem,10vmin,5.2rem);
+  overflow:hidden;
+  perspective:1000px;
+  transform-style:preserve-3d;
+}
+
+.reel-viewport::after{
+  position:absolute;
+  z-index:11;
+  inset:0;
+  content:"";
+  background:linear-gradient(to bottom,rgba(9,27,20,.84),transparent 21%,transparent 79%,rgba(9,27,20,.84));
+  pointer-events:none;
+}
+
+.reel-track .work-card{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(88%,48svh,30rem);
+  max-width:100%;
+  margin:0;
+  backface-visibility:hidden;
+  transform-origin:center center;
+  pointer-events:none;
+  will-change:transform,opacity;
+}
+
+.reel-track .work-card.is-current{
+  pointer-events:auto;
+}
+
+.reel-track .work-title{
+  font-size:clamp(.85rem,3.3vmin,1.25rem);
+}
+
+.reel-track .work-author{
+  font-size:clamp(.7rem,2.8vmin,.92rem);
+}
+
+.reel-controls{
+  bottom:clamp(.45rem,2vmin,.85rem);
+  gap:clamp(.4rem,2vw,1rem);
+  justify-content:center;
+}
+
+.reel-hint{
+  min-width:0;
+  text-align:center;
+  font-size:clamp(.66rem,2.65vmin,.85rem);
+  color:#e2e5d6;
+}
+
+.reel-nav-button{
+  flex:0 0 auto;
+  width:var(--tap-min);
+  height:var(--tap-min);
+  min-height:var(--tap-min);
+  border:1px solid rgba(230,208,162,.65);
+  border-radius:50%;
+  background:rgba(255,255,255,.11);
+  color:#fff9e9;
+  font-size:1.25rem;
+  cursor:pointer;
+}
+
+.reel-nav-button:disabled{
+  opacity:.32;
+  cursor:default;
+}
+
+.reel-nav-button:focus-visible{
+  outline:3px solid #f0c97e;
+  outline-offset:3px;
+}
+
 .works-loading{
   grid-column:1/-1;
   margin:clamp(1.5rem,6vmin,3rem) 0;

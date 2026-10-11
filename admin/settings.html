@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / SETTINGS</title>
-  <link rel="stylesheet" href="admin.css?v=7719ce220092">
+  <link rel="stylesheet" href="admin.css?v=0b2b3dae23cc">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -216,12 +216,13 @@
         </div>
 
         <div class="display-layout-field">
-          <label for="displayGalleryColumns">作品一覧のカラム数</label>
-          <select id="displayGalleryColumns" aria-label="作品一覧のカラム数">
+          <label for="displayGalleryColumns">作品一覧の表示方式</label>
+          <select id="displayGalleryColumns" aria-label="作品一覧の表示方式">
             <option value="2">2カラム（従来表示）</option>
             <option value="3">3カラム（スマートフォンを含む全画面）</option>
+            <option value="reel">スロットリール（1本・縦スクロール）</option>
           </select>
-          <small>スマートフォンでも3カラムを選択できます。作品の選択・詳細表示・投票操作は従来どおりです。初期値は2カラムです。</small>
+          <small>リールは1作品ずつ中央に表示し、上下スクロールで円筒状に切り替わります。バナーは通常のスクロールで画面外へ移動し、上へ戻すと再表示されます。投票操作は従来どおり。初期値は2カラムです。</small>
         </div>
 
         <div class="display-image-field">
@@ -602,6 +603,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=7719ce220092"></script>
+  <script src="admin.js?v=0b2b3dae23cc"></script>
 </body>
 </html>

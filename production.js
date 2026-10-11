@@ -17,6 +17,7 @@ const DEFAULT_DISPLAY_SETTINGS=Object.freeze({
   themeBg:'#eeeae0',
   backgroundMode:'solid',
   galleryColumns:2,
+  galleryMode:'grid',
   themeInk:'#1f3c31',
   themeAccent:'#244f40',
   themeAccentStrong:'#173b30'
@@ -79,6 +80,7 @@ function normalizeDisplaySettings(value){
     themeBg:color('themeBg',DEFAULT_DISPLAY_SETTINGS.themeBg),
     backgroundMode:['gradient','landscape','photoreal_forest'].includes(source.backgroundMode)?source.backgroundMode:'solid',
     galleryColumns:Number(source.galleryColumns)===3?3:2,
+    galleryMode:source.galleryMode==='reel'?'reel':'grid',
     themeInk:color('themeInk',DEFAULT_DISPLAY_SETTINGS.themeInk),
     themeAccent:color('themeAccent',DEFAULT_DISPLAY_SETTINGS.themeAccent),
     themeAccentStrong:color('themeAccentStrong',DEFAULT_DISPLAY_SETTINGS.themeAccentStrong)
@@ -210,6 +212,7 @@ function displayThemeSurfaces(settings){
 }
 
 function applyDisplaySettings(value){
+  const previousGalleryMode=displaySettings.galleryMode;
   displaySettings=normalizeDisplaySettings(value);
   const setText=function(id,text){
     const el=document.getElementById(id);
@@ -248,6 +251,7 @@ function applyDisplaySettings(value){
 
   const root=document.documentElement;
   root.dataset.galleryColumns=String(displaySettings.galleryColumns);
+  root.dataset.galleryMode=displaySettings.galleryMode;
   root.style.setProperty('--bg',displaySettings.themeBg);
   root.style.setProperty('--ink',displaySettings.themeInk);
   root.style.setProperty('--accent',displaySettings.themeAccent);
@@ -308,6 +312,7 @@ function applyDisplaySettings(value){
 
   const mask=document.getElementById('votedMask');
   if(mask&&!mask.hidden)applyVotedMaskCopy(storedWinner());
+  if(previousGalleryMode!==displaySettings.galleryMode&&works.length)renderWorks();
 }
 
 function loadDisplaySettings(){
@@ -569,11 +574,7 @@ function showMaxVoteError(){
   window.maxVoteErrorTimer=setTimeout(hideMaxVoteError,1800);
 }
 
-function renderWorks(){
-  const container=document.getElementById('works');
-  container.innerHTML='';
-
-  works.forEach(function(work,index){
+function createWorkCard(work,index,isReel){
     const parsed=parseChoiceInfo(work.value);
     const isSelected=selected.includes(work.value);
 
@@ -594,7 +595,7 @@ function renderWorks(){
       image.src=work.image;
       image.alt='作品画像：'+(parsed.title||('作品 '+String(index+1)));
       image.decoding='async';
-      image.loading=index<2?'eager':'lazy';
+      image.loading=isReel||index<2?'eager':'lazy';
       attachImageFallback(image,imageWrap);
       imageWrap.appendChild(image);
     }
@@ -661,8 +662,23 @@ function renderWorks(){
       }
     });
 
-    container.appendChild(card);
-  });
+  return card;
+}
+
+function renderWorks(){
+  const container=document.getElementById('works');
+  if(window.SakuhinReel)window.SakuhinReel.destroy();
+  container.replaceChildren();
+
+  const reel=displaySettings.galleryMode==='reel'&&!!window.SakuhinReel&&works.length>0;
+  container.classList.toggle('reel-track',reel);
+  if(reel){
+    window.SakuhinReel.mount({container,works,createCard:createWorkCard});
+  }else{
+    works.forEach(function(work,index){
+      container.appendChild(createWorkCard(work,index,false));
+    });
+  }
 
   container.setAttribute('aria-busy','false');
   updateUI();
@@ -745,7 +761,8 @@ function toggleSelection(value){
   const workIndex=works.findIndex(function(work){
     return work.value===value;
   });
-  const card=workIndex>=0?document.querySelectorAll('.work-card')[workIndex]:null;
+  const card=workIndex>=0
+    ?document.querySelector('.work-card[data-work-index="'+String(workIndex)+'"]'):null;
   if(card){
     const nextSelected=!isSelected;
     card.classList.toggle('selected',nextSelected);
