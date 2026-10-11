@@ -1,4 +1,5 @@
-const MAX_VOTES=3;
+let maxVotes=3;
+const MAX_ALLOWED_VOTES=10;
 const DEFAULT_VOTE_CYCLE_ID='2026';
 let voteCycleId=DEFAULT_VOTE_CYCLE_ID;
 const API_BASE=(window.__SAKUHIN_API_BASE__||'https://sakuhin-vote-api.mutsumam.workers.dev').replace(/\/$/,'');
@@ -351,6 +352,35 @@ function applyVoteCycleSettings(settings){
   voteCycleId=normalizeVoteCycleId(settings&&settings.voteCycleId);
 }
 
+function applyVoteLimitSettings(settings){
+  const limit=Number(settings&&settings.maxVotes);
+  maxVotes=Number.isInteger(limit)&&limit>=1&&limit<=MAX_ALLOWED_VOTES?limit:3;
+  document.querySelector('.gallery-intro strong').textContent='最大'+maxVotes+'作品まで選択できます。';
+  document.querySelector('.max-vote-error-message').textContent='最大'+maxVotes+'作品まで選択できます';
+  const container=document.getElementById('selectedThumbs');
+  container.dataset.multiSlot=maxVotes>3?'true':'false';
+  while(container.children.length<maxVotes){
+    const slot=document.createElement('button');
+    slot.className='selected-thumb-slot';
+    slot.type='button';
+    slot.disabled=true;
+    slot.setAttribute('aria-hidden','true');
+    container.appendChild(slot);
+  }
+  while(container.children.length>maxVotes)container.lastElementChild.remove();
+  if(selected.length>maxVotes){selected=selected.slice(0,maxVotes);updateUI();}
+  renderSelectedThumbs();
+}
+
+function loadVoteLimitSettings(){
+  return rpcCall('getVoteLimitSettings')
+    .then(applyVoteLimitSettings)
+    .catch(function(error){
+      applyVoteLimitSettings({maxVotes:3});
+      console.error('投票数上限を取得できませんでした。',error);
+    });
+}
+
 function loadVoteCycleSettings(){
   return rpcCall('getVoteCycleSettings')
     .then(function(settings){applyVoteCycleSettings(settings);})
@@ -444,11 +474,10 @@ function init(){
   document.getElementById('voteConfirmSubmitButton').addEventListener('click',submitVote);
   document.getElementById('voteConfirmBackButton').addEventListener('click',closeVoteConfirm);
 
-  document.querySelectorAll('.selected-thumb-slot').forEach(function(slot){
-    slot.addEventListener('click',function(){
-      const value=slot.dataset.workValue;
-      if(value)toggleSelection(value);
-    });
+  document.getElementById('selectedThumbs').addEventListener('click',function(event){
+    const slot=event.target.closest('.selected-thumb-slot');
+    const value=slot&&slot.dataset.workValue;
+    if(value)toggleSelection(value);
   });
 
   const detailView=document.getElementById('workDetailView');
@@ -490,7 +519,7 @@ function init(){
   }
 
   loadDisplaySettings();
-  loadVoteCycleSettings().then(function(){
+  Promise.all([loadVoteCycleSettings(),loadVoteLimitSettings()]).then(function(){
     loadWorks();
     if(hasVoted())showVotedMask(storedWinner());
     else hideVotedMask();
@@ -749,7 +778,7 @@ function toggleSelection(value){
   if(isSelected){
     selected.splice(currentIndex,1);
   }else{
-    if(selected.length>=MAX_VOTES){
+    if(selected.length>=maxVotes){
       showMaxVoteError();
       return;
     }
@@ -891,7 +920,7 @@ function renderVoteConfirm(){
 }
 
 function openVoteConfirm(){
-  if(selected.length<1||selected.length>MAX_VOTES||hasVoted())return;
+  if(selected.length<1||selected.length>maxVotes||hasVoted())return;
 
   hideMaxVoteError();
   closeWorkDetail();
@@ -922,7 +951,7 @@ function closeVoteConfirm(){
 }
 
 function submitVote(){
-  if(selected.length<1||selected.length>MAX_VOTES)return;
+  if(selected.length<1||selected.length>maxVotes)return;
 
   hideMaxVoteError();
 

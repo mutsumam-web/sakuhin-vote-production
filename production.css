@@ -1149,6 +1149,23 @@ body.work-detail-active{
   gap:clamp(.22rem,1vw,.45rem);
 }
 
+.selected-thumbs[data-multi-slot="true"]{
+  min-width:0;
+  width:min(40vw,28rem);
+  max-width:100%;
+  display:grid;
+  grid-template-columns:none;
+  grid-auto-flow:column;
+  grid-auto-columns:var(--thumb-size);
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scrollbar-width:thin;
+  scroll-snap-type:x proximity;
+}
+.selected-thumbs[data-multi-slot="true"] .selected-thumb-slot{
+  scroll-snap-align:start;
+}
+
 .selected-thumb-slot{
   position:relative;
   width:var(--thumb-size);

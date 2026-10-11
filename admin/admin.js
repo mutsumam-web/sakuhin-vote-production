@@ -38,6 +38,7 @@
     winnerSettings:null,
     displaySettings:null,
     voteCycleSettings:null,
+    voteLimitSettings:null,
     displayPreviewUrl:'',
     showAllRanking:false,
     works:[],
@@ -177,7 +178,7 @@
   function showDashboard(){
     $('loginShell').hidden=true;
     $('dashboardShell').hidden=false;
-    scheduleRefresh();
+    if($('kpiGrid'))scheduleRefresh();
   }
 
   function showLogin(message){
@@ -204,7 +205,7 @@
       state.session=result.session;
       try{sessionStorage.setItem(SESSION_KEY,state.session);}catch(e){}
       showDashboard();
-      await Promise.all([loadAll(true),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings(),loadVoteCycleSettings()]);
+      await loadCurrentPage();
     }catch(error){
       $('loginMessage').textContent='認証処理に失敗しました。';
     }finally{
@@ -791,10 +792,11 @@
   }
 
   async function loadAll(manual){
-    if(!state.session)return;
+    if(!state.session||!$('kpiGrid'))return;
     setBusy(true);
     const votePromise=adminRpc('getAdminDashboardData',state.session,state.range);
-    const systemPromise=adminRpc('getAdminSystemMetrics',state.session);
+    const systemPromise=$('systemTrendChart')
+      ?adminRpc('getAdminSystemMetrics',state.session):Promise.resolve(null);
     const usagePromise=loadUsageQuota();
     const results=await Promise.allSettled([votePromise,systemPromise,usagePromise]);
     let authFailure=false;
@@ -838,6 +840,7 @@
   }
 
   function renderSystemFailure(error){
+    if(!$('systemTrendChart'))return;
     $('processApiState').textContent='実行履歴を取得できません';
     $('systemTrendChart').innerHTML='<div class="chart-empty">システム実行情報取得エラー</div>';
     $('dashboardNotice').textContent='システム実行情報の取得に失敗しました。 '+String(error&&error.message?error.message:'');
@@ -877,7 +880,7 @@
   }
 
   function renderSystemData(data){
-    if(!data)return;
+    if(!data||!$('kpiGasSuccess'))return;
     $('kpiGasSuccess').textContent=formatPercent(data.successRate);
     $('kpiGasErrors').textContent=formatNumber(data.errorCount);
     $('kpiGasAvg').textContent=formatDuration(data.averageDurationMs);
@@ -1344,6 +1347,7 @@
   }
 
   function updateHealth(){
+    if(!$('systemStatus')||!$('healthPanel'))return;
     const data=state.systemData;
     let status='CAUTION';
     let reasons=['システム実行情報が未取得です。'];
@@ -1438,7 +1442,7 @@
   }
 
   async function loadWorksManager(){
-    if(!state.session)return;
+    if(!state.session||!$('workManagerList'))return;
     try{
       const works=await adminRest('/api/admin/works',{
         headers:{'X-Admin-Session':state.session}
@@ -1722,11 +1726,89 @@
   }
 
 
+
+  function renderVoteLimitSettings(settings){
+    const value=settings&&typeof settings==='object'?settings:{};
+    const parsed=Number(value.maxVotes);
+    const maxVotes=Number.isInteger(parsed)&&parsed>=1&&parsed<=10?parsed:3;
+    state.voteLimitSettings={maxVotes,updatedAt:String(value.updatedAt||'')};
+    $('voteLimitMaxVotes').value=String(maxVotes);
+    $('voteLimitSummary').textContent='現在：最大'+maxVotes+'作品';
+    renderSettingsOverview();
+  }
+
+  async function loadVoteLimitSettings(){
+    if(!state.session||!$('voteLimitSettingsForm'))return;
+    try{
+      const data=await adminRpc('getVoteLimitSettings',state.session);
+      renderVoteLimitSettings(data);
+      $('voteLimitSettingsMessage').textContent='';
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      $('voteLimitSettingsMessage').textContent='最大選択数を取得できませんでした。';
+    }
+  }
+
+  async function saveVoteLimitSettings(event){
+    event.preventDefault();
+    if(!state.session)return;
+    const value=Number($('voteLimitMaxVotes').value);
+    const message=$('voteLimitSettingsMessage');
+    if(!Number.isInteger(value)||value<1||value>10){
+      message.textContent='最大選択数は1～10の整数で指定してください。';
+      return;
+    }
+    const button=$('saveVoteLimitSettingsButton');
+    button.disabled=true;
+    message.textContent='保存しています…';
+    try{
+      const saved=await adminRpc('adminUpdateVoteLimitSettings',state.session,{maxVotes:value});
+      renderVoteLimitSettings(saved);
+      message.textContent='最大選択数を保存しました。';
+      showToast('最大選択数を保存しました。');
+    }catch(error){
+      if(isAuthError(error)){
+        showLogin('セッションの有効期限が切れました。再認証してください。');
+        return;
+      }
+      message.textContent='最大選択数を保存できませんでした。';
+    }finally{
+      button.disabled=false;
+    }
+  }
+
+  async function loadSystemManagement(){
+    if(!state.session||!$('systemTrendChart'))return;
+    const results=await Promise.allSettled([
+      adminRpc('getAdminSystemMetrics',state.session),loadUsageQuota()
+    ]);
+    if(results[0].status==='fulfilled'){
+      state.systemData=results[0].value;
+      renderSystemData(state.systemData);
+      updateHealth();
+    }else if(isAuthError(results[0].reason)){
+      showLogin('セッションの有効期限が切れました。再認証してください。');
+    }else{
+      renderSystemFailure(results[0].reason);
+    }
+  }
+
+  function loadCurrentPage(){
+    return Promise.all([
+      loadAll(false),loadWorksManager(),loadWinnerSettings(),
+      loadDisplaySettings(),loadVoteCycleSettings(),loadVoteLimitSettings(),
+      loadSystemManagement()
+    ]);
+  }
+
   // Settings-only navigation. Existing Dashboard and Works pages remain unchanged.
   function showSettingsCategory(category){
     const nav=$('settingsCategoryNav');
     if(!nav)return;
-    const selected=['overview','design','vote','system'].includes(category)?category:'overview';
+    const selected=['overview','works','design','vote','system'].includes(category)?category:'overview';
     nav.querySelectorAll('[data-settings-tab]').forEach(function(button){
       button.setAttribute('aria-pressed',button.dataset.settingsTab===selected?'true':'false');
     });
@@ -1753,6 +1835,9 @@
     if(state.voteCycleSettings){
       $('settingsOverviewCycle').textContent=String(state.voteCycleSettings.voteCycleId||'2026');
     }
+    if(state.voteLimitSettings&&$('settingsOverviewVoteLimit')){
+      $('settingsOverviewVoteLimit').textContent='最大'+state.voteLimitSettings.maxVotes+'作品まで';
+    }
     if(state.winnerSettings){
       $('settingsOverviewWinner').textContent=state.winnerSettings.enabled?'有効':'無効';
     }
@@ -1770,7 +1855,7 @@
         nav.scrollIntoView({block:'start'});
       });
     });
-    showSettingsCategory('overview');
+    showSettingsCategory(location.hash==='#works'?'works':'overview');
     const form=$('displaySettingsForm');
     if(form){
       form.addEventListener('invalid',function(event){
@@ -1793,12 +1878,14 @@
     on('logoutButton','click',logout);
     const worksPageButton=$('worksPageButton');
     if(worksPageButton){
-      worksPageButton.addEventListener('click',function(){window.location.href='works.html';});
+      worksPageButton.addEventListener('click',function(){window.location.href='settings.html#works';});
     }
     const dashboardPageButton=$('dashboardPageButton');
     if(dashboardPageButton){
-      dashboardPageButton.addEventListener('click',function(){window.location.href='index.html';});
+      dashboardPageButton.addEventListener('click',function(){window.location.href='results.html';});
     }
+    const resultsPageButton=$('resultsPageButton');
+    if(resultsPageButton){resultsPageButton.addEventListener('click',function(){window.location.href='results.html';});}
     const settingsPageButton=$('settingsPageButton');
     if(settingsPageButton){
       settingsPageButton.addEventListener('click',function(){window.location.href='settings.html';});
@@ -1842,6 +1929,8 @@
       setWorksListCollapsed(!state.worksListCollapsed);
     });
     on('adminCodeForm','submit',changeAdminCode);
+    const voteLimitSettingsForm=$('voteLimitSettingsForm');
+    if(voteLimitSettingsForm)voteLimitSettingsForm.addEventListener('submit',saveVoteLimitSettings);
     const voteCycleSettingsForm=$('voteCycleSettingsForm');
     if(voteCycleSettingsForm){
       voteCycleSettingsForm.addEventListener('submit',saveVoteCycleSettings);
@@ -1911,7 +2000,7 @@
     }
     state.session=saved;
     showDashboard();
-    await Promise.all([loadAll(false),loadWorksManager(),loadWinnerSettings(),loadDisplaySettings(),loadVoteCycleSettings()]);
+    await loadCurrentPage();
   }
 
   if(document.readyState==='loading'){
