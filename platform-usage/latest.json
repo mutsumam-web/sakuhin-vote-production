@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-13T06:47:20.284Z",
+  "collectedAt": "2026-10-13T12:47:45.011Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 1767,
-    "quotaUsedMinutes": 1401,
-    "privateRepoMinutes": 1401,
-    "publicRepoMinutes": 366,
+    "usedMinutes": 1811,
+    "quotaUsedMinutes": 1441,
+    "privateRepoMinutes": 1441,
+    "publicRepoMinutes": 370,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 1767,
+    "repositoryMinutesTotal": 1811,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 917
+      "minutes": 918
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 364
+      "minutes": 368
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -42,6 +42,12 @@
       "private": true,
       "archived": false,
       "minutes": 184
+    },
+    {
+      "repository": "mutsumam-web/nikoniko-team",
+      "private": true,
+      "archived": false,
+      "minutes": 39
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
@@ -57,21 +63,21 @@
     }
   ],
   "workers": {
-    "requestsToday": 873,
+    "requestsToday": 1376,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 52346,
+    "rowsReadToday": 69581,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 33474,
+    "rowsWrittenToday": 42304,
     "rowsWrittenLimit": 100000,
-    "storageBytes": 1384448,
+    "storageBytes": 1470464,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 122669941,
+    "storageBytes": 123881478,
     "storageLimitBytes": 10737418240,
     "scope": "account_exact"
   },
