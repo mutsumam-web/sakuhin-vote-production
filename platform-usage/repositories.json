@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-13T18:45:10.361Z",
+  "collectedAt": "2026-10-14T01:01:00.421Z",
   "exact": true,
   "repositoriesComplete": true,
   "repositories": [
@@ -9,13 +9,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 919
+      "minutes": 920
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 372
+      "minutes": 376
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -33,7 +33,7 @@
       "repository": "mutsumam-web/nikoniko-team",
       "private": true,
       "archived": false,
-      "minutes": 92
+      "minutes": 131
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
