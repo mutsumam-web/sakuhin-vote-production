@@ -42,7 +42,8 @@
     displayPreviewUrl:'',
     showAllRanking:false,
     works:[],
-    worksListCollapsed:false
+    worksListCollapsed:false,
+    worksReordering:false
   };
 
   const $=function(id){return document.getElementById(id);};
@@ -1620,6 +1621,7 @@
   }
 
   async function moveWork(workId,direction){
+    if(state.worksReordering)return;
     const list=state.works.slice();
     const index=list.findIndex(function(item){return String(item.id)===String(workId);});
     const target=index+direction;
@@ -1628,16 +1630,20 @@
     list[index]=list[target];
     list[target]=temp;
 
+    state.worksReordering=true;
+    renderWorksManager();
     try{
       await adminRest('/api/admin/works/reorder',{
         method:'POST',
         json:{session:state.session,ids:list.map(function(item){return item.id;})}
       });
       state.works=list;
-      renderWorksManager();
       showToast('表示順を更新しました。');
     }catch(error){
       showToast('表示順を更新できませんでした。');
+    }finally{
+      state.worksReordering=false;
+      renderWorksManager();
     }
   }
 
@@ -1702,12 +1708,12 @@
       const up=document.createElement('button');
       up.type='button';
       up.textContent='↑';
-      up.disabled=index===0;
+      up.disabled=state.worksReordering||index===0;
       up.addEventListener('click',function(){moveWork(work.id,-1);});
       const down=document.createElement('button');
       down.type='button';
       down.textContent='↓';
-      down.disabled=index===works.length-1;
+      down.disabled=state.worksReordering||index===works.length-1;
       down.addEventListener('click',function(){moveWork(work.id,1);});
       const remove=document.createElement('button');
       remove.type='button';
