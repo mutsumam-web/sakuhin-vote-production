@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-16T18:55:01.069Z",
+  "collectedAt": "2026-10-16T21:49:25.154Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2083,
-    "quotaUsedMinutes": 1623,
-    "privateRepoMinutes": 1623,
-    "publicRepoMinutes": 460,
+    "usedMinutes": 2095,
+    "quotaUsedMinutes": 1644,
+    "privateRepoMinutes": 1644,
+    "publicRepoMinutes": 464,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2083,
-    "reconciliationDelta": 0,
+    "repositoryMinutesTotal": 2108,
+    "reconciliationDelta": -13,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 982
+      "minutes": 1003
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 458
+      "minutes": 462
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -62,8 +62,29 @@
       "minutes": 0
     }
   ],
+  "project": {
+    "workers": {
+      "requestsToday": 3639,
+      "errorsToday": 0
+    },
+    "d1": {
+      "rowsReadToday": 86257,
+      "rowsWrittenToday": 6198,
+      "storageBytes": 1241088
+    },
+    "r2": {
+      "storageBytes": 109567197,
+      "classAOperations": null,
+      "classBOperations": null
+    },
+    "githubActions": {
+      "usedMinutes": 1467,
+      "quotaUsedMinutes": 1003
+    }
+  },
   "workers": {
-    "requestsToday": 3733,
+    "requestsToday": 3826,
+    "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
@@ -72,14 +93,20 @@
     "rowsReadLimit": 5000000,
     "rowsWrittenToday": 6251,
     "rowsWrittenLimit": 100000,
-    "storageBytes": 1695744,
+    "storageBytes": 1703936,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
     "storageBytes": 133391531,
     "storageLimitBytes": 10737418240,
+    "classAOperations": null,
+    "classBOperations": null,
+    "classALimit": 1000000,
+    "classBLimit": 10000000,
     "scope": "account_exact"
   },
-  "errors": []
+  "errors": [
+    "r2_unclassified_operations:9:getbucketsippyconfiguration,getbucketnotificationconfiguration,deleteobjects"
+  ]
 }
