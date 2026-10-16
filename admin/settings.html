@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / SETTINGS</title>
-  <link rel="stylesheet" href="admin.css?v=4fd706f6c9c6">
+  <link rel="stylesheet" href="admin.css?v=1ac036380774">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -538,6 +538,32 @@
       </div>
     </section>
 
+    <section class="panel panel-wide" id="usageTrendPanel" aria-labelledby="usageTrendTitle">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">USAGE TRENDS / SAFETY</span>
+          <h2 id="usageTrendTitle">利用枠の推移とヘルスチェック</h2>
+        </div>
+        <button id="usageChartsRefresh" class="button-secondary" type="button">表示を更新</button>
+      </div>
+      <p id="usageChartsState" class="usage-history-status" role="status" aria-live="polite">取得待ち</p>
+      <p class="usage-history-note">各折れ線：作品展システム単独とアカウント全体。70％・90％・100％は無料枠の目安です。契約プラン変更時は公式画面を確認してください。履歴は集計後に蓄積されます。</p>
+      <div class="quota-line-legend" aria-label="折れ線の凡例">
+        <span class="quota-series-project">作品展システム</span>
+        <span class="quota-series-account">アカウント全体</span>
+        <span class="quota-limit-legend">上限目安（100％）</span>
+      </div>
+      <div id="usageTrends" class="quota-trend-grid" aria-live="off"></div>
+      <div class="usage-history-links">
+        <a href="https://github.com/mutsumam-web/sakuhin-vote-system/actions/workflows/collect-usage-metrics.yml" target="_blank" rel="noopener noreferrer">公式集計を任意実行（GitHub Actionsを消費）</a>
+        <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener noreferrer">Cloudflareの公式使用量</a>
+        <a href="https://github.com/settings/billing/usage" target="_blank" rel="noopener noreferrer">GitHub公式Billing</a>
+      </div>
+      <p class="usage-history-note">「表示を更新」は集計済みJSONを再取得し、公開APIの疎通確認を実行します。Cloudflare/GitHubの公式数値を再集計するには上のGitHub Actions画面で手動実行してください（通常は6時間ごとに自動集計）。</p>
+      <h3 class="usage-health-heading">SYSTEM HEALTH / 項目別チェック</h3>
+      <div id="usageHealthDetails" class="usage-health-details"></div>
+    </section>
+
     <section class="panel panel-wide">
       <div class="panel-heading">
         <div>
@@ -591,6 +617,7 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=4fd706f6c9c6"></script>
+  <script src="admin.js?v=1ac036380774"></script>
+  <script src="usage-monitor.js?v=1ac036380774"></script>
 </body>
 </html>

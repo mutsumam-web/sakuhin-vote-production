@@ -1416,3 +1416,134 @@ th{color:var(--muted);font-weight:600}
   .topbar-actions,.toolbar,.auth-shell{display:none!important}
   .panel,.kpi-card,.status-strip{box-shadow:none}
 }
+
+/* Quota line charts: scoped to Settings / System Management. */
+.usage-history-status,.usage-history-note{
+  margin:.45rem 0;
+  color:var(--muted);
+  font-size:clamp(.72rem,1.65vmin,.83rem);
+  line-height:1.65;
+}
+.quota-line-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.55rem 1rem;
+  margin:.85rem 0;
+  font-size:clamp(.7rem,1.65vmin,.82rem);
+}
+.quota-series-project{color:var(--accent-2)}
+.quota-series-account{color:var(--accent)}
+.quota-limit-legend{color:var(--danger)}
+.quota-trend-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:var(--gap);
+}
+.quota-trend-card{
+  min-width:0;
+  padding:var(--pad);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--surface-2);
+}
+.quota-trend-heading{
+  font-size:clamp(.9rem,2.2vmin,1.15rem);
+  margin:0 0 .6rem;
+}
+.quota-trend-stats{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:.4rem 1rem;
+  font-size:clamp(.77rem,1.9vmin,.95rem);
+  font-weight:650;
+}
+.quota-trend-note{
+  margin:.5rem 0;
+  font-size:clamp(.67rem,1.65vmin,.78rem);
+  color:var(--muted);
+  line-height:1.6;
+}
+.quota-trend-note[data-level="danger"]{color:var(--danger)}
+.quota-trend-note[data-level="caution"]{color:var(--warn)}
+.quota-chart{
+  width:100%;
+  min-width:0;
+}
+.quota-chart svg{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:clamp(11rem,43vmin,20rem);
+}
+.quota-reference{
+  fill:none;
+  stroke:var(--line);
+  stroke-width:1;
+  stroke-dasharray:5 5;
+}
+.quota-reference-70{stroke:var(--warn);opacity:.65}
+.quota-reference-90{stroke:var(--danger);opacity:.75}
+.quota-reference-100{stroke:var(--danger);stroke-dasharray:7 3;stroke-width:2}
+.quota-axis-label,.quota-time-label{
+  fill:var(--muted);
+  font-size:12px;
+}
+.quota-line-account,.quota-line-project{
+  fill:none;
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.quota-line-account{stroke:var(--accent)}
+.quota-line-project{stroke:var(--accent-2)}
+.quota-line-account-point{fill:var(--accent)}
+.quota-line-project-point{fill:var(--accent-2)}
+.quota-chart-empty{
+  padding:.25rem;
+  margin:0;
+  font-size:clamp(.68rem,1.5vmin,.8rem);
+  color:var(--muted);
+}
+.usage-history-links{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:.55rem 1rem;
+  margin:1rem 0;
+  font-size:clamp(.74rem,1.7vmin,.86rem);
+}
+.usage-history-links a{color:var(--accent-2)}
+.usage-health-heading{
+  margin:1.25rem 0 .65rem;
+  font-size:clamp(1rem,2.4vmin,1.2rem);
+}
+.usage-health-details{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));
+  gap:clamp(.45rem,1.3vmin,.75rem);
+}
+.usage-health-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:.2rem .7rem;
+  padding:clamp(.6rem,1.6vmin,.9rem);
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:.65rem;
+  font-size:clamp(.74rem,1.7vmin,.85rem);
+}
+.usage-health-row strong{font-weight:600}
+.usage-health-row small{
+  grid-column:1/-1;
+  color:var(--muted);
+  line-height:1.5;
+}
+.usage-health-label{
+  color:var(--muted);
+  font-weight:700;
+  font-size:.68rem;
+}
+.usage-health-row[data-level="normal"] .usage-health-label{color:var(--accent)}
+.usage-health-row[data-level="caution"] .usage-health-label{color:var(--warn)}
+.usage-health-row[data-level="danger"] .usage-health-label{color:var(--danger)}

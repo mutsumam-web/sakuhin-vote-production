@@ -1384,6 +1384,9 @@
       ul.appendChild(li);
     });
     container.appendChild(ul);
+    window.dispatchEvent(new CustomEvent('sakuhin:system-health',{
+      detail:{status,reasons:reasons.slice(),source:data&&data.sourceLabel?data.sourceLabel:'未取得'}
+    }));
 
     if(state.voteData)renderLive(state.voteData.live);
   }
