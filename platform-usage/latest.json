@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-16T23:42:51.874Z",
+  "collectedAt": "2026-10-17T00:10:43.843Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2124,
-    "quotaUsedMinutes": 1651,
-    "privateRepoMinutes": 1651,
-    "publicRepoMinutes": 473,
+    "usedMinutes": 2129,
+    "quotaUsedMinutes": 1652,
+    "privateRepoMinutes": 1652,
+    "publicRepoMinutes": 477,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2124,
+    "repositoryMinutesTotal": 2129,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1010
+      "minutes": 1011
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 471
+      "minutes": 475
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -64,12 +64,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 4145,
+      "requestsToday": 13,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 92740,
-      "rowsWrittenToday": 6453,
+      "rowsReadToday": 0,
+      "rowsWrittenToday": 0,
       "storageBytes": 1245184
     },
     "r2": {
@@ -78,20 +78,20 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1483,
-      "quotaUsedMinutes": 1010
+      "usedMinutes": 1488,
+      "quotaUsedMinutes": 1011
     }
   },
   "workers": {
-    "requestsToday": 4357,
+    "requestsToday": 13,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 98299,
+    "rowsReadToday": 0,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 6506,
+    "rowsWrittenToday": 0,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1708032,
     "storageLimitBytes": 5368709120,
