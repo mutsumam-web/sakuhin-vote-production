@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "updatedAt": "2026-10-18T00:01:58.829Z",
+  "updatedAt": "2026-10-18T01:00:03.765Z",
   "points": [
     {
       "at": "2026-10-16T21:49:25.154Z",
@@ -624,6 +624,58 @@
         "githubActions": {
           "usedMinutes": 1534,
           "quotaUsedMinutes": 1021
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T01:00:03.765Z",
+      "workers": {
+        "requestsToday": 4081,
+        "errorsToday": 0,
+        "limitRequests": 100000,
+        "scope": "account_exact"
+      },
+      "d1": {
+        "rowsReadToday": 173929,
+        "rowsReadLimit": 5000000,
+        "rowsWrittenToday": 1714,
+        "rowsWrittenLimit": 100000,
+        "storageBytes": 1777664,
+        "storageLimitBytes": 5368709120,
+        "scope": "account_exact"
+      },
+      "r2": {
+        "storageBytes": 133391531,
+        "storageLimitBytes": 10737418240,
+        "classAOperations": null,
+        "classBOperations": null,
+        "classALimit": 1000000,
+        "classBLimit": 10000000,
+        "scope": "account_exact"
+      },
+      "githubActions": {
+        "quotaUsedMinutes": 1663,
+        "usedMinutes": 2180,
+        "limitMinutes": 2000
+      },
+      "project": {
+        "workers": {
+          "requestsToday": 4081,
+          "errorsToday": 0
+        },
+        "d1": {
+          "rowsReadToday": 173929,
+          "rowsWrittenToday": 1714,
+          "storageBytes": 1314816
+        },
+        "r2": {
+          "storageBytes": 109567197,
+          "classAOperations": null,
+          "classBOperations": null
+        },
+        "githubActions": {
+          "usedMinutes": 1539,
+          "quotaUsedMinutes": 1022
         }
       }
     }
