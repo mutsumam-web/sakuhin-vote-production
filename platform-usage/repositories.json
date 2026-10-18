@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-18T06:57:19.704Z",
+  "collectedAt": "2026-10-18T12:52:52.788Z",
   "exact": true,
   "repositoriesComplete": true,
   "repositories": [
@@ -9,13 +9,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1025
+      "minutes": 1026
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 523
+      "minutes": 527
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
