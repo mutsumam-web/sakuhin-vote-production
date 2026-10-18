@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-18T01:00:03.765Z",
+  "collectedAt": "2026-10-18T04:09:07.331Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2180,
-    "quotaUsedMinutes": 1663,
-    "privateRepoMinutes": 1663,
-    "publicRepoMinutes": 517,
+    "usedMinutes": 2186,
+    "quotaUsedMinutes": 1665,
+    "privateRepoMinutes": 1665,
+    "publicRepoMinutes": 521,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2180,
+    "repositoryMinutesTotal": 2186,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1022
+      "minutes": 1024
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 515
+      "minutes": 519
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -64,13 +64,13 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 4081,
+      "requestsToday": 11099,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 173929,
-      "rowsWrittenToday": 1714,
-      "storageBytes": 1314816
+      "rowsReadToday": 899911,
+      "rowsWrittenToday": 4563,
+      "storageBytes": 1323008
     },
     "r2": {
       "storageBytes": 109567197,
@@ -78,22 +78,22 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1539,
-      "quotaUsedMinutes": 1022
+      "usedMinutes": 1545,
+      "quotaUsedMinutes": 1024
     }
   },
   "workers": {
-    "requestsToday": 4081,
+    "requestsToday": 11090,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 173929,
+    "rowsReadToday": 899911,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 1714,
+    "rowsWrittenToday": 4563,
     "rowsWrittenLimit": 100000,
-    "storageBytes": 1777664,
+    "storageBytes": 1785856,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
