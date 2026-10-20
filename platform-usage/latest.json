@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-20T07:03:00.755Z",
+  "collectedAt": "2026-10-20T13:02:47.671Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2234,
-    "quotaUsedMinutes": 1676,
-    "privateRepoMinutes": 1676,
-    "publicRepoMinutes": 558,
+    "usedMinutes": 2239,
+    "quotaUsedMinutes": 1677,
+    "privateRepoMinutes": 1677,
+    "publicRepoMinutes": 562,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2234,
+    "repositoryMinutesTotal": 2239,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1035
+      "minutes": 1036
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 556
+      "minutes": 560
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -64,11 +64,11 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 46,
+      "requestsToday": 288,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 2954,
+      "rowsReadToday": 10140,
       "rowsWrittenToday": 0,
       "storageBytes": 1527808
     },
@@ -78,18 +78,18 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1593,
-      "quotaUsedMinutes": 1035
+      "usedMinutes": 1598,
+      "quotaUsedMinutes": 1036
     }
   },
   "workers": {
-    "requestsToday": 69,
+    "requestsToday": 337,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 3873,
+    "rowsReadToday": 11059,
     "rowsReadLimit": 5000000,
     "rowsWrittenToday": 16,
     "rowsWrittenLimit": 100000,
@@ -98,7 +98,7 @@
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 133391531,
+    "storageBytes": 135042284,
     "storageLimitBytes": 10737418240,
     "classAOperations": null,
     "classBOperations": null,
