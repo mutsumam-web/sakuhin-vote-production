@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-22T07:06:42.684Z",
+  "collectedAt": "2026-10-22T13:03:54.807Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2280,
-    "quotaUsedMinutes": 1686,
-    "privateRepoMinutes": 1686,
-    "publicRepoMinutes": 594,
+    "usedMinutes": 2291,
+    "quotaUsedMinutes": 1693,
+    "privateRepoMinutes": 1693,
+    "publicRepoMinutes": 598,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2280,
+    "repositoryMinutesTotal": 2291,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1045
+      "minutes": 1046
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 592
+      "minutes": 596
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -50,6 +50,12 @@
       "minutes": 157
     },
     {
+      "repository": "mutsumam-web/hachi-ai",
+      "private": true,
+      "archived": false,
+      "minutes": 6
+    },
+    {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
       "private": false,
       "archived": false,
@@ -64,41 +70,41 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 102,
+      "requestsToday": 257,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 6322,
+      "rowsReadToday": 11033,
       "rowsWrittenToday": 0,
       "storageBytes": 1536000
     },
     "r2": {
-      "storageBytes": 109567197,
+      "storageBytes": 0,
       "classAOperations": null,
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1639,
-      "quotaUsedMinutes": 1045
+      "usedMinutes": 1644,
+      "quotaUsedMinutes": 1046
     }
   },
   "workers": {
-    "requestsToday": 102,
+    "requestsToday": 300,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 6322,
+    "rowsReadToday": 12635,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 0,
+    "rowsWrittenToday": 24,
     "rowsWrittenLimit": 100000,
     "storageBytes": 2007040,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 135042284,
+    "storageBytes": 25475087,
     "storageLimitBytes": 10737418240,
     "classAOperations": null,
     "classBOperations": null,
