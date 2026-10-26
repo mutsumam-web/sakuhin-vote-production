@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-26T07:10:25.856Z",
+  "collectedAt": "2026-10-26T14:57:45.586Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2380,
-    "quotaUsedMinutes": 1717,
-    "privateRepoMinutes": 1717,
-    "publicRepoMinutes": 663,
+    "usedMinutes": 2400,
+    "quotaUsedMinutes": 1720,
+    "privateRepoMinutes": 1720,
+    "publicRepoMinutes": 678,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2380,
-    "reconciliationDelta": 0,
+    "repositoryMinutesTotal": 2398,
+    "reconciliationDelta": 2,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1065
+      "minutes": 1066
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 656
+      "minutes": 660
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -50,16 +50,22 @@
       "minutes": 157
     },
     {
+      "repository": "mutsumam-web/sakuhin-vote-cyber",
+      "private": false,
+      "archived": false,
+      "minutes": 18
+    },
+    {
       "repository": "mutsumam-web/hachi-ai",
       "private": true,
       "archived": false,
       "minutes": 7
     },
     {
-      "repository": "mutsumam-web/sakuhin-vote-cyber",
-      "private": false,
+      "repository": "mutsumam-web/tunagu-voice-studio",
+      "private": true,
       "archived": false,
-      "minutes": 7
+      "minutes": 2
     },
     {
       "repository": "mutsumam-web/register",
@@ -70,12 +76,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 316,
+      "requestsToday": 470,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 8516,
-      "rowsWrittenToday": 68,
+      "rowsReadToday": 10351,
+      "rowsWrittenToday": 72,
       "storageBytes": 602112
     },
     "r2": {
@@ -84,20 +90,20 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1728,
-      "quotaUsedMinutes": 1065
+      "usedMinutes": 1744,
+      "quotaUsedMinutes": 1066
     }
   },
   "workers": {
-    "requestsToday": 344,
+    "requestsToday": 522,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 8516,
+    "rowsReadToday": 10351,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 68,
+    "rowsWrittenToday": 72,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1077248,
     "storageLimitBytes": 5368709120,
