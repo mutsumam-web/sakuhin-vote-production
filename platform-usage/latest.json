@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-26T14:57:45.586Z",
+  "collectedAt": "2026-10-26T19:05:22.499Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2400,
-    "quotaUsedMinutes": 1720,
-    "privateRepoMinutes": 1720,
-    "publicRepoMinutes": 678,
+    "usedMinutes": 2407,
+    "quotaUsedMinutes": 1725,
+    "privateRepoMinutes": 1725,
+    "publicRepoMinutes": 682,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2398,
-    "reconciliationDelta": 2,
+    "repositoryMinutesTotal": 2407,
+    "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1066
+      "minutes": 1067
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 660
+      "minutes": 664
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -65,7 +65,7 @@
       "repository": "mutsumam-web/tunagu-voice-studio",
       "private": true,
       "archived": false,
-      "minutes": 2
+      "minutes": 6
     },
     {
       "repository": "mutsumam-web/register",
@@ -90,12 +90,12 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1744,
-      "quotaUsedMinutes": 1066
+      "usedMinutes": 1749,
+      "quotaUsedMinutes": 1067
     }
   },
   "workers": {
-    "requestsToday": 522,
+    "requestsToday": 529,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
