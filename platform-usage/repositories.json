@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-27T01:06:53.460Z",
+  "collectedAt": "2026-10-27T07:05:40.672Z",
   "exact": true,
   "repositoriesComplete": true,
   "repositories": [
@@ -9,19 +9,19 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1068
+      "minutes": 1070
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 668
+      "minutes": 672
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
       "private": true,
       "archived": false,
-      "minutes": 304
+      "minutes": 336
     },
     {
       "repository": "mutsumam-web/soyukai-site",
@@ -39,7 +39,7 @@
       "repository": "mutsumam-web/tunagu-voice-studio",
       "private": true,
       "archived": false,
-      "minutes": 20
+      "minutes": 23
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
