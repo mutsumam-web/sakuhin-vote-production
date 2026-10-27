@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-27T07:05:40.672Z",
+  "collectedAt": "2026-10-27T13:06:18.911Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2467,
-    "quotaUsedMinutes": 1777,
-    "privateRepoMinutes": 1777,
-    "publicRepoMinutes": 690,
+    "usedMinutes": 2507,
+    "quotaUsedMinutes": 1813,
+    "privateRepoMinutes": 1813,
+    "publicRepoMinutes": 694,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2467,
+    "repositoryMinutesTotal": 2507,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,19 +23,19 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1070
+      "minutes": 1071
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 672
+      "minutes": 676
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
       "private": true,
       "archived": false,
-      "minutes": 336
+      "minutes": 371
     },
     {
       "repository": "mutsumam-web/soyukai-site",
@@ -76,11 +76,11 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 1,
+      "requestsToday": 65,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 561,
+      "rowsReadToday": 1758,
       "rowsWrittenToday": 4,
       "storageBytes": 602112
     },
@@ -90,18 +90,18 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1760,
-      "quotaUsedMinutes": 1070
+      "usedMinutes": 1765,
+      "quotaUsedMinutes": 1071
     }
   },
   "workers": {
-    "requestsToday": 65,
+    "requestsToday": 447,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 975,
+    "rowsReadToday": 2586,
     "rowsReadLimit": 5000000,
     "rowsWrittenToday": 4,
     "rowsWrittenLimit": 100000,
