@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-28T01:18:37.260Z",
+  "collectedAt": "2026-10-28T07:17:17.498Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2517,
-    "quotaUsedMinutes": 1815,
-    "privateRepoMinutes": 1815,
-    "publicRepoMinutes": 702,
+    "usedMinutes": 2534,
+    "quotaUsedMinutes": 1828,
+    "privateRepoMinutes": 1828,
+    "publicRepoMinutes": 706,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2517,
+    "repositoryMinutesTotal": 2534,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,19 +23,19 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1073
+      "minutes": 1075
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 684
+      "minutes": 688
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
       "private": true,
       "archived": false,
-      "minutes": 371
+      "minutes": 382
     },
     {
       "repository": "mutsumam-web/soyukai-site",
@@ -76,11 +76,11 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 36,
+      "requestsToday": 120,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 1197,
+      "rowsReadToday": 9751,
       "rowsWrittenToday": 0,
       "storageBytes": 602112
     },
@@ -90,20 +90,20 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1775,
-      "quotaUsedMinutes": 1073
+      "usedMinutes": 1781,
+      "quotaUsedMinutes": 1075
     }
   },
   "workers": {
-    "requestsToday": 36,
+    "requestsToday": 196,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 1197,
+    "rowsReadToday": 11085,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 0,
+    "rowsWrittenToday": 19,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1077248,
     "storageLimitBytes": 5368709120,
