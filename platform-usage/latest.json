@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-29T13:11:46.479Z",
+  "collectedAt": "2026-10-29T22:49:28.233Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2617,
-    "quotaUsedMinutes": 1899,
-    "privateRepoMinutes": 1899,
-    "publicRepoMinutes": 718,
+    "usedMinutes": 2631,
+    "quotaUsedMinutes": 1903,
+    "privateRepoMinutes": 1903,
+    "publicRepoMinutes": 728,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2617,
+    "repositoryMinutesTotal": 2631,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1079
+      "minutes": 1080
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 700
+      "minutes": 710
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -65,7 +65,7 @@
       "repository": "mutsumam-web/hachi-ai",
       "private": true,
       "archived": false,
-      "minutes": 10
+      "minutes": 13
     },
     {
       "repository": "mutsumam-web/register",
@@ -76,12 +76,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 96,
+      "requestsToday": 97,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 6392,
-      "rowsWrittenToday": 4,
+      "rowsReadToday": 6953,
+      "rowsWrittenToday": 8,
       "storageBytes": 602112
     },
     "r2": {
@@ -90,20 +90,20 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1797,
-      "quotaUsedMinutes": 1079
+      "usedMinutes": 1808,
+      "quotaUsedMinutes": 1080
     }
   },
   "workers": {
-    "requestsToday": 244,
+    "requestsToday": 248,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 6611,
+    "rowsReadToday": 7172,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 4,
+    "rowsWrittenToday": 8,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1077248,
     "storageLimitBytes": 5368709120,
