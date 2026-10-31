@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-31T12:42:30.233Z",
+  "collectedAt": "2026-10-31T21:41:15.681Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2657,
-    "quotaUsedMinutes": 1910,
-    "privateRepoMinutes": 1910,
-    "publicRepoMinutes": 747,
+    "usedMinutes": 2662,
+    "quotaUsedMinutes": 1911,
+    "privateRepoMinutes": 1911,
+    "publicRepoMinutes": 751,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2657,
+    "repositoryMinutesTotal": 2662,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 1087
+      "minutes": 1088
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 729
+      "minutes": 733
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
@@ -76,11 +76,11 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 332,
+      "requestsToday": 409,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 22863,
+      "rowsReadToday": 25740,
       "rowsWrittenToday": 4,
       "storageBytes": 602112
     },
@@ -90,18 +90,18 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 1834,
-      "quotaUsedMinutes": 1087
+      "usedMinutes": 1839,
+      "quotaUsedMinutes": 1088
     }
   },
   "workers": {
-    "requestsToday": 378,
+    "requestsToday": 470,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 24081,
+    "rowsReadToday": 26958,
     "rowsReadLimit": 5000000,
     "rowsWrittenToday": 20,
     "rowsWrittenLimit": 100000,
