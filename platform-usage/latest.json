@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-01T06:16:52.450Z",
+  "collectedAt": "2026-11-01T13:38:22.907Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 0,
-    "quotaUsedMinutes": 0,
-    "privateRepoMinutes": 0,
-    "publicRepoMinutes": 0,
+    "usedMinutes": 6,
+    "quotaUsedMinutes": 2,
+    "privateRepoMinutes": 2,
+    "publicRepoMinutes": 4,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 0,
+    "repositoryMinutesTotal": 6,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -19,6 +19,18 @@
     "repositoriesComplete": true
   },
   "repositories": [
+    {
+      "repository": "mutsumam-web/sakuhin-vote-production",
+      "private": false,
+      "archived": false,
+      "minutes": 4
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-system",
+      "private": true,
+      "archived": false,
+      "minutes": 2
+    },
     {
       "repository": "mutsumam-web/hachi-ai",
       "private": true,
@@ -50,18 +62,6 @@
       "minutes": 0
     },
     {
-      "repository": "mutsumam-web/sakuhin-vote-production",
-      "private": false,
-      "archived": false,
-      "minutes": 0
-    },
-    {
-      "repository": "mutsumam-web/sakuhin-vote-system",
-      "private": true,
-      "archived": false,
-      "minutes": 0
-    },
-    {
       "repository": "mutsumam-web/soyukai-site",
       "private": true,
       "archived": false,
@@ -76,34 +76,34 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 0,
+      "requestsToday": 77,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 0,
+      "rowsReadToday": 2317,
       "rowsWrittenToday": 0,
       "storageBytes": 602112
     },
     "r2": {
       "storageBytes": 109567197,
       "classAOperations": 0,
-      "classBOperations": 0
+      "classBOperations": 83
     },
     "githubActions": {
-      "usedMinutes": 0,
-      "quotaUsedMinutes": 0
+      "usedMinutes": 6,
+      "quotaUsedMinutes": 2
     }
   },
   "workers": {
-    "requestsToday": 36,
+    "requestsToday": 126,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 0,
+    "rowsReadToday": 3058,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 0,
+    "rowsWrittenToday": 8,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1085440,
     "storageLimitBytes": 5368709120,
@@ -113,7 +113,7 @@
     "storageBytes": 135346542,
     "storageLimitBytes": 10737418240,
     "classAOperations": 2,
-    "classBOperations": 12,
+    "classBOperations": 95,
     "classALimit": 1000000,
     "classBLimit": 10000000,
     "scope": "account_exact"
