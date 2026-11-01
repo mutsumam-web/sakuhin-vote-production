@@ -1,61 +1,61 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-31T21:41:15.681Z",
+  "collectedAt": "2026-11-01T06:16:52.450Z",
   "exact": true,
   "repositoriesComplete": true,
   "repositories": [
     {
-      "repository": "mutsumam-web/sakuhin-vote-system",
+      "repository": "mutsumam-web/hachi-ai",
       "private": true,
       "archived": false,
-      "minutes": 1088
-    },
-    {
-      "repository": "mutsumam-web/sakuhin-vote-production",
-      "private": false,
-      "archived": false,
-      "minutes": 733
+      "minutes": 0
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
       "private": true,
       "archived": false,
-      "minutes": 446
-    },
-    {
-      "repository": "mutsumam-web/soyukai-site",
-      "private": true,
-      "archived": false,
-      "minutes": 184
+      "minutes": 0
     },
     {
       "repository": "mutsumam-web/nikoniko-team",
       "private": true,
       "archived": false,
-      "minutes": 157
+      "minutes": 0
     },
     {
-      "repository": "mutsumam-web/tunagu-voice-studio",
-      "private": true,
+      "repository": "mutsumam-web/register",
+      "private": false,
       "archived": false,
-      "minutes": 23
+      "minutes": 0
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
       "private": false,
       "archived": false,
-      "minutes": 18
+      "minutes": 0
     },
     {
-      "repository": "mutsumam-web/hachi-ai",
+      "repository": "mutsumam-web/sakuhin-vote-production",
+      "private": false,
+      "archived": false,
+      "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 13
+      "minutes": 0
     },
     {
-      "repository": "mutsumam-web/register",
-      "private": false,
+      "repository": "mutsumam-web/soyukai-site",
+      "private": true,
+      "archived": false,
+      "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/tunagu-voice-studio",
+      "private": true,
       "archived": false,
       "minutes": 0
     }
