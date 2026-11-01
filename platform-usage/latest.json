@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-10-31T21:41:15.681Z",
+  "collectedAt": "2026-11-01T06:16:52.450Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 2662,
-    "quotaUsedMinutes": 1911,
-    "privateRepoMinutes": 1911,
-    "publicRepoMinutes": 751,
+    "usedMinutes": 0,
+    "quotaUsedMinutes": 0,
+    "privateRepoMinutes": 0,
+    "publicRepoMinutes": 0,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 2662,
+    "repositoryMinutesTotal": 0,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -20,105 +20,103 @@
   },
   "repositories": [
     {
-      "repository": "mutsumam-web/sakuhin-vote-system",
+      "repository": "mutsumam-web/hachi-ai",
       "private": true,
       "archived": false,
-      "minutes": 1088
-    },
-    {
-      "repository": "mutsumam-web/sakuhin-vote-production",
-      "private": false,
-      "archived": false,
-      "minutes": 733
+      "minutes": 0
     },
     {
       "repository": "mutsumam-web/hiro-ai-line-bot",
       "private": true,
       "archived": false,
-      "minutes": 446
-    },
-    {
-      "repository": "mutsumam-web/soyukai-site",
-      "private": true,
-      "archived": false,
-      "minutes": 184
+      "minutes": 0
     },
     {
       "repository": "mutsumam-web/nikoniko-team",
       "private": true,
       "archived": false,
-      "minutes": 157
-    },
-    {
-      "repository": "mutsumam-web/tunagu-voice-studio",
-      "private": true,
-      "archived": false,
-      "minutes": 23
-    },
-    {
-      "repository": "mutsumam-web/sakuhin-vote-cyber",
-      "private": false,
-      "archived": false,
-      "minutes": 18
-    },
-    {
-      "repository": "mutsumam-web/hachi-ai",
-      "private": true,
-      "archived": false,
-      "minutes": 13
+      "minutes": 0
     },
     {
       "repository": "mutsumam-web/register",
       "private": false,
       "archived": false,
       "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-cyber",
+      "private": false,
+      "archived": false,
+      "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-production",
+      "private": false,
+      "archived": false,
+      "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-system",
+      "private": true,
+      "archived": false,
+      "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/soyukai-site",
+      "private": true,
+      "archived": false,
+      "minutes": 0
+    },
+    {
+      "repository": "mutsumam-web/tunagu-voice-studio",
+      "private": true,
+      "archived": false,
+      "minutes": 0
     }
   ],
   "project": {
     "workers": {
-      "requestsToday": 409,
+      "requestsToday": 0,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 25740,
-      "rowsWrittenToday": 4,
+      "rowsReadToday": 0,
+      "rowsWrittenToday": 0,
       "storageBytes": 602112
     },
     "r2": {
       "storageBytes": 109567197,
-      "classAOperations": null,
-      "classBOperations": null
+      "classAOperations": 0,
+      "classBOperations": 0
     },
     "githubActions": {
-      "usedMinutes": 1839,
-      "quotaUsedMinutes": 1088
+      "usedMinutes": 0,
+      "quotaUsedMinutes": 0
     }
   },
   "workers": {
-    "requestsToday": 470,
+    "requestsToday": 36,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 26958,
+    "rowsReadToday": 0,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 20,
+    "rowsWrittenToday": 0,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1085440,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 135042284,
+    "storageBytes": 135346542,
     "storageLimitBytes": 10737418240,
-    "classAOperations": null,
-    "classBOperations": null,
+    "classAOperations": 2,
+    "classBOperations": 12,
     "classALimit": 1000000,
     "classBLimit": 10000000,
     "scope": "account_exact"
   },
-  "errors": [
-    "r2_unclassified_operations:9:getbucketsippyconfiguration,getbucketnotificationconfiguration,deleteobjects"
-  ]
+  "errors": []
 }
