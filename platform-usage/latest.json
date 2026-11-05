@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-04T19:50:27.860Z",
+  "collectedAt": "2026-11-05T06:56:03.973Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 44,
-    "quotaUsedMinutes": 12,
-    "privateRepoMinutes": 12,
-    "publicRepoMinutes": 32,
+    "usedMinutes": 50,
+    "quotaUsedMinutes": 13,
+    "privateRepoMinutes": 13,
+    "publicRepoMinutes": 37,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 44,
+    "repositoryMinutesTotal": 50,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 32
+      "minutes": 37
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 12
+      "minutes": 13
     },
     {
       "repository": "mutsumam-web/hachi-ai",
@@ -76,34 +76,34 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 311,
+      "requestsToday": 264,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 8709,
-      "rowsWrittenToday": 4,
+      "rowsReadToday": 8225,
+      "rowsWrittenToday": 0,
       "storageBytes": 606208
     },
     "r2": {
       "storageBytes": 109567197,
       "classAOperations": 0,
-      "classBOperations": 573
+      "classBOperations": 785
     },
     "githubActions": {
-      "usedMinutes": 44,
-      "quotaUsedMinutes": 12
+      "usedMinutes": 50,
+      "quotaUsedMinutes": 13
     }
   },
   "workers": {
-    "requestsToday": 321,
+    "requestsToday": 280,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 8709,
+    "rowsReadToday": 8999,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 4,
+    "rowsWrittenToday": 12,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1089536,
     "storageLimitBytes": 5368709120,
@@ -113,7 +113,7 @@
     "storageBytes": 135346542,
     "storageLimitBytes": 10737418240,
     "classAOperations": 2,
-    "classBOperations": 604,
+    "classBOperations": 816,
     "classALimit": 1000000,
     "classBLimit": 10000000,
     "scope": "account_exact"
