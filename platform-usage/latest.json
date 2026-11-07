@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-07T13:13:01.631Z",
+  "collectedAt": "2026-11-07T21:56:11.833Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 77,
-    "quotaUsedMinutes": 21,
-    "privateRepoMinutes": 21,
-    "publicRepoMinutes": 56,
+    "usedMinutes": 82,
+    "quotaUsedMinutes": 22,
+    "privateRepoMinutes": 22,
+    "publicRepoMinutes": 60,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 77,
+    "repositoryMinutesTotal": 82,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 56
+      "minutes": 60
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 21
+      "minutes": 22
     },
     {
       "repository": "mutsumam-web/hachi-ai",
@@ -76,12 +76,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 155,
+      "requestsToday": 156,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 2394,
-      "rowsWrittenToday": 0,
+      "rowsReadToday": 2955,
+      "rowsWrittenToday": 4,
       "storageBytes": 606208
     },
     "r2": {
@@ -90,20 +90,20 @@
       "classBOperations": 987
     },
     "githubActions": {
-      "usedMinutes": 77,
-      "quotaUsedMinutes": 21
+      "usedMinutes": 82,
+      "quotaUsedMinutes": 22
     }
   },
   "workers": {
-    "requestsToday": 169,
+    "requestsToday": 171,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 2394,
+    "rowsReadToday": 2955,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 0,
+    "rowsWrittenToday": 4,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1093632,
     "storageLimitBytes": 5368709120,
