@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-08T22:13:04.182Z",
+  "collectedAt": "2026-11-09T06:45:56.399Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 98,
-    "quotaUsedMinutes": 26,
-    "privateRepoMinutes": 26,
-    "publicRepoMinutes": 72,
+    "usedMinutes": 103,
+    "quotaUsedMinutes": 27,
+    "privateRepoMinutes": 27,
+    "publicRepoMinutes": 76,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 98,
+    "repositoryMinutesTotal": 103,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 72
+      "minutes": 76
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 26
+      "minutes": 27
     },
     {
       "repository": "mutsumam-web/hachi-ai",
@@ -76,12 +76,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 149,
+      "requestsToday": 0,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 11915,
-      "rowsWrittenToday": 4,
+      "rowsReadToday": 0,
+      "rowsWrittenToday": 0,
       "storageBytes": 606208
     },
     "r2": {
@@ -90,20 +90,20 @@
       "classBOperations": 1123
     },
     "githubActions": {
-      "usedMinutes": 98,
-      "quotaUsedMinutes": 26
+      "usedMinutes": 103,
+      "quotaUsedMinutes": 27
     }
   },
   "workers": {
-    "requestsToday": 163,
+    "requestsToday": 0,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 11915,
+    "rowsReadToday": 0,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 4,
+    "rowsWrittenToday": 0,
     "rowsWrittenLimit": 100000,
     "storageBytes": 1093632,
     "storageLimitBytes": 5368709120,
