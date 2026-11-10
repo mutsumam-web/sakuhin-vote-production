@@ -8,6 +8,7 @@
   const EXITING_CARD=1;
   const FRONT_MAX=6;
   const BACK_PEEKS=2;
+  const MOTION_RESPONSE_MS=55; // Short, frame-rate-independent easing; no long drag.
 
   function destroy(){
     if(!current)return;
@@ -93,6 +94,7 @@
       peekStep:18,
       stackInset:0,
       progress:NaN,
+      lastFrameTime:0,
       step:1,
       start:0,
       travel:0,
@@ -180,6 +182,9 @@
         if(state.cards.has(index))return;
         const card=state.createCard(works[index],index,true);
         card.classList.add('reel-card');
+        // Stable paint order: earlier notifications remain above later ones.
+        // Avoid continuous z-index changes during a swipe.
+        card.style.zIndex=String(count-index);
         viewport.appendChild(card);
         state.cards.set(index,card);
       });
@@ -200,7 +205,7 @@
       next.disabled=center>=count-1;
     }
 
-    function frame(){
+    function frame(timestamp){
       state.frame=0;
       if(current!==state)return;
       if(hero&&compactBar){
@@ -217,35 +222,50 @@
         }
       }
       const position=(window.scrollY-state.start)/state.step;
-      const progress=Math.max(0,Math.min(count-1,position));
-      const center=Math.round(progress);
+      const rawProgress=clamp(0,position,count-1);
+      const desired=state.reducedMotion?Math.round(rawProgress):rawProgress;
+      const previous=state.progress;
+      if(!Number.isFinite(previous)||state.reducedMotion||
+         Math.abs(desired-previous)>FRONT_MAX){
+        // Initial render, accessibility preference, and large jumps are immediate.
+        state.progress=desired;
+      }else{
+        // Follow touch input promptly but glide across fractional positions.
+        // Using elapsed time keeps the response consistent at 60 and 120 Hz.
+        const elapsed=state.lastFrameTime
+          ?clamp(1,timestamp-state.lastFrameTime,40)
+          :16.7;
+        const weight=1-Math.exp(-elapsed/MOTION_RESPONSE_MS);
+        const eased=previous+(desired-previous)*weight;
+        state.progress=Math.abs(desired-eased)<.003?desired:eased;
+      }
+      state.lastFrameTime=timestamp||0;
+      const visualProgress=state.progress;
+      const center=Math.round(visualProgress);
       renderWindow(center);
-      // No style writes if the scroll position is unchanged or outside the reel.
-      // Reduced-motion users only receive updates when the selected work changes.
-      const visualProgress=state.reducedMotion?center:progress;
-      if(Math.abs(visualProgress-state.progress)<.001)return;
-      state.progress=visualProgress;
-
-      const spacing=state.cardHeight+state.cardGap;
-      const frontBottom=(state.frontCount-1)*spacing;
-      state.cards.forEach(function(card,index){
-        const relative=index-visualProgress;
-        const behind=Math.max(0,relative-(state.frontCount-1));
-        const y=state.stackInset+(relative<0
-          ?relative*spacing
-          :behind>0
-            ?frontBottom+behind*state.peekStep
-            :relative*spacing);
-        const scale=relative<0
-          ?1+Math.max(-1,relative)*.035
-          :1-Math.min(BACK_PEEKS,behind)*.036;
-        const opacity=relative<0
-          ?Math.max(0,1+relative)
-          :Math.max(.7,1-behind*.12);
-        card.style.transform='translate(-50%,0) translate3d(0,'+y.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
-        card.style.opacity=String(opacity);
-        card.style.zIndex=String(relative<0?120:behind>0?40-Math.floor(behind*4):100-Math.floor(relative*8));
-      });
+      if(!Number.isFinite(previous)||Math.abs(visualProgress-previous)>.0005){
+        const spacing=state.cardHeight+state.cardGap;
+        const frontBottom=(state.frontCount-1)*spacing;
+        state.cards.forEach(function(card,index){
+          const relative=index-visualProgress;
+          const behind=Math.max(0,relative-(state.frontCount-1));
+          const y=state.stackInset+(relative<0
+            ?relative*spacing
+            :behind>0
+              ?frontBottom+behind*state.peekStep
+              :relative*spacing);
+          const scale=relative<0
+            ?1+Math.max(-1,relative)*.035
+            :1-Math.min(BACK_PEEKS,behind)*.036;
+          const opacity=relative<0
+            ?Math.max(0,1+relative)
+            :Math.max(.7,1-behind*.12);
+          card.style.transform='translate(-50%,0) translate3d(0,'+y.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
+          card.style.opacity=String(opacity);
+        });
+      }
+      // Continue decaying after scroll events stop, then sleep without a timer.
+      if(!state.reducedMotion&&Math.abs(desired-visualProgress)>.003)schedule();
     }
 
     function schedule(){
@@ -290,6 +310,7 @@
       measure();
       measureStack();
       state.progress=NaN;
+      state.lastFrameTime=0;
       schedule();
     }
 
