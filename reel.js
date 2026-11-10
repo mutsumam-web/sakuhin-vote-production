@@ -22,6 +22,7 @@
     if(state.snapTimer)clearTimeout(state.snapTimer);
     state.container.classList.remove('reel-track');
     state.container.style.removeProperty('--reel-steps');
+    state.container.style.removeProperty('--reel-step');
     state.container.style.removeProperty('--reel-footer-height');
     if(state.hero){
       state.hero.style.removeProperty('--reel-hero-top');
@@ -127,14 +128,15 @@
       // Read geometry only on mount/resize, never per scroll frame.
       const track=container.getBoundingClientRect();
       const stageHeight=stage.offsetHeight;
-      state.start=track.top+window.scrollY;
-      state.step=count>1?Math.max(1,(track.height-stageHeight)/(count-1)):1;
-      // Card geometry is measured on virtual-window changes, not each scroll frame.
       if(hero&&compactBar){
         state.compactHeight=compactBar.offsetHeight;
         state.expandedHeight=hero.offsetHeight;
         hero.style.setProperty('--reel-hero-top',Math.min(0,state.compactHeight-state.expandedHeight)+'px');
       }
+      // Begin rotating exactly when the sticky reel stage reaches its pin top.
+      // Previously rotation started after the stage had already stopped moving.
+      state.start=track.top+window.scrollY-state.compactHeight;
+      state.step=count>1?Math.max(1,(track.height-stageHeight)/(count-1)):1;
     }
 
     function measureStack(){
@@ -162,6 +164,10 @@
       const extraGap=gaps?Math.min(12,spare/gaps):0;
       state.cardGap=minimumGap+extraGap;
       state.stackInset=spare-extraGap*gaps;
+      // 1 CSS pixel of document scrolling = 1 CSS pixel of foreground travel.
+      // Match each scroll step to the visible card-to-card spacing.
+      container.style.setProperty('--reel-step',
+        (state.cardHeight+state.cardGap).toFixed(3)+'px');
     }
 
     function renderWindow(center){
@@ -240,32 +246,38 @@
         state.progress=Math.abs(desired-eased)<.003?desired:eased;
       }
       state.lastFrameTime=timestamp||0;
-      const visualProgress=state.progress;
-      const center=Math.round(visualProgress);
+      const depthProgress=state.progress;
+      // Hit testing and foreground displacement follow the actual scroll.
+      // Only depth effects are softly interpolated, so the scroll-to-reel
+      // handoff never pauses or loses distance on its first movement.
+      const positionProgress=state.reducedMotion?desired:rawProgress;
+      const center=Math.round(positionProgress);
       renderWindow(center);
-      if(!Number.isFinite(previous)||Math.abs(visualProgress-previous)>.0005){
-        const spacing=state.cardHeight+state.cardGap;
-        const frontBottom=(state.frontCount-1)*spacing;
-        state.cards.forEach(function(card,index){
-          const relative=index-visualProgress;
-          const behind=Math.max(0,relative-(state.frontCount-1));
-          const y=state.stackInset+(relative<0
-            ?relative*spacing
-            :behind>0
-              ?frontBottom+behind*state.peekStep
-              :relative*spacing);
-          const scale=relative<0
-            ?1+Math.max(-1,relative)*.035
-            :1-Math.min(BACK_PEEKS,behind)*.036;
-          const opacity=relative<0
-            ?Math.max(0,1+relative)
-            :Math.max(.7,1-behind*.12);
-          card.style.transform='translate(-50%,0) translate3d(0,'+y.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
-          card.style.opacity=String(opacity);
-        });
-      }
-      // Continue decaying after scroll events stop, then sleep without a timer.
-      if(!state.reducedMotion&&Math.abs(desired-visualProgress)>.003)schedule();
+      // Foreground vertical translation is a direct 1:1 scroll mapping;
+      // scale and opacity retain the smooth 55ms depth glide.
+      const spacing=state.cardHeight+state.cardGap;
+      const frontBottom=(state.frontCount-1)*spacing;
+      state.cards.forEach(function(card,index){
+        const relative=index-positionProgress;
+        const behind=Math.max(0,relative-(state.frontCount-1));
+        const y=state.stackInset+(relative<0
+          ?relative*spacing
+          :behind>0
+            ?frontBottom+behind*state.peekStep
+            :relative*spacing);
+        const depthRelative=index-depthProgress;
+        const depthBehind=Math.max(0,depthRelative-(state.frontCount-1));
+        const scale=depthRelative<0
+          ?1+Math.max(-1,depthRelative)*.035
+          :1-Math.min(BACK_PEEKS,depthBehind)*.036;
+        const opacity=depthRelative<0
+          ?Math.max(0,1+depthRelative)
+          :Math.max(.7,1-depthBehind*.12);
+        card.style.transform='translate(-50%,0) translate3d(0,'+y.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
+        card.style.opacity=String(opacity);
+      });
+      // Stop once depth catches up; no perpetual background animation.
+      if(!state.reducedMotion&&Math.abs(desired-depthProgress)>.003)schedule();
     }
 
     function schedule(){
@@ -280,7 +292,10 @@
       const position=(window.scrollY-state.start)/state.step;
       if(position<=0||position>=count-1)return;
       const nearest=Math.round(position);
-      if(Math.abs(position-nearest)<.015)return;
+      // Avoid a hard tug at the normal-scroll -> reel transition.
+      // Correct only tiny residual offsets, not intentional partial swipes.
+      if(nearest===0||Math.abs(position-nearest)>.12||
+         Math.abs(position-nearest)<.015)return;
       const target=state.start+nearest*state.step;
       state.snapTarget=target;
       window.scrollTo({
@@ -309,6 +324,7 @@
     function onResize(){
       measure();
       measureStack();
+      measure(); // The new card-sized --reel-step changes the track height.
       state.progress=NaN;
       state.lastFrameTime=0;
       schedule();
@@ -337,6 +353,7 @@
     measure();
     renderWindow(0);
     measureStack();
+    measure(); // Calibrate the track to the actual card-to-card spacing.
     // Initialize card transforms synchronously. WebKit may expose the mounted
     // cards before a queued animation frame, leaving every card at top:0.
     frame();
