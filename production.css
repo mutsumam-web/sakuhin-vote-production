@@ -728,7 +728,7 @@ svg{
 /* iPhone notification stack: document scroll advances one artwork per step.
    The compact exhibition bar persists; GRID settings remain untouched. */
 .works-grid.reel-track{
-  --reel-stage-height:calc(100svh - var(--reel-compact-height) - var(--bar-height) - var(--safe-bottom) - clamp(.45rem,2vmin,1rem));
+  --reel-stage-height:calc(100svh - var(--reel-compact-height) - var(--reel-footer-height,calc(var(--bar-height) + var(--safe-bottom))) - 1px);
   --reel-step:clamp(110px,24svh,220px);
   position:relative;
   display:block;
@@ -776,7 +776,7 @@ svg{
 }
 .reel-viewport{
   position:absolute;
-  inset:clamp(3.15rem,8vmin,3.7rem) 0 clamp(.3rem,1.5vmin,.6rem);
+  inset:clamp(3.15rem,8vmin,3.7rem) 0 0;
   overflow:hidden;
   perspective:1000px;
   transform-style:preserve-3d;
@@ -802,8 +802,9 @@ svg{
   border:1px solid rgba(255,255,255,.8);
   border-radius:clamp(.85rem,3.4vmin,1.25rem);
   background:rgba(255,254,250,.92);
-  -webkit-backdrop-filter:blur(18px) saturate(1.1);
-  backdrop-filter:blur(18px) saturate(1.1);
+  /* Blur on 8-9 independently moving cards triggers costly backdrop repaints. */
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
   box-shadow:0 1rem 2rem rgba(28,43,36,.2),0 .14rem .5rem rgba(28,43,36,.09);
   backface-visibility:hidden;
   transform-origin:center center;
@@ -929,7 +930,7 @@ svg{
   .reel-track .work-meta .work-select-zone{right:.45rem}
   .reel-track .work-title{font-size:clamp(.74rem,2.5vh,.92rem)}
   .reel-track .work-index{font-size:.55rem}
-  .reel-viewport{inset:3.15rem 0 .3rem}
+  .reel-viewport{inset:3.15rem 0 0}
 }
 
 .works-loading{

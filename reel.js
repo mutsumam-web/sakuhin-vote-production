@@ -15,10 +15,13 @@
     current=null;
     window.removeEventListener('scroll',state.onScroll);
     window.removeEventListener('resize',state.onResize);
+    window.removeEventListener('wheel',state.onInteraction);
+    window.removeEventListener('touchstart',state.onInteraction);
     if(state.frame)cancelAnimationFrame(state.frame);
     if(state.snapTimer)clearTimeout(state.snapTimer);
     state.container.classList.remove('reel-track');
     state.container.style.removeProperty('--reel-steps');
+    state.container.style.removeProperty('--reel-footer-height');
     if(state.hero){
       state.hero.style.removeProperty('--reel-hero-top');
       state.hero.style.removeProperty('--reel-compact-reveal');
@@ -95,16 +98,31 @@
       travel:0,
       compactHeight:0,
       expandedHeight:0,
+      footerHeight:0,
+      compactReveal:'',
+      compactActive:false,
+      snapTarget:null,
       frame:0,
       snapTimer:0,
       reducedMotion,
       onScroll:null,
-      onResize:null
+      onResize:null,
+      onInteraction:null
     };
     current=state;
 
     function measure(){
-      // Read geometry only on mount or viewport resize, never per scroll frame.
+      // Use the real footer height; the CSS fallback previously double-reserved
+      // safe-area/estimated bar space, leaving a visible empty strip on phones.
+      const footer=document.querySelector('.selection-bar');
+      if(footer){
+        const height=Math.ceil(footer.getBoundingClientRect().height);
+        if(height!==state.footerHeight){
+          state.footerHeight=height;
+          container.style.setProperty('--reel-footer-height',String(height)+'px');
+        }
+      }
+      // Read geometry only on mount/resize, never per scroll frame.
       const track=container.getBoundingClientRect();
       const stageHeight=stage.offsetHeight;
       state.start=track.top+window.scrollY;
@@ -115,6 +133,33 @@
         state.expandedHeight=hero.offsetHeight;
         hero.style.setProperty('--reel-hero-top',Math.min(0,state.compactHeight-state.expandedHeight)+'px');
       }
+    }
+
+    function measureStack(){
+      // Card and viewport sizes depend on viewport, not the current artwork.
+      // Never force synchronous layout in the scroll animation frame.
+      const sample=state.cards.get(state.center);
+      if(!sample)return;
+      state.cardHeight=sample.offsetHeight||64;
+      const availableHeight=viewport.clientHeight;
+      const minimumGap=clamp(7,availableHeight*.015,11);
+      state.peekStep=clamp(13,availableHeight*.035,20);
+      const rearReserve=BACK_PEEKS*state.peekStep+12;
+      const usable=Math.max(0,availableHeight-rearReserve);
+      const fitted=Math.floor((usable+minimumGap)/(state.cardHeight+minimumGap));
+      const nextCount=clamp(1,fitted,FRONT_MAX);
+      if(nextCount!==state.frontCount){
+        state.frontCount=nextCount;
+        const index=state.center;
+        state.center=-1;
+        renderWindow(index);
+      }
+      const spare=Math.max(0,usable-state.frontCount*state.cardHeight
+        -Math.max(0,state.frontCount-1)*minimumGap);
+      const gaps=Math.max(0,state.frontCount-1);
+      const extraGap=gaps?Math.min(12,spare/gaps):0;
+      state.cardGap=minimumGap+extraGap;
+      state.stackInset=spare-extraGap*gaps;
     }
 
     function renderWindow(center){
@@ -139,33 +184,6 @@
         state.cards.set(index,card);
       });
 
-      // Work out how many complete, tappable cards fit above the two peeks.
-      // Read only when the virtual window changes or the viewport is resized.
-      const sample=state.cards.get(center);
-      if(sample){
-        state.cardHeight=sample.offsetHeight||64;
-        const minimumGap=clamp(7,viewport.clientHeight*.015,11);
-        state.peekStep=clamp(13,viewport.clientHeight*.035,20);
-        const rearReserve=BACK_PEEKS*state.peekStep+12;
-        const usable=Math.max(0,viewport.clientHeight-rearReserve);
-        const fitted=Math.floor((usable+minimumGap)/(state.cardHeight+minimumGap));
-        const nextCount=clamp(1,fitted,FRONT_MAX);
-        if(nextCount!==state.frontCount){
-          state.frontCount=nextCount;
-          state.center=-1;
-          renderWindow(center);
-          return;
-        }
-        // Use all available vertical room: the two rear peeks belong at the
-        // bottom of the reel, not halfway down the phone screen.
-        const spare=Math.max(0,usable-state.frontCount*state.cardHeight
-          -Math.max(0,state.frontCount-1)*minimumGap);
-        const gaps=Math.max(0,state.frontCount-1);
-        const extraGap=gaps?Math.min(12,spare/gaps):0;
-        state.cardGap=minimumGap+extraGap;
-        state.stackInset=spare-extraGap*gaps;
-      }
-
       state.cards.forEach(function(card,index){
         const active=index>=center&&index<center+state.frontCount;
         card.classList.toggle('is-current',index===center);
@@ -186,11 +204,17 @@
       state.frame=0;
       if(current!==state)return;
       if(hero&&compactBar){
-        const reveal=Math.max(0,Math.min(1,(window.scrollY-(state.expandedHeight-state.compactHeight-78))/78));
-        hero.style.setProperty('--reel-compact-reveal',reveal.toFixed(3));
-        const active=reveal>.18;
-        compactBar.inert=!active;
-        compactBar.setAttribute('aria-hidden',active?'false':'true');
+        const reveal=Math.max(0,Math.min(1,(window.scrollY-(state.expandedHeight-state.compactHeight-78))/78)).toFixed(3);
+        if(reveal!==state.compactReveal){
+          state.compactReveal=reveal;
+          hero.style.setProperty('--reel-compact-reveal',reveal);
+        }
+        const active=Number(reveal)>.18;
+        if(active!==state.compactActive){
+          state.compactActive=active;
+          compactBar.inert=!active;
+          compactBar.setAttribute('aria-hidden',active?'false':'true');
+        }
       }
       const position=(window.scrollY-state.start)/state.step;
       const progress=Math.max(0,Math.min(count-1,position));
@@ -229,36 +253,53 @@
     }
 
     function snap(){
-      if(current!==state||count<2)return;
+      state.snapTimer=0;
+      if(current!==state||count<2||state.snapTarget!==null)return;
       if(document.body.classList.contains('work-detail-active')||
          document.body.classList.contains('vote-confirm-active'))return;
       const position=(window.scrollY-state.start)/state.step;
       if(position<=0||position>=count-1)return;
       const nearest=Math.round(position);
       if(Math.abs(position-nearest)<.015)return;
+      const target=state.start+nearest*state.step;
+      state.snapTarget=target;
       window.scrollTo({
-        top:state.start+nearest*state.step,
+        top:target,
         behavior:state.reducedMotion?'instant':'smooth'
       });
     }
 
     function onScroll(){
       schedule();
+      if(state.snapTarget!==null){
+        if(Math.abs(window.scrollY-state.snapTarget)<1.5)state.snapTarget=null;
+        else return; // Never launch a second snap while smooth scrolling.
+      }
       if(state.snapTimer)clearTimeout(state.snapTimer);
       state.snapTimer=setTimeout(snap,190);
     }
 
+    function onInteraction(){
+      if(state.snapTarget===null)return;
+      state.snapTarget=null;
+      // Interrupt a programmatic smooth snap when the visitor swipes again.
+      window.scrollTo({top:window.scrollY,behavior:'instant'});
+    }
+
     function onResize(){
       measure();
-      state.center=-1; // Recompute the number of fully visible cards on rotation.
+      measureStack();
       state.progress=NaN;
       schedule();
     }
 
     function go(delta){
       const target=Math.max(0,Math.min(count-1,state.center+delta));
+      if(state.snapTimer)clearTimeout(state.snapTimer);
+      state.snapTimer=0;
+      state.snapTarget=state.start+target*state.step;
       window.scrollTo({
-        top:state.start+target*state.step,
+        top:state.snapTarget,
         behavior:state.reducedMotion?'instant':'smooth'
       });
     }
@@ -267,10 +308,17 @@
     next.addEventListener('click',function(){go(1);});
     state.onScroll=onScroll;
     state.onResize=onResize;
+    state.onInteraction=onInteraction;
     window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('resize',onResize,{passive:true});
+    window.addEventListener('wheel',onInteraction,{passive:true});
+    window.addEventListener('touchstart',onInteraction,{passive:true});
     measure();
-    schedule();
+    renderWindow(0);
+    measureStack();
+    // Initialize card transforms synchronously. WebKit may expose the mounted
+    // cards before a queued animation frame, leaving every card at top:0.
+    frame();
   }
 
   window.SakuhinReel={mount,destroy};
