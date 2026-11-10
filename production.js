@@ -224,6 +224,7 @@ function applyDisplaySettings(value){
 
   setText('heroTopline',displaySettings.heroTopline);
   setText('heroTitleJp',displaySettings.heroTitleJp);
+  setText('compactHeroTitleJp',displaySettings.heroTitleJp);
   setText('heroTitleEn',displaySettings.heroTitleEn);
   setText('heroSide',displaySettings.heroSide);
   setText('heroCaption',displaySettings.heroCaption);
@@ -687,7 +688,7 @@ function createWorkCard(work,index,isReel){
       toggleSelection(work.value);
     });
 
-    imageWrap.appendChild(selectZone);
+    if(!isReel)imageWrap.appendChild(selectZone);
 
     const meta=document.createElement('div');
     meta.className='work-meta';
@@ -711,6 +712,8 @@ function createWorkCard(work,index,isReel){
       author.textContent=parsed.author;
       meta.appendChild(author);
     }
+
+    if(isReel)meta.appendChild(selectZone);
 
     card.appendChild(imageWrap);
     card.appendChild(meta);

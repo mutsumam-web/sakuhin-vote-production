@@ -1,12 +1,12 @@
-/* Single artwork reel: document scrolling is the only scroll container.
-   The hero remains in normal flow; the sticky reel stage occupies the gallery.
-   Only three artwork cards (current and neighbours) are mounted at once.
-   Geometry is cached: scrolling reads scrollY, not bounding boxes. */
+/* iOS-style artwork notification stack. The document stays the scroll container.
+   A collapsed slice of the hero remains sticky above the stacked cards.
+   Only nearby artwork cards are mounted; geometry reads remain outside scroll frames. */
 (function(){
   'use strict';
 
   let current=null;
-  const WINDOW_RADIUS=1;
+  const WINDOW_BEHIND=1;
+  const WINDOW_AHEAD=3;
 
   function destroy(){
     if(!current)return;
@@ -18,7 +18,15 @@
     if(state.snapTimer)clearTimeout(state.snapTimer);
     state.container.classList.remove('reel-track');
     state.container.style.removeProperty('--reel-steps');
+    state.hero.style.removeProperty('--reel-hero-top');
+    state.hero.style.removeProperty('--reel-compact-reveal');
+    if(state.compactBar){
+      state.compactBar.inert=true;
+      state.compactBar.setAttribute('aria-hidden','true');
+    }
   }
+
+  function clamp(min,value,max){return Math.max(min,Math.min(max,value));}
 
   function mount(options){
     destroy();
@@ -32,13 +40,13 @@
 
     const stage=document.createElement('section');
     stage.className='reel-stage';
-    stage.setAttribute('aria-label','作品鑑賞スロットリール');
+    stage.setAttribute('aria-label','通知カード型の作品一覧');
 
     const header=document.createElement('div');
     header.className='reel-stage-header';
     const kicker=document.createElement('span');
     kicker.className='reel-stage-kicker';
-    kicker.textContent='ART REEL';
+    kicker.textContent='ARTWORK NOTIFICATIONS';
     const counter=document.createElement('span');
     counter.className='reel-stage-counter';
     counter.setAttribute('aria-live','polite');
@@ -57,7 +65,7 @@
     previous.textContent='↑';
     const hint=document.createElement('span');
     hint.className='reel-hint';
-    hint.textContent='上下にスワイプして鑑賞';
+    hint.textContent='上下にスワイプして作品をめくる';
     const next=document.createElement('button');
     next.type='button';
     next.className='reel-nav-button';
@@ -68,15 +76,19 @@
     container.replaceChildren(stage);
 
     const reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hero=document.querySelector('.app-header');
+    const compactBar=hero&&hero.querySelector('.hero-compact-bar');
     const state={
-      container,stage,viewport,counter,previous,next,works,
+      container,stage,viewport,counter,previous,next,works,hero,compactBar,
       createCard:options.createCard,
       cards:new Map(),
       center:-1,
       progress:NaN,
       step:1,
       start:0,
-      radius:0,
+      travel:0,
+      compactHeight:0,
+      expandedHeight:0,
       frame:0,
       snapTimer:0,
       reducedMotion,
@@ -91,14 +103,19 @@
       const stageHeight=stage.offsetHeight;
       state.start=track.top+window.scrollY;
       state.step=count>1?Math.max(1,(track.height-stageHeight)/(count-1)):1;
-      state.radius=Math.min(viewport.clientHeight*.43,300);
+      state.travel=Math.max(155,Math.min(290,viewport.clientHeight*.57));
+      if(hero&&compactBar){
+        state.compactHeight=compactBar.offsetHeight;
+        state.expandedHeight=hero.offsetHeight;
+        hero.style.setProperty('--reel-hero-top',Math.min(0,state.compactHeight-state.expandedHeight)+'px');
+      }
     }
 
     function renderWindow(center){
       if(center===state.center)return;
       state.center=center;
       const desired=new Set();
-      for(let index=Math.max(0,center-WINDOW_RADIUS);index<=Math.min(count-1,center+WINDOW_RADIUS);index++){
+      for(let index=Math.max(0,center-WINDOW_BEHIND);index<=Math.min(count-1,center+WINDOW_AHEAD);index++){
         desired.add(index);
       }
       state.cards.forEach(function(card,index){
@@ -132,6 +149,13 @@
     function frame(){
       state.frame=0;
       if(current!==state)return;
+      if(hero&&compactBar){
+        const reveal=Math.max(0,Math.min(1,(window.scrollY-(state.expandedHeight-state.compactHeight-78))/78));
+        hero.style.setProperty('--reel-compact-reveal',reveal.toFixed(3));
+        const active=reveal>.18;
+        compactBar.inert=!active;
+        compactBar.setAttribute('aria-hidden',active?'false':'true');
+      }
       const position=(window.scrollY-state.start)/state.step;
       const progress=Math.max(0,Math.min(count-1,position));
       const center=Math.round(progress);
@@ -142,18 +166,18 @@
       if(Math.abs(visualProgress-state.progress)<.001)return;
       state.progress=visualProgress;
 
-      const radius=state.radius;
       state.cards.forEach(function(card,index){
         const relative=index-visualProgress;
-        const magnitude=Math.abs(relative);
-        const angle=Math.max(-84,Math.min(84,relative*40));
-        const radians=angle*Math.PI/180;
-        const y=state.reducedMotion?relative*radius*.7:Math.sin(radians)*radius;
-        const z=state.reducedMotion?0:(Math.cos(radians)-1)*radius*1.35;
-        const rotation=state.reducedMotion?0:-angle;
-        card.style.transform='translate(-50%,-50%) translate3d(0,'+y.toFixed(1)+'px,'+z.toFixed(1)+'px) rotateX('+rotation.toFixed(1)+'deg)';
-        card.style.opacity=String(Math.max(.04,1-magnitude*.42));
-        card.style.zIndex=String(100-Math.round(magnitude*10));
+        const depth=Math.max(0,Math.min(3,relative));
+        const dismissed=Math.max(0,Math.min(1,-relative));
+        const y=relative>=0
+          ?depth*clamp(35,viewport.clientHeight*.105,66)
+          :-dismissed*state.travel;
+        const scale=relative>=0?1-depth*.055:1-dismissed*.045;
+        const opacity=relative>=0?1-depth*.14:1-dismissed;
+        card.style.transform='translate(-50%,-50%) translate3d(0,'+y.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
+        card.style.opacity=String(Math.max(0,opacity));
+        card.style.zIndex=String(relative<0?120+Math.round(dismissed*10):100-Math.round(relative*8));
       });
     }
 
