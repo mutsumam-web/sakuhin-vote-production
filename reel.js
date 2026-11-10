@@ -102,6 +102,9 @@
       compactHeight:0,
       expandedHeight:0,
       footerHeight:0,
+      stageHeight:0,
+      viewportWidth:0,
+      viewportHeight:0,
       compactReveal:'',
       compactActive:false,
       snapTarget:null,
@@ -128,6 +131,9 @@
       // Read geometry only on mount/resize, never per scroll frame.
       const track=container.getBoundingClientRect();
       const stageHeight=stage.offsetHeight;
+      state.stageHeight=stageHeight;
+      state.viewportWidth=viewport.clientWidth;
+      state.viewportHeight=viewport.clientHeight;
       // Measure the compact banner before calibrating the reel start.
       // The stage pins when its top reaches this bar, not the viewport top.
       if(hero&&compactBar){
@@ -319,6 +325,19 @@
     }
 
     function onResize(){
+      // Mobile browser chrome may fire resize without changing the reel's
+      // svh-based layout. Do not reset an in-flight 55ms glide in that case.
+      const footer=document.querySelector('.selection-bar');
+      const footerHeight=footer
+        ?Math.ceil(footer.getBoundingClientRect().height):state.footerHeight;
+      if(stage.offsetHeight===state.stageHeight&&
+         viewport.clientWidth===state.viewportWidth&&
+         viewport.clientHeight===state.viewportHeight&&
+         footerHeight===state.footerHeight&&
+         (!hero||hero.offsetHeight===state.expandedHeight)&&
+         (!compactBar||compactBar.offsetHeight===state.compactHeight)){
+        return;
+      }
       measure();
       measureStack();
       // The measured card pitch changes the track's scroll distance.
