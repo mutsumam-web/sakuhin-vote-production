@@ -266,14 +266,27 @@
             ?frontBottom+behind*state.peekStep
             :relative*spacing);
         const depthRelative=index-depthProgress;
-        const depthBehind=Math.max(0,depthRelative-(state.frontCount-1));
+        // Foreground cards retain exact 1:1 scroll travel. Only the passive
+        // rear peeks trail by at most one peek interval, fading the lag to zero
+        // at the moment a card becomes independently tappable.
+        const rearBlend=clamp(0,
+          relative-(state.frontCount-.5),1);
+        const rearLag=!state.reducedMotion&&!card.classList.contains('is-active')
+          ?clamp(-1,positionProgress-depthProgress,1)*state.peekStep*rearBlend
+          :0;
+        // Let the last two foreground cards subtly recede into the rear
+        // stack. These visual-only depth effects keep the 55ms glide even
+        // while card positions respond directly to finger movement.
+        const softDepth=Math.max(0,
+          depthRelative-(state.frontCount-2));
         const scale=depthRelative<0
           ?1+Math.max(-1,depthRelative)*.035
-          :1-Math.min(BACK_PEEKS,depthBehind)*.036;
+          :1-Math.min(3.5,softDepth)*.018;
         const opacity=depthRelative<0
           ?Math.max(0,1+depthRelative)
-          :Math.max(.7,1-depthBehind*.12);
-        card.style.transform='translate(-50%,0) translate3d(0,'+y.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
+          :Math.max(.7,1-Math.min(2,softDepth)*.032
+              -Math.min(2,Math.max(0,softDepth-2))*.094);
+        card.style.transform='translate(-50%,0) translate3d(0,'+(y+rearLag).toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
         card.style.opacity=String(opacity);
       });
       // Stop once depth catches up; no perpetual background animation.
