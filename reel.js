@@ -282,12 +282,16 @@
         const scale=depthRelative<0
           ?1+Math.max(-1,depthRelative)*.035
           :1-Math.min(3.5,softDepth)*.018;
+        // Leaving cards disappear behind the clipped viewport/banner.
+        // Fading them as well provides no useful transition, but forces
+        // extra opacity compositing while scrolling.
         const opacity=depthRelative<0
-          ?Math.max(0,1+depthRelative)
+          ?1
           :Math.max(.7,1-Math.min(2,softDepth)*.032
               -Math.min(2,Math.max(0,softDepth-2))*.094);
         card.style.transform='translate(-50%,0) translate3d(0,'+(y+rearLag).toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
-        card.style.opacity=String(opacity);
+        const opacityValue=String(opacity);
+        if(card.style.opacity!==opacityValue)card.style.opacity=opacityValue;
       });
       // Stop once depth catches up; no perpetual background animation.
       if(!state.reducedMotion&&Math.abs(desired-depthProgress)>.003)schedule();
