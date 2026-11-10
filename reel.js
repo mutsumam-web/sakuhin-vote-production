@@ -6,7 +6,7 @@
 
   let current=null;
   const EXITING_CARD=1;
-  const FRONT_MAX=3;
+  const FRONT_MAX=6;
   const BACK_PEEKS=2;
 
   function destroy(){
@@ -87,9 +87,10 @@
       cards:new Map(),
       center:-1,
       frontCount:FRONT_MAX,
-      cardHeight:160,
-      cardGap:10,
+      cardHeight:64,
+      cardGap:9,
       peekStep:18,
+      stackInset:0,
       progress:NaN,
       step:1,
       start:0,
@@ -144,11 +145,12 @@
       // Read only when the virtual window changes or the viewport is resized.
       const sample=state.cards.get(center);
       if(sample){
-        state.cardHeight=sample.offsetHeight||160;
-        state.cardGap=clamp(8,viewport.clientHeight*.019,13);
+        state.cardHeight=sample.offsetHeight||64;
+        const minimumGap=clamp(7,viewport.clientHeight*.015,11);
         state.peekStep=clamp(13,viewport.clientHeight*.035,20);
-        const usable=Math.max(0,viewport.clientHeight-(BACK_PEEKS*state.peekStep+12));
-        const fitted=Math.floor((usable+state.cardGap)/(state.cardHeight+state.cardGap));
+        const rearReserve=BACK_PEEKS*state.peekStep+12;
+        const usable=Math.max(0,viewport.clientHeight-rearReserve);
+        const fitted=Math.floor((usable+minimumGap)/(state.cardHeight+minimumGap));
         const nextCount=clamp(1,fitted,FRONT_MAX);
         if(nextCount!==state.frontCount){
           state.frontCount=nextCount;
@@ -156,6 +158,14 @@
           renderWindow(center);
           return;
         }
+        // Use all available vertical room: the two rear peeks belong at the
+        // bottom of the reel, not halfway down the phone screen.
+        const spare=Math.max(0,usable-state.frontCount*state.cardHeight
+          -Math.max(0,state.frontCount-1)*minimumGap);
+        const gaps=Math.max(0,state.frontCount-1);
+        const extraGap=gaps?Math.min(12,spare/gaps):0;
+        state.cardGap=minimumGap+extraGap;
+        state.stackInset=spare-extraGap*gaps;
       }
 
       state.cards.forEach(function(card,index){
@@ -199,11 +209,11 @@
       state.cards.forEach(function(card,index){
         const relative=index-visualProgress;
         const behind=Math.max(0,relative-(state.frontCount-1));
-        const y=relative<0
+        const y=state.stackInset+(relative<0
           ?relative*spacing
           :behind>0
             ?frontBottom+behind*state.peekStep
-            :relative*spacing;
+            :relative*spacing);
         const scale=relative<0
           ?1+Math.max(-1,relative)*.035
           :1-Math.min(BACK_PEEKS,behind)*.036;
