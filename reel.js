@@ -127,14 +127,17 @@
       // Read geometry only on mount/resize, never per scroll frame.
       const track=container.getBoundingClientRect();
       const stageHeight=stage.offsetHeight;
-      state.start=track.top+window.scrollY;
-      state.step=count>1?Math.max(1,(track.height-stageHeight)/(count-1)):1;
-      // Card geometry is measured on virtual-window changes, not each scroll frame.
+      // Measure the compact banner before calibrating the reel start.
+      // The stage pins when its top reaches this bar, not the viewport top.
       if(hero&&compactBar){
         state.compactHeight=compactBar.offsetHeight;
         state.expandedHeight=hero.offsetHeight;
         hero.style.setProperty('--reel-hero-top',Math.min(0,state.compactHeight-state.expandedHeight)+'px');
       }
+      // Start the existing 55ms glide at the exact sticky boundary.
+      // Keep the PR #64 step length and easing unchanged.
+      state.start=track.top+window.scrollY-state.compactHeight;
+      state.step=count>1?Math.max(1,(track.height-stageHeight)/(count-1)):1;
     }
 
     function measureStack(){
