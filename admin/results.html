@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / 投票結果・分析</title>
-  <link rel="stylesheet" href="admin.css?v=584b03b3704f">
+  <link rel="stylesheet" href="admin.css?v=83bb52dbd862">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -16,7 +16,7 @@
       <p class="auth-subtitle">投票結果・分析</p>
       <form id="loginForm" class="auth-form" autocomplete="off">
         <label for="adminCode">管理者コード</label>
-        <input id="adminCode" name="adminCode" type="password" inputmode="numeric" autocomplete="current-password" required>
+        <input id="adminCode" name="adminCode" type="password" inputmode="numeric" autocomplete="current-password" enterkeyhint="done" minlength="4" maxlength="12" required>
         <button id="loginButton" type="submit">認証する</button>
       </form>
       <p id="loginMessage" class="auth-message" role="status" aria-live="polite"></p>
@@ -189,6 +189,6 @@
     <footer class="dashboard-footer"><p>投票結果・ランキング・傾向を確認できます。システム監視は管理画面へ。</p><p id="dashboardNotice"></p></footer>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=584b03b3704f"></script>
+  <script src="admin.js?v=83bb52dbd862"></script>
 </body>
 </html>

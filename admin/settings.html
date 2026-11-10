@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#11161b">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票システム / SETTINGS</title>
-  <link rel="stylesheet" href="admin.css?v=584b03b3704f">
+  <link rel="stylesheet" href="admin.css?v=83bb52dbd862">
 </head>
 <body>
   <main id="loginShell" class="auth-shell" aria-labelledby="loginTitle">
@@ -16,7 +16,7 @@
       <p class="auth-subtitle">SYSTEM MANAGEMENT</p>
       <form id="loginForm" class="auth-form" autocomplete="off">
         <label for="adminCode">管理者コード</label>
-        <input id="adminCode" name="adminCode" type="password" inputmode="numeric" autocomplete="current-password" required>
+        <input id="adminCode" name="adminCode" type="password" inputmode="numeric" autocomplete="current-password" enterkeyhint="done" minlength="4" maxlength="12" required>
         <button id="loginButton" type="submit">認証する</button>
       </form>
       <p id="loginMessage" class="auth-message" role="status" aria-live="polite"></p>
@@ -457,17 +457,17 @@
       <form id="adminCodeForm" class="work-editor" autocomplete="off">
         <label>
           <span>現在の管理コード</span>
-          <input id="currentAdminCode" type="password" inputmode="numeric" minlength="4" maxlength="12" required>
+          <input id="currentAdminCode" type="password" inputmode="numeric" autocomplete="current-password" enterkeyhint="done" minlength="4" maxlength="12" required>
         </label>
 
         <label>
           <span>新しい管理コード</span>
-          <input id="newAdminCode" type="password" inputmode="numeric" minlength="4" maxlength="12" required>
+          <input id="newAdminCode" type="password" inputmode="numeric" autocomplete="new-password" enterkeyhint="done" minlength="4" maxlength="12" pattern="[0-9]{4,12}" required>
         </label>
 
         <label>
           <span>新しい管理コード（確認）</span>
-          <input id="confirmAdminCode" type="password" inputmode="numeric" minlength="4" maxlength="12" required>
+          <input id="confirmAdminCode" type="password" inputmode="numeric" autocomplete="new-password" enterkeyhint="done" minlength="4" maxlength="12" pattern="[0-9]{4,12}" required>
         </label>
 
         <div class="work-editor-actions">
@@ -487,6 +487,11 @@
         <p>作品・画像・管理コードは保持します。</p>
       </div>
       <p class="reset-votes-warning">D1に保存された投票記録をすべて削除します。この操作は元に戻せません。投票済み端末のローカル状態は変更しません。</p>
+      <div class="work-editor">
+        <label for="resetVotesAdminCode"><span>管理者コード（数字4〜12桁）</span>
+          <input id="resetVotesAdminCode" name="resetVotesAdminCode" type="password" inputmode="numeric" autocomplete="current-password" enterkeyhint="done" minlength="4" maxlength="12" required>
+        </label>
+      </div>
       <div class="work-editor-actions">
         <button id="resetVotesButton" class="button-danger" type="button">全投票データをリセット</button>
       </div>
@@ -617,7 +622,7 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="admin.js?v=584b03b3704f"></script>
-  <script src="usage-monitor.js?v=584b03b3704f"></script>
+  <script src="admin.js?v=83bb52dbd862"></script>
+  <script src="usage-monitor.js?v=83bb52dbd862"></script>
 </body>
 </html>

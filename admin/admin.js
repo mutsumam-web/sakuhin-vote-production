@@ -756,12 +756,11 @@
       return;
     }
 
-    const code=window.prompt('管理者コードを入力してください。');
-    if(code===null)return;
-
-    const current=code.trim();
-    if(!current){
-      message.textContent='管理者コードを入力してください。';
+    const codeInput=$('resetVotesAdminCode');
+    const current=codeInput.value.trim();
+    if(!current||current.length<4||current.length>12){
+      message.textContent='管理者コードを4〜12桁で入力してください。';
+      codeInput.focus();
       return;
     }
 
@@ -793,6 +792,7 @@
 
       message.textContent='投票データをリセットできませんでした。';
     }finally{
+      codeInput.value='';
       button.disabled=false;
     }
   }

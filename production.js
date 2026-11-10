@@ -488,6 +488,16 @@ function hideVotedMask(){
 function init(){
   document.getElementById('voteButton').addEventListener('click',openVoteConfirm);
   document.getElementById('adminButton').addEventListener('click',showAdmin);
+  const adminCodeDialog=document.getElementById('adminCodeDialog');
+  document.getElementById('adminCodeDialogForm').addEventListener('submit',function(event){
+    event.preventDefault();
+    const code=document.getElementById('adminResetCode').value;
+    adminCodeDialog.close();
+    adminReset(code);
+  });
+  document.getElementById('adminResetCancelButton').addEventListener('click',function(){
+    adminCodeDialog.close();
+  });
 
   document.getElementById('voteConfirmSubmitButton').addEventListener('click',submitVote);
   document.getElementById('voteConfirmBackButton').addEventListener('click',closeVoteConfirm);
@@ -1018,9 +1028,11 @@ function submitVote(){
 }
 
 function showAdmin(){
-  const code=window.prompt('管理者コードを入力してください。');
-  if(code===null)return;
-  adminReset(code.trim());
+  const dialog=document.getElementById('adminCodeDialog');
+  const input=document.getElementById('adminResetCode');
+  input.value='';
+  if(!dialog.open)dialog.showModal();
+  input.focus();
 }
 
 function adminReset(code){

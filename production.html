@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#eeeae0">
   <meta name="format-detection" content="telephone=no">
   <title>作品展投票</title>
-  <link rel="stylesheet" href="production.css?v=584b03b3704f">
+  <link rel="stylesheet" href="production.css?v=83bb52dbd862">
 </head>
 <body>
   <a class="skip-link" href="#works">作品一覧へ移動</a>
@@ -36,6 +36,7 @@
         </defs>
       </svg>
       <div class="hero-visual" aria-hidden="true"></div>
+      <a id="headerAdminLink" class="header-admin-link" href="admin/settings.html" aria-label="管理画面を開く">管理者</a>
       <div class="hero-topline">
         <span id="heroTopline">山口駐屯地創設71周年記念行事</span>
       </div>
@@ -131,6 +132,19 @@
     <div class="max-vote-error-message">最大3作品まで選択できます</div>
   </div>
 
+  <dialog id="adminCodeDialog" class="admin-code-dialog" aria-labelledby="adminCodeDialogTitle">
+    <form id="adminCodeDialogForm">
+      <h2 id="adminCodeDialogTitle">管理者コードを入力</h2>
+      <p>この端末の投票済み状態を解除します。</p>
+      <label for="adminResetCode">管理者コード（数字4〜12桁）</label>
+      <input id="adminResetCode" name="adminResetCode" type="password" inputmode="numeric" autocomplete="current-password" enterkeyhint="done" minlength="4" maxlength="12" pattern="[0-9]{4,12}" required>
+      <div class="admin-code-dialog-actions">
+        <button id="adminResetCancelButton" type="button">キャンセル</button>
+        <button id="adminResetSubmitButton" type="submit">確認する</button>
+      </div>
+    </form>
+  </dialog>
+
   <div id="votedMask" class="voted-mask" hidden aria-hidden="true" aria-live="polite" aria-modal="true" role="dialog" aria-labelledby="votedMaskTitle">
     <div class="voted-mask-admin-zone" aria-label="管理者機能" role="button" tabindex="0"></div>
     <div class="voted-mask-content">
@@ -148,6 +162,6 @@
   </div>
 
   <script src="reel.js?v=20261011-single-reel-v1"></script>
-  <script src="production.js?v=584b03b3704f"></script>
+  <script src="production.js?v=83bb52dbd862"></script>
 </body>
 </html>
