@@ -48,10 +48,12 @@ let works=[];
 let selected=[];
 let activeDetailValue='';
 
-function displayAssetUrl(key){
+function displayAssetUrl(key,variant){
   const value=String(key||'').trim();
   if(!value)return'';
-  return API_BASE+'/assets/'+value.split('/').map(encodeURIComponent).join('/');
+  const encoded=value.split('/').map(encodeURIComponent).join('/');
+  return API_BASE+'/assets/'+(variant==='banner'?'banners/':'')+encoded
+    +(variant==='banner'?'.webp':'');
 }
 
 function normalizeDisplaySettings(value){
@@ -306,9 +308,25 @@ function applyDisplaySettings(value){
 
   const heroVisual=document.querySelector('.hero-visual');
   if(heroVisual){
-    heroVisual.style.backgroundImage=displaySettings.headerImageKey
-      ?'url("'+displayAssetUrl(displaySettings.headerImageKey).replace(/"/g,'%22')+'")'
-      :'';
+    const key=displaySettings.headerImageKey;
+    if(!key){
+      heroVisual.style.backgroundImage='';
+    }else{
+      const original=displayAssetUrl(key);
+      const banner=displayAssetUrl(key,'banner');
+      const heroImage=new Image();
+      heroImage.onload=function(){
+        if(displaySettings.headerImageKey===key){
+          heroVisual.style.backgroundImage='url("'+banner.replace(/"/g,'%22')+'")';
+        }
+      };
+      heroImage.onerror=function(){
+        if(displaySettings.headerImageKey===key){
+          heroVisual.style.backgroundImage='url("'+original.replace(/"/g,'%22')+'")';
+        }
+      };
+      heroImage.src=banner;
+    }
   }
 
   const mask=document.getElementById('votedMask');
@@ -572,14 +590,22 @@ function parseChoiceInfo(value){
   };
 }
 
-function attachImageFallback(image,imageWrap){
+function attachImageFallback(image,imageWrap,originalUrl){
+  let originalTried=false;
   const fail=function(){
-    imageWrap.classList.add('image-unavailable');
+    if(originalUrl&&!originalTried){
+      originalTried=true;
+      image.src=originalUrl;
+    }else if(imageWrap){
+      imageWrap.classList.add('image-unavailable');
+    }
   };
-
-  image.addEventListener('error',fail,{once:true});
-
+  image.addEventListener('error',fail);
   if(image.complete&&image.naturalWidth===0)fail();
+}
+
+function previewImageUrl(work){
+  return work.thumbnail||work.image;
 }
 
 function hideMaxVoteError(){
@@ -621,11 +647,11 @@ function createWorkCard(work,index,isReel){
     if(work.image){
       const image=document.createElement('img');
       image.className='work-image';
-      image.src=work.image;
+      image.src=previewImageUrl(work);
       image.alt='作品画像：'+(parsed.title||('作品 '+String(index+1)));
       image.decoding='async';
       image.loading=isReel||index<2?'eager':'lazy';
-      attachImageFallback(image,imageWrap);
+      attachImageFallback(image,imageWrap,work.thumbnail?work.image:'');
       imageWrap.appendChild(image);
     }
 
@@ -845,9 +871,10 @@ function renderSelectedThumbs(){
 
     if(work&&work.image){
       const image=document.createElement('img');
-      image.src=work.image;
+      image.src=previewImageUrl(work);
       image.alt='';
       image.decoding='async';
+      attachImageFallback(image,null,work.thumbnail?work.image:'');
       slot.appendChild(image);
     }
 
@@ -886,9 +913,10 @@ function renderVoteConfirm(){
 
     if(work&&work.image){
       const image=document.createElement('img');
-      image.src=work.image;
+      image.src=previewImageUrl(work);
       image.alt='';
       image.decoding='async';
+      attachImageFallback(image,null,work.thumbnail?work.image:'');
       thumb.appendChild(image);
     }
 

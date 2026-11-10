@@ -557,6 +557,11 @@
           body:file
         });
         headerImageKey=asset.key;
+        try{
+          await uploadOptimizedAsset(file,headerImageKey,'banners');
+        }catch(error){
+          console.warn('ヘッダー軽量画像を作成できませんでした。元画像で表示します。');
+        }
       }
 
       const input={
@@ -1505,6 +1510,39 @@
     return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
   }
 
+  // Browser-side WebP preview: uploaded to R2 immediately so newly added
+  // images work before the next Static Assets snapshot/deployment.
+  async function uploadOptimizedAsset(file,key,variant){
+    if(typeof createImageBitmap!=='function')return false;
+    const bitmap=await createImageBitmap(file);
+    try{
+      const maxDimension=variant==='banners'?1600:768;
+      const ratio=Math.min(1,maxDimension/Math.max(bitmap.width,bitmap.height));
+      const width=Math.max(1,Math.round(bitmap.width*ratio));
+      const height=Math.max(1,Math.round(bitmap.height*ratio));
+      const canvas=document.createElement('canvas');
+      canvas.width=width;
+      canvas.height=height;
+      canvas.getContext('2d').drawImage(bitmap,0,0,width,height);
+      const blob=await new Promise(function(resolve){
+        canvas.toBlob(resolve,'image/webp',variant==='banners'?.82:.76);
+      });
+      if(!blob||blob.type!=='image/webp')return false;
+      const optimizedKey=variant+'/'+key+'.webp';
+      await adminRest('/api/admin/assets/'+encodeURIComponent(optimizedKey),{
+        method:'PUT',
+        headers:{
+          'X-Admin-Session':state.session,
+          'Content-Type':'image/webp'
+        },
+        body:blob
+      });
+      return true;
+    }finally{
+      if(bitmap.close)bitmap.close();
+    }
+  }
+
   async function uploadWorkImage(work,file){
     const ext=assetExtension(file);
     if(!ext)throw new Error('UNSUPPORTED_ASSET_TYPE');
@@ -1517,6 +1555,11 @@
       },
       body:file
     });
+    try{
+      await uploadOptimizedAsset(file,key,'thumbs');
+    }catch(error){
+      console.warn('サムネイル作成に失敗しました。元画像で表示します。');
+    }
 
     const updated=await adminRest('/api/admin/works/'+encodeURIComponent(work.id),{
       method:'PATCH',
