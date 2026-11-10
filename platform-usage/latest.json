@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-10T07:26:38.745Z",
+  "collectedAt": "2026-11-10T19:49:15.557Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 364,
-    "quotaUsedMinutes": 249,
-    "privateRepoMinutes": 249,
-    "publicRepoMinutes": 112,
+    "usedMinutes": 498,
+    "quotaUsedMinutes": 363,
+    "privateRepoMinutes": 363,
+    "publicRepoMinutes": 135,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 361,
-    "reconciliationDelta": 3,
+    "repositoryMinutesTotal": 498,
+    "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 249
+      "minutes": 363
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 112
+      "minutes": 135
     },
     {
       "repository": "mutsumam-web/hachi-ai",
@@ -76,12 +76,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 486,
+      "requestsToday": 793,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 53627,
-      "rowsWrittenToday": 1054,
+      "rowsReadToday": 91946,
+      "rowsWrittenToday": 1087,
       "storageBytes": 454656
     },
     "r2": {
@@ -90,20 +90,20 @@
       "classBOperations": 1199
     },
     "githubActions": {
-      "usedMinutes": 361,
-      "quotaUsedMinutes": 249
+      "usedMinutes": 498,
+      "quotaUsedMinutes": 363
     }
   },
   "workers": {
-    "requestsToday": 486,
+    "requestsToday": 795,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 53627,
+    "rowsReadToday": 91946,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 1054,
+    "rowsWrittenToday": 1087,
     "rowsWrittenLimit": 100000,
     "storageBytes": 942080,
     "storageLimitBytes": 5368709120,
