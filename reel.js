@@ -22,6 +22,7 @@
     if(state.snapTimer)clearTimeout(state.snapTimer);
     state.container.classList.remove('reel-track');
     state.container.style.removeProperty('--reel-steps');
+    state.container.style.removeProperty('--reel-step');
     state.container.style.removeProperty('--reel-footer-height');
     if(state.hero){
       state.hero.style.removeProperty('--reel-hero-top');
@@ -165,6 +166,11 @@
       const extraGap=gaps?Math.min(12,spare/gaps):0;
       state.cardGap=minimumGap+extraGap;
       state.stackInset=spare-extraGap*gaps;
+      // Match the scroll distance for one artwork to its actual visual pitch.
+      // PR #64's 55ms easing still applies to ALL card motion: no direct
+      // scroll position mapping or change to the interpolation algorithm.
+      container.style.setProperty('--reel-step',
+        (state.cardHeight+state.cardGap).toFixed(3)+'px');
     }
 
     function renderWindow(center){
@@ -315,6 +321,8 @@
     function onResize(){
       measure();
       measureStack();
+      // The measured card pitch changes the track's scroll distance.
+      measure();
       state.progress=NaN;
       state.lastFrameTime=0;
       schedule();
@@ -343,6 +351,8 @@
     measure();
     renderWindow(0);
     measureStack();
+    // Recalibrate the reel travel after writing the measured --reel-step.
+    measure();
     // Initialize card transforms synchronously. WebKit may expose the mounted
     // cards before a queued animation frame, leaving every card at top:0.
     frame();
