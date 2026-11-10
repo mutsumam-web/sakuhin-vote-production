@@ -748,20 +748,18 @@ svg{
   background:linear-gradient(180deg,rgba(242,244,239,.33),rgba(255,255,255,.08) 70%,transparent);
   color:var(--ink);
 }
-.reel-stage-header,
-.reel-controls{
+.reel-stage-header{
   position:absolute;
   z-index:14;
+  top:clamp(.2rem,1vmin,.5rem);
   left:0;
   right:0;
+  min-height:var(--tap-min);
+  padding-inline:clamp(.65rem,3vw,1.3rem);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding-inline:clamp(.65rem,3vw,1.3rem);
-}
-.reel-stage-header{
-  top:clamp(.3rem,1.5vmin,.8rem);
-  gap:.5rem;
+  gap:clamp(.35rem,1.5vw,.75rem);
 }
 .reel-stage-kicker{
   color:var(--accent);
@@ -778,7 +776,7 @@ svg{
 }
 .reel-viewport{
   position:absolute;
-  inset:clamp(2.05rem,6vmin,3.1rem) 0 clamp(3.15rem,7vmin,4.1rem);
+  inset:clamp(3.15rem,8vmin,3.7rem) 0 clamp(.3rem,1.5vmin,.6rem);
   overflow:hidden;
   perspective:1000px;
   transform-style:preserve-3d;
@@ -787,7 +785,7 @@ svg{
   display:none;
 }
 .reel-track .work-card{
-  --reel-card-height:clamp(4rem,7.65svh,4.95rem);
+  --reel-card-height:clamp(4.35rem,8.65svh,5.55rem);
   position:absolute;
   left:50%;
   top:0;
@@ -797,7 +795,7 @@ svg{
   margin:0;
   padding:clamp(.3rem,1.4vmin,.48rem) clamp(.42rem,1.9vw,.75rem);
   display:grid;
-  grid-template-columns:clamp(2.6rem,5.7svh,3.4rem) minmax(0,1fr) auto;
+  grid-template-columns:clamp(2.85rem,6.4svh,3.95rem) minmax(0,1fr) auto;
   align-items:center;
   align-content:center;
   gap:clamp(.35rem,1.6vw,.8rem);
@@ -895,15 +893,16 @@ svg{
   background:transparent;
 }
 .reel-controls{
-  bottom:clamp(.1rem,1.2vmin,.55rem);
-  gap:clamp(.25rem,2vw,.8rem);
-  justify-content:center;
+  position:static;
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:clamp(.25rem,1.2vw,.55rem);
 }
-.reel-hint{
-  min-width:0;
-  text-align:center;
-  font-size:clamp(.62rem,calc(.62rem + var(--type-fluid-caption)),.83rem);
-  color:var(--ink-soft);
+@media(max-width:700px){
+  .reel-stage-kicker{display:none}
+  .reel-stage-counter{margin-right:auto}
 }
 .reel-nav-button{
   flex:0 0 auto;
@@ -930,7 +929,7 @@ svg{
   .reel-track .work-meta .work-select-zone{right:.45rem}
   .reel-track .work-title{font-size:clamp(.74rem,2.5vh,.92rem)}
   .reel-track .work-index{font-size:.55rem}
-  .reel-viewport{inset:2rem 0 2.75rem}
+  .reel-viewport{inset:3.15rem 0 .3rem}
 }
 
 .works-loading{

@@ -66,16 +66,14 @@
     previous.className='reel-nav-button';
     previous.setAttribute('aria-label','前の作品');
     previous.textContent='↑';
-    const hint=document.createElement('span');
-    hint.className='reel-hint';
-    hint.textContent='手前のカードはすべて選択できます';
     const next=document.createElement('button');
     next.type='button';
     next.className='reel-nav-button';
     next.setAttribute('aria-label','次の作品');
     next.textContent='↓';
-    controls.append(previous,hint,next);
-    stage.append(header,viewport,controls);
+    controls.append(previous,next);
+    header.append(controls);
+    stage.append(header,viewport);
     container.replaceChildren(stage);
 
     const reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
