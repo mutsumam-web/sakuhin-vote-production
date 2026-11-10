@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-09T22:27:09.379Z",
+  "collectedAt": "2026-11-10T07:26:38.745Z",
   "exact": true,
   "repositoriesComplete": true,
   "repositories": [
     {
-      "repository": "mutsumam-web/sakuhin-vote-production",
-      "private": false,
-      "archived": false,
-      "minutes": 80
-    },
-    {
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 29
+      "minutes": 249
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-production",
+      "private": false,
+      "archived": false,
+      "minutes": 112
     },
     {
       "repository": "mutsumam-web/hachi-ai",
