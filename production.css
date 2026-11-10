@@ -787,11 +787,13 @@ svg{
   display:none;
 }
 .reel-track .work-card{
+  --reel-card-height:clamp(8.4rem,18svh,10rem);
   position:absolute;
   left:50%;
-  top:50%;
+  top:0;
   width:min(94%,34rem);
   max-width:100%;
+  height:var(--reel-card-height);
   margin:0;
   padding:clamp(.55rem,2.4vw,.95rem);
   display:grid;
@@ -811,7 +813,7 @@ svg{
   contain:layout;
   will-change:transform,opacity;
 }
-.reel-track .work-card.is-current{pointer-events:auto}
+.reel-track .work-card.is-active{pointer-events:auto}
 .reel-track .work-image-wrap{
   width:100%;
   aspect-ratio:1/1;

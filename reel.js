@@ -5,8 +5,9 @@
   'use strict';
 
   let current=null;
-  const WINDOW_BEHIND=1;
-  const WINDOW_AHEAD=3;
+  const EXITING_CARD=1;
+  const FRONT_MAX=3;
+  const BACK_PEEKS=2;
 
   function destroy(){
     if(!current)return;
@@ -18,8 +19,10 @@
     if(state.snapTimer)clearTimeout(state.snapTimer);
     state.container.classList.remove('reel-track');
     state.container.style.removeProperty('--reel-steps');
-    state.hero.style.removeProperty('--reel-hero-top');
-    state.hero.style.removeProperty('--reel-compact-reveal');
+    if(state.hero){
+      state.hero.style.removeProperty('--reel-hero-top');
+      state.hero.style.removeProperty('--reel-compact-reveal');
+    }
     if(state.compactBar){
       state.compactBar.inert=true;
       state.compactBar.setAttribute('aria-hidden','true');
@@ -54,7 +57,7 @@
 
     const viewport=document.createElement('div');
     viewport.className='reel-viewport';
-    viewport.setAttribute('aria-label','中央の作品を選択または詳細表示');
+    viewport.setAttribute('aria-label','手前の作品カードはそれぞれ選択・詳細表示できます');
 
     const controls=document.createElement('div');
     controls.className='reel-controls';
@@ -65,7 +68,7 @@
     previous.textContent='↑';
     const hint=document.createElement('span');
     hint.className='reel-hint';
-    hint.textContent='上下にスワイプして作品をめくる';
+    hint.textContent='手前のカードはすべて選択できます';
     const next=document.createElement('button');
     next.type='button';
     next.className='reel-nav-button';
@@ -83,6 +86,10 @@
       createCard:options.createCard,
       cards:new Map(),
       center:-1,
+      frontCount:FRONT_MAX,
+      cardHeight:160,
+      cardGap:10,
+      peekStep:18,
       progress:NaN,
       step:1,
       start:0,
@@ -103,7 +110,7 @@
       const stageHeight=stage.offsetHeight;
       state.start=track.top+window.scrollY;
       state.step=count>1?Math.max(1,(track.height-stageHeight)/(count-1)):1;
-      state.travel=Math.max(155,Math.min(290,viewport.clientHeight*.57));
+      // Card geometry is measured on virtual-window changes, not each scroll frame.
       if(hero&&compactBar){
         state.compactHeight=compactBar.offsetHeight;
         state.expandedHeight=hero.offsetHeight;
@@ -115,7 +122,8 @@
       if(center===state.center)return;
       state.center=center;
       const desired=new Set();
-      for(let index=Math.max(0,center-WINDOW_BEHIND);index<=Math.min(count-1,center+WINDOW_AHEAD);index++){
+      const last=Math.min(count-1,center+state.frontCount+BACK_PEEKS-1);
+      for(let index=Math.max(0,center-EXITING_CARD);index<=last;index++){
         desired.add(index);
       }
       state.cards.forEach(function(card,index){
@@ -131,17 +139,37 @@
         viewport.appendChild(card);
         state.cards.set(index,card);
       });
-      // Focus/accessibility attributes only change when the central work changes.
+
+      // Work out how many complete, tappable cards fit above the two peeks.
+      // Read only when the virtual window changes or the viewport is resized.
+      const sample=state.cards.get(center);
+      if(sample){
+        state.cardHeight=sample.offsetHeight||160;
+        state.cardGap=clamp(8,viewport.clientHeight*.019,13);
+        state.peekStep=clamp(13,viewport.clientHeight*.035,20);
+        const usable=Math.max(0,viewport.clientHeight-(BACK_PEEKS*state.peekStep+12));
+        const fitted=Math.floor((usable+state.cardGap)/(state.cardHeight+state.cardGap));
+        const nextCount=clamp(1,fitted,FRONT_MAX);
+        if(nextCount!==state.frontCount){
+          state.frontCount=nextCount;
+          state.center=-1;
+          renderWindow(center);
+          return;
+        }
+      }
+
       state.cards.forEach(function(card,index){
-        const active=index===center;
-        card.classList.toggle('is-current',active);
+        const active=index>=center&&index<center+state.frontCount;
+        card.classList.toggle('is-current',index===center);
+        card.classList.toggle('is-active',active);
         card.inert=!active;
         card.setAttribute('aria-hidden',active?'false':'true');
         card.tabIndex=active?0:-1;
         const zone=card.querySelector('.work-select-zone');
         if(zone)zone.tabIndex=active?0:-1;
       });
-      counter.textContent='WORK '+String(center+1).padStart(2,'0')+' / '+String(count).padStart(2,'0');
+      const end=Math.min(count,center+state.frontCount);
+      counter.textContent='WORK '+String(center+1).padStart(2,'0')+'–'+String(end).padStart(2,'0')+' / '+String(count).padStart(2,'0');
       previous.disabled=center<=0;
       next.disabled=center>=count-1;
     }
@@ -166,18 +194,25 @@
       if(Math.abs(visualProgress-state.progress)<.001)return;
       state.progress=visualProgress;
 
+      const spacing=state.cardHeight+state.cardGap;
+      const frontBottom=(state.frontCount-1)*spacing;
       state.cards.forEach(function(card,index){
         const relative=index-visualProgress;
-        const depth=Math.max(0,Math.min(3,relative));
-        const dismissed=Math.max(0,Math.min(1,-relative));
-        const y=relative>=0
-          ?depth*clamp(35,viewport.clientHeight*.105,66)
-          :-dismissed*state.travel;
-        const scale=relative>=0?1-depth*.055:1-dismissed*.045;
-        const opacity=relative>=0?1-depth*.14:1-dismissed;
-        card.style.transform='translate(-50%,-50%) translate3d(0,'+y.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
-        card.style.opacity=String(Math.max(0,opacity));
-        card.style.zIndex=String(relative<0?120+Math.round(dismissed*10):100-Math.round(relative*8));
+        const behind=Math.max(0,relative-(state.frontCount-1));
+        const y=relative<0
+          ?relative*spacing
+          :behind>0
+            ?frontBottom+behind*state.peekStep
+            :relative*spacing;
+        const scale=relative<0
+          ?1+Math.max(-1,relative)*.035
+          :1-Math.min(BACK_PEEKS,behind)*.036;
+        const opacity=relative<0
+          ?Math.max(0,1+relative)
+          :Math.max(.7,1-behind*.12);
+        card.style.transform='translate(-50%,0) translate3d(0,'+y.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
+        card.style.opacity=String(opacity);
+        card.style.zIndex=String(relative<0?120:behind>0?40-Math.floor(behind*4):100-Math.floor(relative*8));
       });
     }
 
@@ -207,7 +242,8 @@
 
     function onResize(){
       measure();
-      state.progress=NaN; // Updated radius/viewport size requires fresh transforms.
+      state.center=-1; // Recompute the number of fully visible cards on rotation.
+      state.progress=NaN;
       schedule();
     }
 
