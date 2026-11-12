@@ -162,6 +162,21 @@ svg{
   padding-bottom:calc(var(--bar-height) + var(--safe-bottom) + clamp(1.1rem,4vmin,2rem));
 }
 
+/* Three-column GRID only: fixed scroll-depth dice behind the gallery UI. */
+.grid-dice-canvas{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  display:block;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+:root[data-gallery-columns="3"][data-gallery-mode="grid"] .app-shell{
+  position:relative;
+  z-index:2;
+}
+
 .app-header{
   --hero-pad-inline:clamp(.9rem,4.2vw,3rem);
   --hero-pad-left:max(calc(var(--safe-left) + var(--hero-pad-inline)),var(--hero-pad-inline));
