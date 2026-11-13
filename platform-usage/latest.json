@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-13T06:52:54.632Z",
+  "collectedAt": "2026-11-13T19:48:45.158Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 535,
-    "quotaUsedMinutes": 376,
-    "privateRepoMinutes": 376,
-    "publicRepoMinutes": 159,
+    "usedMinutes": 616,
+    "quotaUsedMinutes": 431,
+    "privateRepoMinutes": 431,
+    "publicRepoMinutes": 185,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 535,
+    "repositoryMinutesTotal": 616,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,19 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 376
+      "minutes": 431
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 159
+      "minutes": 184
+    },
+    {
+      "repository": "mutsumam-web/sakuhin-vote-cyber",
+      "private": false,
+      "archived": false,
+      "minutes": 1
     },
     {
       "repository": "mutsumam-web/hachi-ai",
@@ -56,12 +62,6 @@
       "minutes": 0
     },
     {
-      "repository": "mutsumam-web/sakuhin-vote-cyber",
-      "private": false,
-      "archived": false,
-      "minutes": 0
-    },
-    {
       "repository": "mutsumam-web/soyukai-site",
       "private": true,
       "archived": false,
@@ -76,12 +76,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 0,
+      "requestsToday": 256,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 0,
-      "rowsWrittenToday": 0,
+      "rowsReadToday": 27574,
+      "rowsWrittenToday": 4,
       "storageBytes": 454656
     },
     "r2": {
@@ -90,20 +90,20 @@
       "classBOperations": 1199
     },
     "githubActions": {
-      "usedMinutes": 535,
-      "quotaUsedMinutes": 376
+      "usedMinutes": 616,
+      "quotaUsedMinutes": 431
     }
   },
   "workers": {
-    "requestsToday": 12,
+    "requestsToday": 312,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 3,
+    "rowsReadToday": 27580,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 0,
+    "rowsWrittenToday": 4,
     "rowsWrittenLimit": 100000,
     "storageBytes": 942080,
     "storageLimitBytes": 5368709120,
