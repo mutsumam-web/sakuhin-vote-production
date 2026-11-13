@@ -1,8 +1,8 @@
-/* Production three-column GRID only: 18 small cubes follow one shared
- * vertical track. Top/bottom turnarounds form compact curls; left/right
- * wall contacts reflect smoothly with no circular detour.
- * Cubes enter from outside the top edge and exit beyond the bottom edge.
- * Artwork cards, voting logic and the two-column/reel modes are unchanged.
+/* Production three-column GRID only: one short, close-spaced cube ribbon.
+ * A single continuous trajectory extends from outside the top edge,
+ * through vertical legs with top/bottom 360-degree turns, then outside
+ * the bottom edge. Left/right rebounds are smooth, without loops.
+ * Artwork, 2-column GRID, reel, and voting behavior stay unchanged.
  */
 (function(){
   'use strict';
@@ -63,6 +63,7 @@
     const k=760/(760-z);
     return [screenX/k,screenY/k,z];
   }
+  let currentSpin=0;
   function addSample(p,turn){
     if(track.length){
       const q=track[track.length-1].p;
@@ -70,7 +71,7 @@
         (p[0]-q[0])*950,(p[1]-q[1])*1190,(p[2]-q[2])*.16
       );
     }
-    track.push({p,d:totalLength,turn});
+    track.push({p,d:totalLength,turn,turnSpin:turn>0?currentSpin:0});
   }
   function legPoint(leg,t,index){
     const [ax,ay]=leg.a,[bx,by]=leg.b;
@@ -106,9 +107,18 @@
   }
   for(let i=0;i<legs.length;i++){
     const leg=legs[i],next=legs[(i+1)%legs.length];
-    for(let k=0;k<180;k++)addSample(legPoint(leg,k/180,i),0);
-    for(let k=0;k<80;k++)addSample(turnPoint(leg.b,next.a,k/80,i),1);
+    for(let k=0;k<180;k++){
+      currentSpin=0;
+      addSample(legPoint(leg,k/180,i),0);
+    }
+    for(let k=0;k<80;k++){
+      // A complete cube tumble finishes before the vertical
+      // trajectory has reversed at the middle of this turn.
+      currentSpin=tau*smooth(Math.min(1,(k/80)/.50));
+      addSample(turnPoint(leg.b,next.a,k/80,i),1);
+    }
   }
+  currentSpin=0;
   addSample(legPoint(legs[0],0,0),0);
   function atFraction(value){
     const d=(((value%1)+1)%1)*totalLength;
@@ -121,12 +131,53 @@
     const t=(d-a.d)/Math.max(1e-8,b.d-a.d);
     return [
       mix(a.p[0],b.p[0],t),mix(a.p[1],b.p[1],t),
-      mix(a.p[2],b.p[2],t),mix(a.turn,b.turn,t)
+      mix(a.p[2],b.p[2],t),mix(a.turn,b.turn,t),
+      (a.turn>0&&b.turn===0&&a.turnSpin>tau*.9)?tau:mix(a.turnSpin,b.turnSpin,t)
     ];
+  }
+  // The exit attaches to the beginning of the seventh vertical leg,
+  // whose direction is down. Both off-screen extensions are sampled
+  // by the same distance coordinate as the inner closed route.
+  const EXIT_TRACK_AT=track[6*260].d/totalLength;
+  const entryAnchor=track[0].p;
+  const exitAnchor=atFraction(EXIT_TRACK_AT);
+  const screenOf=p=>{
+    const depth=760/(760-p[2]);
+    return [p[0]*depth,p[1]*depth];
+  };
+  const entryScreen=screenOf(entryAnchor),exitScreen=screenOf(exitAnchor);
+  function externalPosition(u,anchor,screen,entry){
+    const delta=entry?u:u-EXIT_TRACK_AT;
+    const sx=screen[0],sy=screen[1]+delta*(entry?6.0:7.0);
+    const blend=entry?
+      smooth((u+.087)/.087):
+      smooth(delta/.23);
+    const z=entry?
+      mix(-710,anchor[2],blend):
+      mix(anchor[2],-650,blend);
+    const depth=760/(760-z);
+    return [sx/depth,sy/depth,z,0,0];
+  }
+  function atTravel(u){
+    if(u<0)return externalPosition(u,entryAnchor,entryScreen,true);
+    if(u>EXIT_TRACK_AT)return externalPosition(u,exitAnchor,exitScreen,false);
+    return atFraction(u);
+  }
+  const ENTRY_FINISH=.10,EXIT_BEGIN=.87,EXIT_EXTENSION=.190;
+  function scrollTravel(progress){
+    if(progress<=ENTRY_FINISH){
+      return -.020+.020*smooth(progress/ENTRY_FINISH);
+    }
+    if(progress<EXIT_BEGIN){
+      return EXIT_TRACK_AT*
+        smooth((progress-ENTRY_FINISH)/(EXIT_BEGIN-ENTRY_FINISH));
+    }
+    return EXIT_TRACK_AT+EXIT_EXTENSION*
+      smooth((progress-EXIT_BEGIN)/(1-EXIT_BEGIN));
   }
   const cubes=Array.from({length:18},(_,i)=>({
     index:i,
-    gap:i*.0105,
+    gap:i*.0032,
     size:.82+(i*17%9)*.042,
     rotSeed:i*2.37+.6,
     rollOffset:((i*0.267+0.11)%1),
@@ -179,22 +230,8 @@
     ctx.restore();
   }
   function drawOne(cube,trackPos,head){
-    const [tx,ty,trackZ]=trackPos;
-    // Staggered entrance: each cube approaches from beyond the TOP
-    // edge, in the leader/follower order. It is never faded into place.
-    const entryStart=.003+cube.index*.0018;
-    const entry=smooth((eased-entryStart)/.026);
-    if(entry<=.0001)return;
-    const z=mix(-1100,trackZ,entry);
+    const [tx,ty,z,,turnSpin]=trackPos;
     const depth=760/(760-z);
-    // Exit only at the end: each cube physically travels beyond the
-    // BOTTOM edge instead of fading away while still on screen.
-    const exitStart=.946+cube.index*.0017;
-    const exit=smooth((eased-exitStart)/Math.max(.001,1-exitStart));
-    if(exit>=.999)return;
-    const entryOffset=-h*1.45*(1-entry);
-    const exitOffset=h*1.55*exit;
-    const verticalOffset=entryOffset+exitOffset;
     const event=((head*cube.rollRate+cube.rollOffset)%1+1)%1;
     const eventStep=smooth((event-.33)/.15);
     const eventPulse=smooth((event-.33)/.06)*(1-smooth((event-.42)/.06));
@@ -203,16 +240,19 @@
     const x=tx*w+Math.sin(elapsed*.43+cube.rotSeed)*1.25;
     const y=ty*h+Math.cos(elapsed*.37+cube.rotSeed)*1.35;
     const screenX=w*.5+x*depth;
-    const screenY=h*.49+y*depth+verticalOffset;
+    const screenY=h*.49+y*depth;
     const half=(pointSize/depth)/2,i=cube.index;
     const extraTurn=reduced.matches?0:tau*eventStep;
-    const xr=cube.rotSeed*.53+elapsed*(.19+(i%5)*.013)+phase*(i%2?-2.1:2.0)+extraTurn;
+    const xr=cube.rotSeed*.53+elapsed*(.19+(i%5)*.013)+phase*(i%2?-2.1:2.0)+extraTurn+(reduced.matches?0:turnSpin);
     const yr=cube.rotSeed*.34+elapsed*(.13+(i%7)*.009)-phase*(i%2?2.4:1.7);
     const zr=cube.rotSeed*.12+elapsed*(.045+(i%3)*.009);
     const trans=v=>{
       const p=rotate(v,xr,yr,zr);
-      return [p[0]*half+x,p[1]*half+y+verticalOffset/depth,p[2]*half+z];
+      return [p[0]*half+x,p[1]*half+y,p[2]*half+z];
     };
+    // The Canvas viewport, not a visibility fade, clips entry/exit.
+    if(screenX+pointSize<0||screenX-pointSize>w||
+       screenY+pointSize<0||screenY-pointSize>h)return;
     const near=z>16&&Math.abs(screenX-w*.5)>w*.29;
     const ctx=near?fctx:bctx;
     const opacity=near?.84:.77;
@@ -260,22 +300,21 @@
         eased=target;velocity=0;
       }
     }
-    // Approximately one third of v8's scroll response and autonomous
-    // orbit speed. Two asynchronous waves add gentle, non-repeating
-    // acceleration; hairpins slow to make their tiny curls legible.
+    // Preserve v11's measured slow autonomous pace and gentle variation.
     if(!reduced.matches){
-      const headSample=atFraction(phase+eased*.94);
-      const turnDrag=headSample[3];
-      const surge=.012+
+      const pace=.012+
         .0048*Math.sin(elapsed*.38+.7)+
         .0031*Math.sin(elapsed*1.07+1.13);
-      phase+=clamp(surge*(1-.52*turnDrag),.003,.022)*dt;
+      phase+=clamp(pace,.003,.022)*dt;
     }
-    const head=phase+eased*.94+
-      (reduced.matches?0:.0035*Math.sin(eased*tau*2.1));
+    const midWindow=smooth((eased-ENTRY_FINISH)/.09)*
+      (1-smooth((eased-.78)/.09));
+    // Small bounded self-motion, with no drift at entry/exit junctions.
+    const head=scrollTravel(eased)+
+      (reduced.matches?0:.007*Math.sin(tau*phase)*midWindow);
     bctx.clearRect(0,0,w,h);
     fctx.clearRect(0,0,w,h);
-    const positioned=cubes.map(c=>({c,p:atFraction(head-c.gap)}))
+    const positioned=cubes.map(c=>({c,p:atTravel(head-c.gap)}))
       .sort((a,b)=>a.p[2]-b.p[2]);
     drawCount=0;
     for(const item of positioned)drawOne(item.c,item.p,head);
@@ -317,15 +356,18 @@
   // Read-only diagnostics for browser checks. No user information.
   window.__gridCubeDiagnostics=()=>({
     active:enabled,drawCount,progress:target,cubes:cubes.length,
-    route:'vertical-curl-top-bottom-soft-side-reflection',curls:curlCount,
+    route:'single-file-slow-entry-exit-top-bottom-360',curls:curlCount,
     frontCanvasHidden:front.hidden,
     pointerEvents:getComputedStyle(front).pointerEvents,
-    lastOnlyExit:eased>=.946,
-    scrollTriggeredEntrance:eased>.003,
+    lastOnlyExit:eased>=EXIT_BEGIN,
+    scrollTriggeredEntrance:eased>0,
     offscreenEntrance:true,offscreenExit:true,
+    seamlessSequentialTrack:true,
+    exitTrackAt:EXIT_TRACK_AT,
+    leaderDistance:scrollTravel(eased),
     sideWallReflections:legs.filter(leg=>!!leg.wall).length,
-    followerSpacing:.0105,
+    followerSpacing:.0032,
     cubeSizeBase:w<500?21:28,
-    orbitProgress:((phase+eased*.94)%1+1)%1
+    orbitProgress:scrollTravel(eased)
   });
 })();
