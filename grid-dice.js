@@ -1,7 +1,7 @@
-/* Production three-column GRID only: shared ribbon orbit with long sweeping
- * straights and tight curling turns. All 18 cubes stay on screen until the
- * end-of-page exit, with brief edge foreground and independent tumbling.
- * No voting, card geometry, or GRID layout code is changed.
+/* Production three-column GRID only: a slow, primarily vertical
+ * leader-and-followers ribbon with varied columns, gentle S-bends,
+ * compact curling hairpins, a brief foreground pass, and final exit.
+ * Do not alter artwork cards, the GRID layout, or voting.
  */
 (function(){
   'use strict';
@@ -30,62 +30,64 @@
     {c:[0,1,0],u:[1,0,0],v:[0,0,-1],n:[0,1,0],i:4},
     {c:[0,-1,0],u:[1,0,0],v:[0,0,1],n:[0,-1,0],i:5}
   ];
-  // Eight long traversals joined by eight compact U-turns. The
-  // head and all 17 followers use this ONE continuous closed course.
-  // No looping off-screen: only the final page-exit moves cubes away.
-  const sweeps=[
-    [[-.36,-.29],[ .36,-.30]], // left-to-right, upper
-    [[ .36,-.07],[-.36,-.01]], // right-to-left, upper-middle
-    [[-.36, .23],[ .36, .32]], // long lower diagonal
-    [[ .36, .15],[-.36, .30]], // counter sweep
-    [[-.36, .04],[ .36,-.16]], // long rising diagonal
-    [[ .36,-.34],[-.36,-.18]], // upper traverse
-    [[-.36, .12],[ .36, .22]], // mid-lower traverse
-    [[ .36, .34],[-.36, .29]]  // final lower return
+  // Eight DISTINCT vertical legs, each joined by a compact top/bottom
+  // hairpin. Shared arc-length sampling keeps every follower on the
+  // leader's exact course; x varies without random per-cube detours.
+  const legs=[
+    {a:[-.30,-.32],b:[-.12,.33],cx1:-.32,cx2:-.20,curve:.009},
+    {a:[ .18, .33],b:[ .29,-.33],cx1: .15,cx2: .33,curve:-.010},
+    {a:[ .08,-.33],b:[ .30, .33],cx1: .03,cx2: .33,curve:.013},
+    {a:[-.02, .33],b:[-.29,-.33],cx1:-.01,cx2:-.31,curve:-.008},
+    {a:[-.07,-.33],b:[ .14, .33],cx1:-.10,cx2: .20,curve:.020},
+    {a:[-.24, .33],b:[-.18,-.33],cx1:-.28,cx2:-.18,curve:-.005},
+    {a:[ .16,-.33],b:[ .27, .33],cx1: .22,cx2: .21,curve:-.013},
+    {a:[-.10, .33],b:[-.27,-.33],cx1:-.14,cx2:-.30,curve:.006}
   ];
+  const curlCount=legs.length;
   const SAMPLE_COUNT=2080,track=[];
   let totalLength=0;
-  const curlCount=sweeps.length;
+  const cubic=(a,b,c,d,t)=>{
+    const u=1-t;
+    return u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d;
+  };
+  function depthFor(x){
+    const edge=smooth((Math.abs(x)-.265)/.035);
+    return -245+285*edge;
+  }
   function addSample(p,turn){
     if(track.length){
       const q=track[track.length-1].p;
       totalLength+=Math.hypot(
-        (p[0]-q[0])*950,
-        (p[1]-q[1])*1190,
-        (p[2]-q[2])*.18
+        (p[0]-q[0])*950,(p[1]-q[1])*1190,(p[2]-q[2])*.16
       );
     }
     track.push({p,d:totalLength,turn});
   }
-  function depthFor(x){
-    const edge=smooth((Math.abs(x)-.345)/.075);
-    return -230+270*edge;
-  }
-  function straight(a,b,t,index){
-    const x=mix(a[0],b[0],t);
-    const y=mix(a[1],b[1],t)+Math.sin(Math.PI*t)**2 *
-      (.004*Math.sin(index*1.91));
+  function legPoint(leg,t,index){
+    const a=leg.a,b=leg.b,dy=b[1]-a[1];
+    const x=cubic(a[0],leg.cx1,leg.cx2,b[0],t)+
+      Math.sin(Math.PI*t)**2*leg.curve*Math.sin(tau*t*(index%3===0?1.5:1));
+    const y=cubic(a[1],a[1]+dy*.31,b[1]-dy*.31,b[1],t);
     return [x,y,depthFor(x)];
   }
-  function curledTurn(a,b,t,index){
-    // Enter horizontally, make a compact curl at the outside end,
-    // then leave horizontally in the reverse direction.
-    const side=a[0]>0?1:-1;
-    const theta=-Math.PI/2+Math.PI*t;
-    const envelope=Math.sin(Math.PI*t)**4;
-    const curl=0.015*envelope;
-    const x=side*(.36+.051*Math.cos(theta))+
-      side*curl*Math.sin(tau*t);
-    const y=(a[1]+b[1])/2+(b[1]-a[1])/2*Math.sin(theta)+
-      (index%2?1:-1)*curl*(1-Math.cos(tau*t));
+  function turnPoint(a,b,t,index){
+    // Smooth U-turn at top/bottom. Extra mini-curl occurs only at
+    // selected turns, so the route isn't an identical zigzag repeat.
+    const sign=a[1]>0?1:-1;
+    const envelope=Math.sin(Math.PI*t)**2;
+    const curl=(index===1||index===4||index===6)?0.027:0;
+    const x=cubic(a[0],a[0],b[0],b[0],t)+
+      curl*envelope*Math.sin(tau*t);
+    const y=cubic(a[1],a[1]+sign*.12,b[1]+sign*.12,b[1],t)+
+      sign*curl*.65*envelope*(1-Math.cos(tau*t));
     return [x,y,depthFor(x)];
   }
-  for(let i=0;i<sweeps.length;i++){
-    const [a,b]=sweeps[i],next=sweeps[(i+1)%sweeps.length][0];
-    for(let k=0;k<156;k++)addSample(straight(a,b,k/156,i),0);
-    for(let k=0;k<104;k++)addSample(curledTurn(b,next,k/104,i),1);
+  for(let i=0;i<legs.length;i++){
+    const leg=legs[i],next=legs[(i+1)%legs.length];
+    for(let k=0;k<180;k++)addSample(legPoint(leg,k/180,i),0);
+    for(let k=0;k<80;k++)addSample(turnPoint(leg.b,next.a,k/80,i),1);
   }
-  addSample(straight(sweeps[0][0],sweeps[0][1],0,0),0);
+  addSample(legPoint(legs[0],0,0),0);
   function atFraction(value){
     const d=(((value%1)+1)%1)*totalLength;
     let low=0,high=track.length-1;
@@ -180,7 +182,7 @@
       const p=rotate(v,xr,yr,zr);
       return [p[0]*half+x,p[1]*half+y+exit*h*.95/depth,p[2]*half+z];
     };
-    const near=z>29&&Math.abs(screenX-w*.5)>w*.39;
+    const near=z>16&&Math.abs(screenX-w*.5)>w*.29;
     const ctx=near?fctx:bctx;
     const opacity=(near?.84:.77)*(1-smooth(exit));
     const sortable=[];
@@ -227,18 +229,19 @@
         eased=target;velocity=0;
       }
     }
-    // Faster on straights, slowing through the curling turns.
-    // Two non-synchronous oscillations give non-repeating pace changes.
+    // Approximately one third of v8's scroll response and autonomous
+    // orbit speed. Two asynchronous waves add gentle, non-repeating
+    // acceleration; hairpins slow to make their tiny curls legible.
     if(!reduced.matches){
-      const headSample=atFraction(phase+eased*3.1);
+      const headSample=atFraction(phase+eased*.94);
       const turnDrag=headSample[3];
-      const surge=.035+
-        .013*Math.sin(elapsed*.64+.7)+
-        .010*Math.sin(elapsed*1.91+1.13);
-      phase+=clamp(surge*(1-.44*turnDrag),.010,.067)*dt;
+      const surge=.012+
+        .0048*Math.sin(elapsed*.38+.7)+
+        .0031*Math.sin(elapsed*1.07+1.13);
+      phase+=clamp(surge*(1-.52*turnDrag),.003,.022)*dt;
     }
-    const head=phase+eased*3.1+
-      (reduced.matches?0:.008*Math.sin(eased*tau*3.7));
+    const head=phase+eased*.94+
+      (reduced.matches?0:.0035*Math.sin(eased*tau*2.1));
     bctx.clearRect(0,0,w,h);
     fctx.clearRect(0,0,w,h);
     const positioned=cubes.map(c=>({c,p:atFraction(head-c.gap)}))
@@ -283,10 +286,10 @@
   // Read-only diagnostics for browser checks. No user information.
   window.__gridCubeDiagnostics=()=>({
     active:enabled,drawCount,progress:target,cubes:cubes.length,
-    route:'wide-orbits-eight-sweeps',curls:curlCount,
+    route:'slow-vertical-varied-legs',curls:curlCount,
     frontCanvasHidden:front.hidden,
     pointerEvents:getComputedStyle(front).pointerEvents,
     lastOnlyExit:eased>=.946,
-    orbitProgress:((phase+eased*3.1)%1+1)%1
+    orbitProgress:((phase+eased*.94)%1+1)%1
   });
 })();
