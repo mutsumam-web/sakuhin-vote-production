@@ -1,8 +1,8 @@
-/* Production three-column GRID only: a slow, primarily vertical
- * leader-and-followers ribbon with varied columns, gentle S-bends,
- * compact curling hairpins, sequential scroll-triggered depth entrance,
- * brief foreground passes and final exit.
- * Do not alter artwork cards, the GRID layout, or voting.
+/* Production three-column GRID only: 18 small cubes follow one shared
+ * vertical track. Top/bottom turnarounds form compact curls; left/right
+ * wall contacts reflect smoothly with no circular detour.
+ * Cubes enter from outside the top edge and exit beyond the bottom edge.
+ * Artwork cards, voting logic and the two-column/reel modes are unchanged.
  */
 (function(){
   'use strict';
@@ -31,18 +31,19 @@
     {c:[0,1,0],u:[1,0,0],v:[0,0,-1],n:[0,1,0],i:4},
     {c:[0,-1,0],u:[1,0,0],v:[0,0,1],n:[0,-1,0],i:5}
   ];
-  // Eight DISTINCT vertical legs, each joined by a compact top/bottom
-  // hairpin. Shared arc-length sampling keeps every follower on the
-  // leader's exact course; x varies without random per-cube detours.
+  // Eight varied vertical legs: some brush a side wall and reflect by
+  // easing horizontal velocity through zero, NOT by making a loop.
+  // Each top/bottom turnaround uses a small curl before vertical reversal.
+  // The leader and all followers share these samples by arc length.
   const legs=[
-    {a:[-.30,-.32],b:[-.12,.33],cx1:-.32,cx2:-.20,curve:.009},
-    {a:[ .18, .33],b:[ .29,-.33],cx1: .15,cx2: .33,curve:-.010},
-    {a:[ .08,-.33],b:[ .30, .33],cx1: .03,cx2: .33,curve:.013},
-    {a:[-.02, .33],b:[-.29,-.33],cx1:-.01,cx2:-.31,curve:-.008},
-    {a:[-.07,-.33],b:[ .14, .33],cx1:-.10,cx2: .20,curve:.020},
-    {a:[-.24, .33],b:[-.18,-.33],cx1:-.28,cx2:-.18,curve:-.005},
-    {a:[ .16,-.33],b:[ .27, .33],cx1: .22,cx2: .21,curve:-.013},
-    {a:[-.10, .33],b:[-.27,-.33],cx1:-.14,cx2:-.30,curve:.006}
+    {a:[-.24,-.395],b:[-.13,.395],curve:-.012},
+    {a:[ .16, .395],b:[ .27,-.395],wall:{side:1,at:.41}},
+    {a:[ .06,-.395],b:[ .25, .395],curve:.028},
+    {a:[-.12, .395],b:[-.27,-.395],wall:{side:-1,at:.56}},
+    {a:[-.07,-.395],b:[ .18, .395],curve:-.023},
+    {a:[-.29, .395],b:[-.21,-.395],wall:{side:-1,at:.48}},
+    {a:[ .10,-.395],b:[ .27, .395],wall:{side:1,at:.62}},
+    {a:[-.12, .395],b:[-.27,-.395],curve:.018}
   ];
   const curlCount=legs.length;
   const SAMPLE_COUNT=2080,track=[];
@@ -51,9 +52,16 @@
     const u=1-t;
     return u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d;
   };
-  function depthFor(x){
-    const edge=smooth((Math.abs(x)-.265)/.035);
+  function depthFor(screenX){
+    const edge=smooth((Math.abs(screenX)-.376)/.054);
     return -245+285*edge;
+  }
+  function pathFromScreen(screenX,screenY){
+    // Compensate for perspective so the trajectory remains inside
+    // the viewport on both narrow phones and wide monitors.
+    const z=depthFor(screenX);
+    const k=760/(760-z);
+    return [screenX/k,screenY/k,z];
   }
   function addSample(p,turn){
     if(track.length){
@@ -65,23 +73,36 @@
     track.push({p,d:totalLength,turn});
   }
   function legPoint(leg,t,index){
-    const a=leg.a,b=leg.b,dy=b[1]-a[1];
-    const x=cubic(a[0],leg.cx1,leg.cx2,b[0],t)+
-      Math.sin(Math.PI*t)**2*leg.curve*Math.sin(tau*t*(index%3===0?1.5:1));
-    const y=cubic(a[1],a[1]+dy*.31,b[1]-dy*.31,b[1],t);
-    return [x,y,depthFor(x)];
+    const [ax,ay]=leg.a,[bx,by]=leg.b;
+    let x;
+    if(leg.wall){
+      // The lateral reflection has no positional loop or spin pulse.
+      // Its horizontal derivative reaches zero at the side wall.
+      const at=leg.wall.at,wall=leg.wall.side*.438;
+      x=t<=at ? mix(ax,wall,smooth(t/at)) :
+        mix(wall,bx,smooth((t-at)/(1-at)));
+    }else{
+      x=mix(ax,bx,smooth(t))+
+        leg.curve*Math.sin(Math.PI*t)**2*Math.sin(tau*t*(index%3===0?1.5:1));
+    }
+    const y=cubic(ay,ay+(by-ay)*.31,by-(by-ay)*.31,by,t);
+    return pathFromScreen(x,y);
   }
   function turnPoint(a,b,t,index){
-    // Smooth U-turn at top/bottom. Extra mini-curl occurs only at
-    // selected turns, so the route isn't an identical zigzag repeat.
+    // A compact loop near the horizontal top/bottom boundary, then
+    // vertical reversal. Neither side-wall contact triggers this.
     const sign=a[1]>0?1:-1;
-    const envelope=Math.sin(Math.PI*t)**2;
-    const curl=(index===1||index===4||index===6)?0.027:0;
-    const x=cubic(a[0],a[0],b[0],b[0],t)+
-      curl*envelope*Math.sin(tau*t);
-    const y=cubic(a[1],a[1]+sign*.12,b[1]+sign*.12,b[1],t)+
-      sign*curl*.65*envelope*(1-Math.cos(tau*t));
-    return [x,y,depthFor(x)];
+    let x=cubic(a[0],a[0],b[0],b[0],t);
+    let y=cubic(a[1],a[1]+sign*.07,b[1]+sign*.07,b[1],t);
+    const q=(t-.17)/.66;
+    if(q>0&&q<1){
+      const envelope=Math.sin(Math.PI*q)**2;
+      const r=.024+(index%3)*.0055;
+      const direction=b[0]>=a[0]?1:-1;
+      x+=direction*r*envelope*(Math.cos(tau*q)-1);
+      y+=sign*r*.80*envelope*Math.sin(tau*q);
+    }
+    return pathFromScreen(x,y);
   }
   for(let i=0;i<legs.length;i++){
     const leg=legs[i],next=legs[(i+1)%legs.length];
@@ -159,20 +180,21 @@
   }
   function drawOne(cube,trackPos,head){
     const [tx,ty,trackZ]=trackPos;
-    // At the top of the page no cubes are present. Scrolling gradually
-    // releases the leader first and then its followers from deep space.
-    // Entering cubes grow through perspective rather than appearing at
-    // their normal size or being permanently present on page load.
+    // Staggered entrance: each cube approaches from beyond the TOP
+    // edge, in the leader/follower order. It is never faded into place.
     const entryStart=.003+cube.index*.0018;
     const entry=smooth((eased-entryStart)/.026);
     if(entry<=.0001)return;
-    const z=mix(-1600,trackZ,entry);
+    const z=mix(-1100,trackZ,entry);
     const depth=760/(760-z);
-    // Once fully entered, all cubes remain on-screen until the page-end
-    // exit, retaining v9's vertical route and per-cube rotations.
+    // Exit only at the end: each cube physically travels beyond the
+    // BOTTOM edge instead of fading away while still on screen.
     const exitStart=.946+cube.index*.0017;
     const exit=smooth((eased-exitStart)/Math.max(.001,1-exitStart));
     if(exit>=.999)return;
+    const entryOffset=-h*1.45*(1-entry);
+    const exitOffset=h*1.55*exit;
+    const verticalOffset=entryOffset+exitOffset;
     const event=((head*cube.rollRate+cube.rollOffset)%1+1)%1;
     const eventStep=smooth((event-.33)/.15);
     const eventPulse=smooth((event-.33)/.06)*(1-smooth((event-.42)/.06));
@@ -181,7 +203,7 @@
     const x=tx*w+Math.sin(elapsed*.43+cube.rotSeed)*1.25;
     const y=ty*h+Math.cos(elapsed*.37+cube.rotSeed)*1.35;
     const screenX=w*.5+x*depth;
-    const screenY=h*.49+y*depth+exit*h*.95;
+    const screenY=h*.49+y*depth+verticalOffset;
     const half=(pointSize/depth)/2,i=cube.index;
     const extraTurn=reduced.matches?0:tau*eventStep;
     const xr=cube.rotSeed*.53+elapsed*(.19+(i%5)*.013)+phase*(i%2?-2.1:2.0)+extraTurn;
@@ -189,11 +211,11 @@
     const zr=cube.rotSeed*.12+elapsed*(.045+(i%3)*.009);
     const trans=v=>{
       const p=rotate(v,xr,yr,zr);
-      return [p[0]*half+x,p[1]*half+y+exit*h*.95/depth,p[2]*half+z];
+      return [p[0]*half+x,p[1]*half+y+verticalOffset/depth,p[2]*half+z];
     };
     const near=z>16&&Math.abs(screenX-w*.5)>w*.29;
     const ctx=near?fctx:bctx;
-    const opacity=(near?.84:.77)*entry*(1-smooth(exit));
+    const opacity=near?.84:.77;
     const sortable=[];
     for(const face of faces){
       const n=rotate(face.n,xr,yr,zr);
@@ -295,11 +317,13 @@
   // Read-only diagnostics for browser checks. No user information.
   window.__gridCubeDiagnostics=()=>({
     active:enabled,drawCount,progress:target,cubes:cubes.length,
-    route:'slow-vertical-varied-legs',curls:curlCount,
+    route:'vertical-curl-top-bottom-soft-side-reflection',curls:curlCount,
     frontCanvasHidden:front.hidden,
     pointerEvents:getComputedStyle(front).pointerEvents,
     lastOnlyExit:eased>=.946,
     scrollTriggeredEntrance:eased>.003,
+    offscreenEntrance:true,offscreenExit:true,
+    sideWallReflections:legs.filter(leg=>!!leg.wall).length,
     followerSpacing:.0105,
     cubeSizeBase:w<500?21:28,
     orbitProgress:((phase+eased*.94)%1+1)%1
