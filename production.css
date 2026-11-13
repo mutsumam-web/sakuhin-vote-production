@@ -172,6 +172,9 @@ svg{
   height:100%;
   pointer-events:none;
 }
+.grid-dice-canvas-front{
+  z-index:8;
+}
 :root[data-gallery-columns="3"][data-gallery-mode="grid"] .app-shell{
   position:relative;
   z-index:2;

@@ -1,212 +1,254 @@
-/* Decorative scroll-depth dice for Production's three-column GRID only.
-   Fixed, pointer-transparent Canvas; no changes to card geometry or voting logic. */
+/* Production three-column GRID only: one descending serpentine leader track.
+ * Followers share the track; local curls, brief edge foreground and
+ * per-cube tumbling do not affect work cards, vote handling or layout.
+ */
 (function(){
   'use strict';
-  const canvas=document.getElementById('gridDiceCanvas');
-  if(!canvas)return;
-  const context=canvas.getContext('2d',{alpha:true});
-  if(!context)return;
-
   const root=document.documentElement;
-  const motion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)');
-  const TAU=Math.PI*2;
-  const colors=['#b4a4ef','#60bdac','#edab85','#dc8cb5','#81a9e8','#e5c77b',
-    '#afa1e0','#75b8be','#d9909e','#a0c68d','#ad90d6','#dba98c',
-    '#7fc4ae','#a8b6dd','#dca9c3','#7e9fd1'];
-  const positions=[[-.25,-.14],[.36,.12],[-.45,.22],[.16,-.27],[.49,-.14],[-.1,.36],
-    [.34,.26],[-.37,-.26],[.22,.18],[-.48,.08],[.08,-.38],[.43,.03],
-    [-.2,.25],[.17,-.15],[-.38,-.06],[.48,-.21]];
-  const starts=[-.27,-.20,-.13,-.06,.01,.08,.15,.22,.29,.36,.43,.50,.57,.64,.71,.78];
-  const faces=[
-    {center:[0,0,1],u:[1,0,0],v:[0,1,0],normal:[0,0,1],pips:1},
-    {center:[0,0,-1],u:[-1,0,0],v:[0,1,0],normal:[0,0,-1],pips:6},
-    {center:[1,0,0],u:[0,0,-1],v:[0,1,0],normal:[1,0,0],pips:3},
-    {center:[-1,0,0],u:[0,0,1],v:[0,1,0],normal:[-1,0,0],pips:4},
-    {center:[0,1,0],u:[1,0,0],v:[0,0,-1],normal:[0,1,0],pips:2},
-    {center:[0,-1,0],u:[1,0,0],v:[0,0,1],normal:[0,-1,0],pips:5}
+  const back=document.getElementById('gridDiceCanvas');
+  const front=document.getElementById('gridDiceFrontCanvas');
+  if(!back || !front)return;
+  const bctx=back.getContext('2d',{alpha:true});
+  const fctx=front.getContext('2d',{alpha:true});
+  if(!bctx || !fctx)return;
+  const reduced=window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : {matches:false};
+  const tau=Math.PI*2;
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const smooth=v=>{const t=clamp(v,0,1);return t*t*(3-2*t);};
+  const mix=(a,b,t)=>a+(b-a)*t;
+  const brand=[
+    ['JS','#c19919'],['TS','#478dcc'],['VUE','#39b88c'],['SASS','#dc739b'],
+    ['CSS','#4b96e0'],['HTML','#df8b56'],['SVG','#b99a58'],['LESS','#657cbb'],
+    ['NODE','#7caa61'],['WEB','#7f8a98'],['CP','#6d7e8e'],['GL','#66748c']
   ];
-  const spots={
-    1:[[0,0]],2:[[-.28,-.28],[.28,.28]],
-    3:[[-.28,-.28],[0,0],[.28,.28]],
-    4:[[-.28,-.28],[.28,-.28],[-.28,.28],[.28,.28]],
-    5:[[-.28,-.28],[.28,-.28],[0,0],[-.28,.28],[.28,.28]],
-    6:[[-.28,-.30],[.28,-.30],[-.28,0],[.28,0],[-.28,.30],[.28,.30]]
-  };
-  const dice=starts.map(function(start,i){
-    return {start,len:i%3===0?.52:.46,tint:[1,3,5].map(function(n){return parseInt(colors[i].slice(n,n+2),16);}),seed:i,home:positions[i]};
-  });
-  const clamp=function(value,min,max){return Math.max(min,Math.min(max,value));};
-  const mix=function(a,b,t){return a+(b-a)*t;};
-  function smooth(min,max,value){
-    const t=clamp((value-min)/(max-min),0,1);
-    return t*t*(3-2*t);
-  }
-  function rotate(vector,xr,yr,zr){
-    let x=vector[0],y=vector[1],z=vector[2];
-    let c=Math.cos(xr),s=Math.sin(xr);
-    [y,z]=[y*c-z*s,y*s+z*c];
-    c=Math.cos(yr);s=Math.sin(yr);
-    [x,z]=[x*c+z*s,-x*s+z*c];
-    c=Math.cos(zr);s=Math.sin(zr);
-    return [x*c-y*s,x*s+y*c,z];
-  }
-
-  let width=1,height=1,ratio=1,target=0,visual=0,velocity=0;
-  let last=0,clock=0,active=false,frameId=0;
-  function isActive(){
-    return root.dataset.galleryColumns==='3'&&root.dataset.galleryMode==='grid';
-  }
-  function setTarget(){
-    const max=Math.max(1,root.scrollHeight-root.clientHeight);
-    target=clamp(window.scrollY/max,0,1);
-    schedule();
-  }
-  function resize(){
-    if(!active)return;
-    const nextW=Math.max(1,window.innerWidth);
-    const nextH=Math.max(1,window.innerHeight);
-    const nextRatio=Math.min(1.6,window.devicePixelRatio||1);
-    if(nextW!==width||nextH!==height||nextRatio!==ratio){
-      width=nextW;height=nextH;ratio=nextRatio;
-      canvas.width=Math.round(width*ratio);
-      canvas.height=Math.round(height*ratio);
-      context.setTransform(ratio,0,0,ratio,0,0);
+  const faces=[
+    {c:[0,0,1],u:[1,0,0],v:[0,1,0],n:[0,0,1],i:0},
+    {c:[0,0,-1],u:[-1,0,0],v:[0,1,0],n:[0,0,-1],i:1},
+    {c:[1,0,0],u:[0,0,-1],v:[0,1,0],n:[1,0,0],i:2},
+    {c:[-1,0,0],u:[0,0,1],v:[0,1,0],n:[-1,0,0],i:3},
+    {c:[0,1,0],u:[1,0,0],v:[0,0,-1],n:[0,1,0],i:4},
+    {c:[0,-1,0],u:[1,0,0],v:[0,0,1],n:[0,-1,0],i:5}
+  ];
+  // One descending serpentine route, not 18 independent trajectories.
+  // Small local curls are part of the shared path, so every follower
+  // traverses them in exactly the leader's order.
+  const SAMPLE_COUNT=2048,track=[];
+  let totalLength=0;
+  const curls=[
+    {at:0.31,width:0.095,radius:0.059},
+    {at:0.71,width:0.103,radius:0.051}
+  ];
+  const wobble=[
+    {frequency:3,phase:.8,x:.009,y:.008},
+    {frequency:5,phase:2.3,x:.004,y:.004}
+  ];
+  function path(t){
+    const a=t*tau;
+    let x=.433*Math.sin(a*1.27-.48)+.024*Math.sin(a*2.13+.6);
+    let y=-.89+1.78*t;
+    for(const n of wobble){
+      x+=n.x*Math.sin(a*n.frequency+n.phase);
+      y+=n.y*Math.sin(a*n.frequency+n.phase*1.17);
     }
-    setTarget();
-  }
-  function syncActive(){
-    const next=isActive();
-    if(next===active)return;
-    active=next;
-    canvas.hidden=!next;
-    if(next){
-      last=0;
-      // Entering GRID should not inherit motion from a different gallery mode.
-      const max=Math.max(1,root.scrollHeight-root.clientHeight);
-      target=visual=clamp(window.scrollY/max,0,1);
-      velocity=0;
-      resize();
-    }else{
-      if(frameId)cancelAnimationFrame(frameId);
-      frameId=0;
-      context.clearRect(0,0,width,height);
-    }
-  }
-  function project(point){
-    const factor=850/(850-point[2]);
-    return [width/2+point[0]*factor,height/2+point[1]*factor,factor];
-  }
-  function trace(points){
-    context.beginPath();
-    points.forEach(function(point,i){
-      if(i===0)context.moveTo(point[0],point[1]);
-      else context.lineTo(point[0],point[1]);
-    });
-    context.closePath();
-  }
-  function drawDie(die,u){
-    if(u<0||u>1)return;
-    const arrival=smooth(0,.49,u),departure=smooth(.49,1,u);
-    const z=mix(-1950,255,arrival)-2210*departure;
-    const fog=.12+.88*smooth(-1810,-500,z);
-    const alpha=smooth(0,.13,u)*(1-smooth(.87,1,u))*fog*.80;
-    if(alpha<.018)return;
-    const i=die.seed,side=i%2?-1:1;
-    const center=die.home;
-    const x0=center[0]*.5,y0=center[1]*.4;
-    const x1=center[0]+side*.09,y1=center[1]-side*.06;
-    const x2=clamp(center[0]-side*.42,-.85,.85);
-    const y2=clamp(center[1]+side*.28,-.8,.8);
-    const x=mix(mix(x0,x1,arrival),x2,departure)*width*.58+Math.sin(clock*.48+i*1.77)*6;
-    const y=mix(mix(y0,y1,arrival),y2,departure)*height*.51+Math.cos(clock*.42+i*.91)*7;
-    const spin=motion&&motion.matches?0:clock;
-    const xr=.55+i*.61+u*(i%2?-9.5:9.5)+spin*(.085+i%3*.011);
-    const yr=.17+i*.39+u*(i%2?12:-11)+spin*(.11+i%4*.009);
-    const zr=i*.43+u*(i%2?-6:7)+spin*.042;
-    const half=clamp(Math.min(width*.24,height*.23),68,134)/2;
-    const transform=function(point){
-      const p=rotate(point,xr,yr,zr);
-      return [p[0]+x,p[1]+y,p[2]+z];
-    };
-    const projected=[];
-    faces.forEach(function(face){
-      const normal=rotate(face.normal,xr,yr,zr);
-      if(normal[2]<.025)return;
-      const quad=[];
-      [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(function(pair){
-        const a=pair[0],b=pair[1];
-        quad.push(project(transform([
-          (face.center[0]+face.u[0]*a+face.v[0]*b)*half,
-          (face.center[1]+face.u[1]*a+face.v[1]*b)*half,
-          (face.center[2]+face.u[2]*a+face.v[2]*b)*half
-        ])));
-      });
-      projected.push({face,normal,quad,depth:quad.reduce(function(sum,p){return sum+p[2];},0)/4});
-    });
-    projected.sort(function(a,b){return a.depth-b.depth;});
-    context.globalAlpha=alpha;
-    projected.forEach(function(item){
-      const f=item.face,n=item.normal,q=item.quad;
-      const shine=.66+.3*Math.max(0,-.35*n[0]-.6*n[1]+.72*n[2]);
-      const rgb=die.tint.map(function(v){return Math.round(clamp(v*shine,0,255));});
-      trace(q);context.fillStyle='rgb('+rgb.join(',')+')';context.fill();
-      context.lineWidth=clamp(q[0][2],.45,2);
-      context.strokeStyle='rgba(255,255,255,.75)';context.stroke();
-      spots[f.pips].forEach(function(dot){
-        const ring=[];
-        for(let j=0;j<12;j++){
-          const angle=j*TAU/12;
-          const fu=dot[0]*2*half+Math.cos(angle)*half*.125;
-          const fv=dot[1]*2*half+Math.sin(angle)*half*.125;
-          ring.push(project(transform([
-            f.center[0]*(half+.45)+f.u[0]*fu+f.v[0]*fv,
-            f.center[1]*(half+.45)+f.u[1]*fu+f.v[1]*fv,
-            f.center[2]*(half+.45)+f.u[2]*fu+f.v[2]*fv
-          ])));
-        }
-        trace(ring);context.fillStyle='rgba(25,27,44,.82)';context.fill();
-      });
-      trace(q);
-      const grad=context.createLinearGradient(q[0][0],q[0][1],q[2][0],q[2][1]);
-      grad.addColorStop(0,'rgba(255,255,255,.20)');
-      grad.addColorStop(1,'rgba(255,255,255,0)');
-      context.fillStyle=grad;context.fill();
-    });
-    context.globalAlpha=1;
-  }
-  function draw(now){
-    frameId=0;
-    if(!active||document.hidden)return;
-    const delta=last?Math.min((now-last)/1000,.035):1/60;
-    last=now;clock+=delta;
-    const reduced=motion&&motion.matches;
-    if(reduced){visual=target;velocity=0;}
-    else{
-      velocity+=(target-visual)*77*delta;
-      velocity*=Math.exp(-15.7*delta);
-      visual+=velocity*delta;
-      if(Math.abs(target-visual)<.000005&&Math.abs(velocity)<.00001){
-        visual=target;velocity=0;
+    for(const curl of curls){
+      const q=(t-curl.at)/curl.width+.5;
+      if(q>0&&q<1){
+        const envelope=Math.sin(Math.PI*q)**2;
+        x+=curl.radius*(Math.cos(tau*q)-1)*envelope;
+        y+=curl.radius*Math.sin(tau*q)*envelope;
       }
     }
-    context.clearRect(0,0,width,height);
-    const visible=dice.map(function(d){return{die:d,u:(visual-d.start)/d.len};})
-      .filter(function(item){return item.u>=0&&item.u<=1;});
-    visible.sort(function(a,b){return Math.sin(Math.PI*a.u)-Math.sin(Math.PI*b.u);});
-    visible.forEach(function(item){drawDie(item.die,item.u);});
-    if(!reduced)schedule();
+    // Cubes emerge momentarily ahead of cards only near a lateral edge.
+    // Center crossings, curls and most of the route remain behind.
+    const edge=smooth((Math.abs(x)-.36)/.077);
+    const z=-680+751*edge;
+    return [x,y,z];
   }
-  function schedule(){
-    if(active&&!frameId&&!document.hidden)frameId=requestAnimationFrame(draw);
+  for(let i=0;i<=SAMPLE_COUNT;i++){
+    const p=path(i/SAMPLE_COUNT);
+    if(i){
+      const prior=track[i-1].p;
+      totalLength+=Math.hypot((p[0]-prior[0])*900,(p[1]-prior[1])*1230,(p[2]-prior[2])*.32);
+    }
+    track.push({p,d:totalLength});
   }
-  window.addEventListener('scroll',setTarget,{passive:true});
-  window.addEventListener('resize',resize,{passive:true});
-  document.addEventListener('visibilitychange',function(){last=0;schedule();});
-  new MutationObserver(syncActive).observe(root,{attributes:true,attributeFilter:['data-gallery-columns','data-gallery-mode']});
-  if(motion){
-    const changed=function(){last=0;schedule();};
-    if(motion.addEventListener)motion.addEventListener('change',changed);
-    else if(motion.addListener)motion.addListener(changed);
+  function atFraction(value){
+    const wrapped=((value%1)+1)%1;
+    const d=wrapped*totalLength;
+    let low=0,high=track.length-1;
+    while(low+1<high){const mid=(low+high)>>1; if(track[mid].d<=d)low=mid;else high=mid;}
+    const a=track[low],b=track[high],t=(d-a.d)/Math.max(1e-8,b.d-a.d);
+    return [mix(a.p[0],b.p[0],t),mix(a.p[1],b.p[1],t),mix(a.p[2],b.p[2],t)];
   }
+  const cubes=Array.from({length:18},(_,i)=>({
+    index:i,
+    gap:i*.019,
+    size:.82+(i*17%9)*.042,
+    rotSeed:i*2.37+.6,
+    rollOffset:((i*0.267+0.11)%1),
+    rollRate:.83+(i%5)*.084,
+    labels:faces.map((_,f)=>brand[(i*3+f*2)%brand.length])
+  }));
+  let w=1,h=1,dpr=1,phase=.09,target=0,eased=0,velocity=0,
+      last=0,elapsed=0,raf=0,enabled=false,drawCount=0;
+  function sizeCanvas(){
+    const nextW=Math.max(1,window.innerWidth);
+    const nextH=Math.max(1,window.innerHeight);
+    const nextDpr=Math.min(1.5,window.devicePixelRatio||1);
+    if(w===nextW&&h===nextH&&dpr===nextDpr)return;
+    w=nextW;h=nextH;dpr=nextDpr;
+    for(const canvas of [back,front]){
+      canvas.width=Math.round(w*dpr);
+      canvas.height=Math.round(h*dpr);
+    }
+    bctx.setTransform(dpr,0,0,dpr,0,0);
+    fctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function rotate(v,xr,yr,zr){
+    let [x,y,z]=v;let a=Math.cos(xr),b=Math.sin(xr);
+    [y,z]=[y*a-z*b,y*b+z*a];a=Math.cos(yr);b=Math.sin(yr);
+    [x,z]=[x*a+z*b,-x*b+z*a];a=Math.cos(zr);b=Math.sin(zr);
+    return [x*a-y*b,x*b+y*a,z];
+  }
+  function projected(p){
+    const k=760/(760-p[2]);
+    return [w*.5+p[0]*k,h*.49+p[1]*k,k];
+  }
+  function polygon(ctx,vertices){
+    ctx.beginPath();ctx.moveTo(vertices[0][0],vertices[0][1]);
+    for(let j=1;j<vertices.length;j++)ctx.lineTo(vertices[j][0],vertices[j][1]);
+    ctx.closePath();
+  }
+  function faceMark(ctx,vertices,brandInfo,opacity){
+    const dx=vertices[1][0]-vertices[0][0],dy=vertices[1][1]-vertices[0][1];
+    const ex=vertices[3][0]-vertices[0][0],ey=vertices[3][1]-vertices[0][1];
+    if(Math.hypot(dx,dy)<12 || Math.hypot(ex,ey)<9)return;
+    const cx=vertices[0][0]+(dx+ex)*.5,cy=vertices[0][1]+(dy+ey)*.5;
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.transform(dx/120,dy/120,ex/120,ey/120,0,0);
+    const text=brandInfo[0];
+    ctx.fillStyle=brandInfo[1];ctx.globalAlpha*=opacity;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font=`900 ${text.length>3?36:text.length>2?42:56}px system-ui, sans-serif`;
+    ctx.fillText(text,0,4);
+    ctx.restore();
+  }
+  function drawOne(cube,trackPos,localU,head){
+    const [tx,ty,z]=trackPos;
+    const depth=760/(760-z);
+    const progress=((localU%1)+1)%1;
+    const entry=smooth(progress/.075)*(1-smooth((progress-.925)/.075));
+    if(entry<.02)return;
+    // Each cube occasionally executes one complete individual tumble.
+    // The extra angle is 0 or 2PI outside the event window, keeping
+    // orientation continuous when the per-cube cycle wraps.
+    const event=((head*cube.rollRate+cube.rollOffset)%1+1)%1;
+    const eventStep=smooth((event-.33)/.15);
+    const eventPulse=smooth((event-.33)/.06)*(1-smooth((event-.42)/.06));
+    const shrink=1-.19*eventPulse;
+    const pointSize=clamp((w<500?31:39)*cube.size*depth*shrink,7,w<500?38:49);
+    const visibility=clamp((pointSize-9)/10,0,1)*entry;
+    if(visibility<.03)return;
+    const x=tx*w+Math.sin(elapsed*.43+cube.rotSeed)*1.25;
+    const y=ty*h+Math.cos(elapsed*.37+cube.rotSeed)*1.35;
+    const screenX=w*.5+x*depth,screenY=h*.49+y*depth;
+    if(screenX<-pointSize||screenX>w+pointSize||
+       screenY<-pointSize||screenY>h+pointSize)return;
+    const half=(pointSize/depth)/2,i=cube.index;
+    const extraTurn=reduced.matches?0:tau*eventStep;
+    const xr=cube.rotSeed*.53+elapsed*(.19+(i%5)*.013)+phase*(i%2?-2.1:2.0)+extraTurn;
+    const yr=cube.rotSeed*.34+elapsed*(.13+(i%7)*.009)-phase*(i%2?2.4:1.7);
+    const zr=cube.rotSeed*.12+elapsed*(.045+(i%3)*.009);
+    const trans=v=>{const p=rotate(v,xr,yr,zr);return [p[0]*half+x,p[1]*half+y,p[2]*half+z];};
+    // Only a short lateral-edge passage draws on top of artwork.
+    const near=z>48&&Math.abs(screenX-w*.5)>w*.415;
+    const ctx=near?fctx:bctx;
+    const opacity=(near?.84:.77)*visibility;
+    const sortable=[];
+    for(const face of faces){
+      const n=rotate(face.n,xr,yr,zr);if(n[2]<=.02)continue;
+      const vertices=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([a,b])=>projected(trans([
+        face.c[0]+face.u[0]*a+face.v[0]*b,
+        face.c[1]+face.u[1]*a+face.v[1]*b,
+        face.c[2]+face.u[2]*a+face.v[2]*b
+      ])));
+      sortable.push({face,n,vertices,mean:vertices.reduce((s,p)=>s+p[2],0)/4});
+    }
+    sortable.sort((a,b)=>a.mean-b.mean);
+    for(const {face,n,vertices} of sortable){
+      const light=clamp(.77+n[2]*.19-n[0]*.09-n[1]*.08,.58,1);
+      const g=Math.round(245*light),blue=Math.round(251*light);
+      ctx.save();ctx.globalAlpha=opacity;
+      polygon(ctx,vertices);ctx.fillStyle=`rgb(${g},${Math.min(255,g+1)},${blue})`;ctx.fill();
+      ctx.strokeStyle='rgba(110,122,140,.45)';ctx.lineWidth=.65;ctx.stroke();
+      faceMark(ctx,vertices,cube.labels[face.i],1);
+      ctx.restore();
+    }
+    drawCount++;
+  }
+  function render(now){
+    raf=0;if(!enabled||document.hidden)return;
+    const dt=last?clamp((now-last)/1000,0,.035):1/60;
+    last=now;elapsed+=dt;
+    if(reduced.matches){eased=target;velocity=0;}else{
+      velocity+=(target-eased)*65*dt;
+      velocity*=Math.exp(-12*dt);
+      eased+=velocity*dt;
+      if(Math.abs(target-eased)<.000005&&Math.abs(velocity)<.00001){
+        eased=target;velocity=0;
+      }
+    }
+    if(!reduced.matches){
+      const pace=.025+.010*Math.sin(phase*tau*1.7+.2)+.004*Math.sin(phase*tau*3.2);
+      phase+=Math.max(.009,pace)*dt;
+    }
+    const head=phase+eased*2.85;
+    bctx.clearRect(0,0,w,h);fctx.clearRect(0,0,w,h);
+    const positioned=cubes.map(c=>({c,u:head-c.gap,p:atFraction(head-c.gap)}))
+      .sort((a,b)=>a.p[2]-b.p[2]);
+    drawCount=0;
+    for(const item of positioned)drawOne(item.c,item.p,item.u,head);
+    if(!reduced.matches)request();
+  }
+  function request(){
+    if(enabled&&!raf&&!document.hidden)raf=requestAnimationFrame(render);
+  }
+  function readScroll(){
+    const max=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+    target=clamp(window.scrollY/max,0,1);
+    request();
+  }
+  function syncActive(){
+    const next=root.dataset.galleryColumns==='3'&&root.dataset.galleryMode==='grid';
+    if(next===enabled)return;
+    enabled=next;
+    back.hidden=!next;front.hidden=!next;
+    if(!next){
+      if(raf)cancelAnimationFrame(raf);
+      raf=0;bctx.clearRect(0,0,w,h);fctx.clearRect(0,0,w,h);
+      return;
+    }
+    last=0;velocity=0;
+    sizeCanvas();
+    const max=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+    target=eased=clamp(window.scrollY/max,0,1);
+    request();
+  }
+  window.addEventListener('scroll',readScroll,{passive:true});
+  window.addEventListener('resize',()=>{sizeCanvas();readScroll();},{passive:true});
+  document.addEventListener('visibilitychange',()=>{last=0;request();});
+  new MutationObserver(syncActive).observe(root,{
+    attributes:true,attributeFilter:['data-gallery-columns','data-gallery-mode']
+  });
+  if(reduced.addEventListener)reduced.addEventListener('change',()=>{last=0;request();});
+  else if(reduced.addListener)reduced.addListener(()=>{last=0;request();});
   syncActive();
+  // Read-only diagnostics for browser checks. No user information.
+  window.__gridCubeDiagnostics=()=>({
+    active:enabled,drawCount,progress:target,cubes:cubes.length,
+    route:'descending-serpentine',curls:curls.length,
+    frontCanvasHidden:front.hidden,
+    pointerEvents:getComputedStyle(front).pointerEvents
+  });
 })();
