@@ -1,8 +1,9 @@
-/* Production three-column GRID only: one short, close-spaced cube ribbon.
- * A single continuous trajectory extends from outside the top edge,
- * through vertical legs with top/bottom 360-degree turns, then outside
- * the bottom edge. Left/right rebounds are smooth, without loops.
- * Artwork, 2-column GRID, reel, and voting behavior stay unchanged.
+/* Production three-column GRID only: an 18-cube single-file ribbon.
+ * Each top/bottom encounter makes a complete circular LOOP of the
+ * leading cube's route, then a compact vertical U-turn. Every follower
+ * traverses the same loop in order; side walls reflect without loops.
+ * Entry and exit continue the one route outside the viewport.
+ * Artwork, 2-column GRID, reel and voting logic are unchanged.
  */
 (function(){
   'use strict';
@@ -63,7 +64,6 @@
     const k=760/(760-z);
     return [screenX/k,screenY/k,z];
   }
-  let currentSpin=0;
   function addSample(p,turn){
     if(track.length){
       const q=track[track.length-1].p;
@@ -71,7 +71,7 @@
         (p[0]-q[0])*950,(p[1]-q[1])*1190,(p[2]-q[2])*.16
       );
     }
-    track.push({p,d:totalLength,turn,turnSpin:turn>0?currentSpin:0});
+    track.push({p,d:totalLength,turn});
   }
   function legPoint(leg,t,index){
     const [ax,ay]=leg.a,[bx,by]=leg.b;
@@ -89,36 +89,37 @@
     const y=cubic(ay,ay+(by-ay)*.31,by-(by-ay)*.31,by,t);
     return pathFromScreen(x,y);
   }
+  // Draw one *physical* full circle, not an in-place 360° cube spin.
+  // The normalized axes use the viewport aspect ratio so this is round
+  // in CSS pixels on both phones and wide desktop screens.
+  const loopRadiusPx=Math.min(window.innerWidth,window.innerHeight)*.045;
+  const loopRx=loopRadiusPx/Math.max(1,window.innerWidth);
+  const loopRy=loopRadiusPx/Math.max(1,window.innerHeight);
+  const LOOP_PHASE=.60;
   function turnPoint(a,b,t,index){
-    // A compact loop near the horizontal top/bottom boundary, then
-    // vertical reversal. Neither side-wall contact triggers this.
     const sign=a[1]>0?1:-1;
-    let x=cubic(a[0],a[0],b[0],b[0],t);
-    let y=cubic(a[1],a[1]+sign*.07,b[1]+sign*.07,b[1],t);
-    const q=(t-.17)/.66;
-    if(q>0&&q<1){
-      const envelope=Math.sin(Math.PI*q)**2;
-      const r=.024+(index%3)*.0055;
-      const direction=b[0]>=a[0]?1:-1;
-      x+=direction*r*envelope*(Math.cos(tau*q)-1);
-      y+=sign*r*.80*envelope*Math.sin(tau*q);
+    const direction=b[0]>=a[0]?1:-1;
+    let x,y;
+    if(t<LOOP_PHASE){
+      // Enter with a vertical tangent, trace a complete 2π circle,
+      // then return to the same point with the same vertical tangent.
+      const theta=t/LOOP_PHASE*tau;
+      x=a[0]+direction*loopRx*(1-Math.cos(theta));
+      y=a[1]+sign*loopRy*Math.sin(theta);
+    }else{
+      // Only after the complete loop do we turn back vertically.
+      // U-turn tangents point into, and then out of, the screen.
+      const q=(t-LOOP_PHASE)/(1-LOOP_PHASE);
+      x=cubic(a[0],a[0],b[0],b[0],q);
+      y=a[1]+sign*(.024+(index%3)*.004)*Math.sin(Math.PI*q);
     }
     return pathFromScreen(x,y);
   }
   for(let i=0;i<legs.length;i++){
     const leg=legs[i],next=legs[(i+1)%legs.length];
-    for(let k=0;k<180;k++){
-      currentSpin=0;
-      addSample(legPoint(leg,k/180,i),0);
-    }
-    for(let k=0;k<80;k++){
-      // A complete cube tumble finishes before the vertical
-      // trajectory has reversed at the middle of this turn.
-      currentSpin=tau*smooth(Math.min(1,(k/80)/.50));
-      addSample(turnPoint(leg.b,next.a,k/80,i),1);
-    }
+    for(let k=0;k<180;k++)addSample(legPoint(leg,k/180,i),0);
+    for(let k=0;k<80;k++)addSample(turnPoint(leg.b,next.a,k/80,i),1);
   }
-  currentSpin=0;
   addSample(legPoint(legs[0],0,0),0);
   function atFraction(value){
     const d=(((value%1)+1)%1)*totalLength;
@@ -131,8 +132,7 @@
     const t=(d-a.d)/Math.max(1e-8,b.d-a.d);
     return [
       mix(a.p[0],b.p[0],t),mix(a.p[1],b.p[1],t),
-      mix(a.p[2],b.p[2],t),mix(a.turn,b.turn,t),
-      (a.turn>0&&b.turn===0&&a.turnSpin>tau*.9)?tau:mix(a.turnSpin,b.turnSpin,t)
+      mix(a.p[2],b.p[2],t),mix(a.turn,b.turn,t)
     ];
   }
   // The exit attaches to the beginning of the seventh vertical leg,
@@ -163,7 +163,7 @@
     if(u>EXIT_TRACK_AT)return externalPosition(u,exitAnchor,exitScreen,false);
     return atFraction(u);
   }
-  const ENTRY_FINISH=.10,EXIT_BEGIN=.87,EXIT_EXTENSION=.190;
+  const ENTRY_FINISH=.10,EXIT_BEGIN=.87,EXIT_EXTENSION=.196;
   function scrollTravel(progress){
     if(progress<=ENTRY_FINISH){
       return -.020+.020*smooth(progress/ENTRY_FINISH);
@@ -177,7 +177,7 @@
   }
   const cubes=Array.from({length:18},(_,i)=>({
     index:i,
-    gap:i*.0032,
+    gap:i*.0036,
     size:.82+(i*17%9)*.042,
     rotSeed:i*2.37+.6,
     rollOffset:((i*0.267+0.11)%1),
@@ -230,7 +230,7 @@
     ctx.restore();
   }
   function drawOne(cube,trackPos,head){
-    const [tx,ty,z,,turnSpin]=trackPos;
+    const [tx,ty,z]=trackPos;
     const depth=760/(760-z);
     const event=((head*cube.rollRate+cube.rollOffset)%1+1)%1;
     const eventStep=smooth((event-.33)/.15);
@@ -243,7 +243,7 @@
     const screenY=h*.49+y*depth;
     const half=(pointSize/depth)/2,i=cube.index;
     const extraTurn=reduced.matches?0:tau*eventStep;
-    const xr=cube.rotSeed*.53+elapsed*(.19+(i%5)*.013)+phase*(i%2?-2.1:2.0)+extraTurn+(reduced.matches?0:turnSpin);
+    const xr=cube.rotSeed*.53+elapsed*(.19+(i%5)*.013)+phase*(i%2?-2.1:2.0)+extraTurn;
     const yr=cube.rotSeed*.34+elapsed*(.13+(i%7)*.009)-phase*(i%2?2.4:1.7);
     const zr=cube.rotSeed*.12+elapsed*(.045+(i%3)*.009);
     const trans=v=>{
@@ -356,7 +356,7 @@
   // Read-only diagnostics for browser checks. No user information.
   window.__gridCubeDiagnostics=()=>({
     active:enabled,drawCount,progress:target,cubes:cubes.length,
-    route:'single-file-slow-entry-exit-top-bottom-360',curls:curlCount,
+    route:'single-file-full-circular-loops-then-vertical-turns',curls:curlCount,
     frontCanvasHidden:front.hidden,
     pointerEvents:getComputedStyle(front).pointerEvents,
     lastOnlyExit:eased>=EXIT_BEGIN,
@@ -366,7 +366,8 @@
     exitTrackAt:EXIT_TRACK_AT,
     leaderDistance:scrollTravel(eased),
     sideWallReflections:legs.filter(leg=>!!leg.wall).length,
-    followerSpacing:.0032,
+    followerSpacing:.0036,
+    topBottomPhysicalLoop:true,loopRadiusPx,
     cubeSizeBase:w<500?21:28,
     orbitProgress:scrollTravel(eased)
   });
