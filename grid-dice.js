@@ -1,6 +1,7 @@
 /* Production three-column GRID only: a slow, primarily vertical
  * leader-and-followers ribbon with varied columns, gentle S-bends,
- * compact curling hairpins, a brief foreground pass, and final exit.
+ * compact curling hairpins, sequential scroll-triggered depth entrance,
+ * brief foreground passes and final exit.
  * Do not alter artwork cards, the GRID layout, or voting.
  */
 (function(){
@@ -104,7 +105,7 @@
   }
   const cubes=Array.from({length:18},(_,i)=>({
     index:i,
-    gap:i*.019,
+    gap:i*.0105,
     size:.82+(i*17%9)*.042,
     rotSeed:i*2.37+.6,
     rollOffset:((i*0.267+0.11)%1),
@@ -157,10 +158,18 @@
     ctx.restore();
   }
   function drawOne(cube,trackPos,head){
-    const [tx,ty,z]=trackPos;
+    const [tx,ty,trackZ]=trackPos;
+    // At the top of the page no cubes are present. Scrolling gradually
+    // releases the leader first and then its followers from deep space.
+    // Entering cubes grow through perspective rather than appearing at
+    // their normal size or being permanently present on page load.
+    const entryStart=.003+cube.index*.0018;
+    const entry=smooth((eased-entryStart)/.026);
+    if(entry<=.0001)return;
+    const z=mix(-1600,trackZ,entry);
     const depth=760/(760-z);
-    // Cubes never disappear along normal orbit segments. The only
-    // intentional fade/exit occurs in the last ~5% of page scroll.
+    // Once fully entered, all cubes remain on-screen until the page-end
+    // exit, retaining v9's vertical route and per-cube rotations.
     const exitStart=.946+cube.index*.0017;
     const exit=smooth((eased-exitStart)/Math.max(.001,1-exitStart));
     if(exit>=.999)return;
@@ -168,7 +177,7 @@
     const eventStep=smooth((event-.33)/.15);
     const eventPulse=smooth((event-.33)/.06)*(1-smooth((event-.42)/.06));
     const shrink=1-.19*eventPulse;
-    const pointSize=clamp((w<500?31:39)*cube.size*depth*shrink,14,w<500?38:49);
+    const pointSize=clamp((w<500?21:28)*cube.size*depth*shrink,3.5,w<500?27:36);
     const x=tx*w+Math.sin(elapsed*.43+cube.rotSeed)*1.25;
     const y=ty*h+Math.cos(elapsed*.37+cube.rotSeed)*1.35;
     const screenX=w*.5+x*depth;
@@ -184,7 +193,7 @@
     };
     const near=z>16&&Math.abs(screenX-w*.5)>w*.29;
     const ctx=near?fctx:bctx;
-    const opacity=(near?.84:.77)*(1-smooth(exit));
+    const opacity=(near?.84:.77)*entry*(1-smooth(exit));
     const sortable=[];
     for(const face of faces){
       const n=rotate(face.n,xr,yr,zr);
@@ -290,6 +299,9 @@
     frontCanvasHidden:front.hidden,
     pointerEvents:getComputedStyle(front).pointerEvents,
     lastOnlyExit:eased>=.946,
+    scrollTriggeredEntrance:eased>.003,
+    followerSpacing:.0105,
+    cubeSizeBase:w<500?21:28,
     orbitProgress:((phase+eased*.94)%1+1)%1
   });
 })();
