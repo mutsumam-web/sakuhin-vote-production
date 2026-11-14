@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-14T18:12:41.423Z",
+  "collectedAt": "2026-11-14T22:31:29.326Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 627,
-    "quotaUsedMinutes": 434,
-    "privateRepoMinutes": 434,
-    "publicRepoMinutes": 193,
+    "usedMinutes": 632,
+    "quotaUsedMinutes": 435,
+    "privateRepoMinutes": 435,
+    "publicRepoMinutes": 197,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 627,
+    "repositoryMinutesTotal": 632,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 434
+      "minutes": 435
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 192
+      "minutes": 196
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
@@ -76,12 +76,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 15,
+      "requestsToday": 16,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 1835,
-      "rowsWrittenToday": 4,
+      "rowsReadToday": 2396,
+      "rowsWrittenToday": 8,
       "storageBytes": 454656
     },
     "r2": {
@@ -90,20 +90,20 @@
       "classBOperations": 1199
     },
     "githubActions": {
-      "usedMinutes": 627,
-      "quotaUsedMinutes": 434
+      "usedMinutes": 632,
+      "quotaUsedMinutes": 435
     }
   },
   "workers": {
-    "requestsToday": 51,
+    "requestsToday": 56,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 1835,
+    "rowsReadToday": 2396,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 4,
+    "rowsWrittenToday": 8,
     "rowsWrittenLimit": 100000,
     "storageBytes": 942080,
     "storageLimitBytes": 5368709120,
