@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-16T22:13:49.942Z",
+  "collectedAt": "2026-11-17T08:01:26.821Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 664,
-    "quotaUsedMinutes": 448,
-    "privateRepoMinutes": 448,
-    "publicRepoMinutes": 216,
+    "usedMinutes": 669,
+    "quotaUsedMinutes": 449,
+    "privateRepoMinutes": 449,
+    "publicRepoMinutes": 220,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 664,
+    "repositoryMinutesTotal": 669,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 448
+      "minutes": 449
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 215
+      "minutes": 219
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
@@ -76,11 +76,11 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 35,
+      "requestsToday": 0,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 3745,
+      "rowsReadToday": 0,
       "rowsWrittenToday": 0,
       "storageBytes": 454656
     },
@@ -90,18 +90,18 @@
       "classBOperations": 1199
     },
     "githubActions": {
-      "usedMinutes": 664,
-      "quotaUsedMinutes": 448
+      "usedMinutes": 669,
+      "quotaUsedMinutes": 449
     }
   },
   "workers": {
-    "requestsToday": 47,
+    "requestsToday": 5,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 3745,
+    "rowsReadToday": 0,
     "rowsReadLimit": 5000000,
     "rowsWrittenToday": 0,
     "rowsWrittenLimit": 100000,
