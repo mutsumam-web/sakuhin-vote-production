@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-18T07:38:01.674Z",
+  "collectedAt": "2026-11-18T20:38:51.409Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 680,
-    "quotaUsedMinutes": 452,
-    "privateRepoMinutes": 452,
-    "publicRepoMinutes": 228,
+    "usedMinutes": 686,
+    "quotaUsedMinutes": 454,
+    "privateRepoMinutes": 454,
+    "publicRepoMinutes": 232,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 680,
+    "repositoryMinutesTotal": 686,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,13 +23,13 @@
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 452
+      "minutes": 454
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 227
+      "minutes": 231
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
@@ -76,11 +76,11 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 8,
+      "requestsToday": 21,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 1198,
+      "rowsReadToday": 2472,
       "rowsWrittenToday": 4,
       "storageBytes": 454656
     },
@@ -90,18 +90,18 @@
       "classBOperations": 1199
     },
     "githubActions": {
-      "usedMinutes": 680,
-      "quotaUsedMinutes": 452
+      "usedMinutes": 686,
+      "quotaUsedMinutes": 454
     }
   },
   "workers": {
-    "requestsToday": 8,
+    "requestsToday": 46,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 1198,
+    "rowsReadToday": 2472,
     "rowsReadLimit": 5000000,
     "rowsWrittenToday": 4,
     "rowsWrittenLimit": 100000,
@@ -113,7 +113,7 @@
     "storageBytes": 135346542,
     "storageLimitBytes": 10737418240,
     "classAOperations": 2,
-    "classBOperations": 1262,
+    "classBOperations": 1274,
     "classALimit": 1000000,
     "classBLimit": 10000000,
     "scope": "account_exact"
