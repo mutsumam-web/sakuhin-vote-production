@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-19T07:33:36.722Z",
+  "collectedAt": "2026-11-19T20:43:49.222Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 691,
-    "quotaUsedMinutes": 455,
-    "privateRepoMinutes": 455,
-    "publicRepoMinutes": 236,
+    "usedMinutes": 1240,
+    "quotaUsedMinutes": 1033,
+    "privateRepoMinutes": 1033,
+    "publicRepoMinutes": 240,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 691,
-    "reconciliationDelta": 0,
+    "repositoryMinutesTotal": 1273,
+    "reconciliationDelta": -33,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -20,28 +20,28 @@
   },
   "repositories": [
     {
+      "repository": "mutsumam-web/aims-investment-system",
+      "private": true,
+      "archived": false,
+      "minutes": 576
+    },
+    {
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 455
+      "minutes": 457
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 235
+      "minutes": 239
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
       "private": false,
       "archived": false,
       "minutes": 1
-    },
-    {
-      "repository": "mutsumam-web/aims-investment-system",
-      "private": true,
-      "archived": false,
-      "minutes": 0
     },
     {
       "repository": "mutsumam-web/hachi-ai",
@@ -82,12 +82,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 7,
+      "requestsToday": 29,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 637,
-      "rowsWrittenToday": 0,
+      "rowsReadToday": 3109,
+      "rowsWrittenToday": 4,
       "storageBytes": 454656
     },
     "r2": {
@@ -96,30 +96,30 @@
       "classBOperations": 1199
     },
     "githubActions": {
-      "usedMinutes": 691,
-      "quotaUsedMinutes": 455
+      "usedMinutes": 697,
+      "quotaUsedMinutes": 457
     }
   },
   "workers": {
-    "requestsToday": 11,
+    "requestsToday": 94,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 637,
+    "rowsReadToday": 3109,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 0,
+    "rowsWrittenToday": 4,
     "rowsWrittenLimit": 100000,
     "storageBytes": 942080,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 111112830,
+    "storageBytes": 135538791,
     "storageLimitBytes": 10737418240,
-    "classAOperations": 2,
-    "classBOperations": 1274,
+    "classAOperations": 3,
+    "classBOperations": 1300,
     "classALimit": 1000000,
     "classBLimit": 10000000,
     "scope": "account_exact"
