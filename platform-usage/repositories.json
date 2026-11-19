@@ -1,33 +1,33 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-19T07:33:36.722Z",
+  "collectedAt": "2026-11-19T20:43:49.222Z",
   "exact": true,
   "repositoriesComplete": true,
   "repositories": [
     {
+      "repository": "mutsumam-web/aims-investment-system",
+      "private": true,
+      "archived": false,
+      "minutes": 576
+    },
+    {
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 455
+      "minutes": 457
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 235
+      "minutes": 239
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
       "private": false,
       "archived": false,
       "minutes": 1
-    },
-    {
-      "repository": "mutsumam-web/aims-investment-system",
-      "private": true,
-      "archived": false,
-      "minutes": 0
     },
     {
       "repository": "mutsumam-web/hachi-ai",
