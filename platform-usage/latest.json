@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-25T21:46:41.752Z",
+  "collectedAt": "2026-11-26T08:30:07.759Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 16862,
-    "quotaUsedMinutes": 16573,
-    "privateRepoMinutes": 16573,
-    "publicRepoMinutes": 292,
+    "usedMinutes": 17223,
+    "quotaUsedMinutes": 16926,
+    "privateRepoMinutes": 16926,
+    "publicRepoMinutes": 297,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 16865,
-    "reconciliationDelta": -3,
+    "repositoryMinutesTotal": 17223,
+    "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
     "plan": "free",
@@ -23,19 +23,19 @@
       "repository": "mutsumam-web/aims-investment-system",
       "private": true,
       "archived": false,
-      "minutes": 16098
+      "minutes": 16450
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 475
+      "minutes": 476
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 291
+      "minutes": 296
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
@@ -82,12 +82,12 @@
   ],
   "project": {
     "workers": {
-      "requestsToday": 0,
+      "requestsToday": 1,
       "errorsToday": 0
     },
     "d1": {
-      "rowsReadToday": 0,
-      "rowsWrittenToday": 0,
+      "rowsReadToday": 561,
+      "rowsWrittenToday": 4,
       "storageBytes": 454656
     },
     "r2": {
@@ -96,27 +96,27 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 767,
-      "quotaUsedMinutes": 475
+      "usedMinutes": 773,
+      "quotaUsedMinutes": 476
     }
   },
   "workers": {
-    "requestsToday": 42,
+    "requestsToday": 11,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
   },
   "d1": {
-    "rowsReadToday": 0,
+    "rowsReadToday": 561,
     "rowsReadLimit": 5000000,
-    "rowsWrittenToday": 0,
+    "rowsWrittenToday": 4,
     "rowsWrittenLimit": 100000,
     "storageBytes": 942080,
     "storageLimitBytes": 5368709120,
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 137306628,
+    "storageBytes": 137323689,
     "storageLimitBytes": 10737418240,
     "classAOperations": null,
     "classBOperations": null,
