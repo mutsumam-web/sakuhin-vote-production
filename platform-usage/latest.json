@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "collectedAt": "2026-11-26T08:30:07.759Z",
+  "collectedAt": "2026-11-26T21:39:48.098Z",
   "githubActions": {
     "status": "ok",
     "exact": true,
-    "usedMinutes": 17223,
-    "quotaUsedMinutes": 16926,
-    "privateRepoMinutes": 16926,
-    "publicRepoMinutes": 297,
+    "usedMinutes": 17230,
+    "quotaUsedMinutes": 16929,
+    "privateRepoMinutes": 16929,
+    "publicRepoMinutes": 301,
     "unknownVisibilityMinutes": 0,
     "repositoryMetadataComplete": true,
-    "repositoryMinutesTotal": 17223,
+    "repositoryMinutesTotal": 17230,
     "reconciliationDelta": 0,
     "limitMinutes": 2000,
     "scope": "account_exact",
@@ -23,19 +23,19 @@
       "repository": "mutsumam-web/aims-investment-system",
       "private": true,
       "archived": false,
-      "minutes": 16450
+      "minutes": 16451
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-system",
       "private": true,
       "archived": false,
-      "minutes": 476
+      "minutes": 478
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-production",
       "private": false,
       "archived": false,
-      "minutes": 296
+      "minutes": 300
     },
     {
       "repository": "mutsumam-web/sakuhin-vote-cyber",
@@ -96,12 +96,12 @@
       "classBOperations": null
     },
     "githubActions": {
-      "usedMinutes": 773,
-      "quotaUsedMinutes": 476
+      "usedMinutes": 779,
+      "quotaUsedMinutes": 478
     }
   },
   "workers": {
-    "requestsToday": 11,
+    "requestsToday": 28,
     "errorsToday": 0,
     "limitRequests": 100000,
     "scope": "account_exact"
@@ -116,7 +116,7 @@
     "scope": "account_exact"
   },
   "r2": {
-    "storageBytes": 137323689,
+    "storageBytes": 137345403,
     "storageLimitBytes": 10737418240,
     "classAOperations": null,
     "classBOperations": null,
