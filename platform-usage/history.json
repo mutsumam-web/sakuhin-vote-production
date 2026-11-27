@@ -1,112 +1,8 @@
 {
   "schemaVersion": 1,
   "source": "platform-usage-monitor",
-  "updatedAt": "2026-11-26T21:39:48.098Z",
+  "updatedAt": "2026-11-27T08:43:44.961Z",
   "points": [
-    {
-      "at": "2026-10-27T01:06:53.460Z",
-      "workers": {
-        "requestsToday": 31,
-        "errorsToday": 0,
-        "limitRequests": 100000,
-        "scope": "account_exact"
-      },
-      "d1": {
-        "rowsReadToday": 414,
-        "rowsReadLimit": 5000000,
-        "rowsWrittenToday": 0,
-        "rowsWrittenLimit": 100000,
-        "storageBytes": 1077248,
-        "storageLimitBytes": 5368709120,
-        "scope": "account_exact"
-      },
-      "r2": {
-        "storageBytes": 135042284,
-        "storageLimitBytes": 10737418240,
-        "classAOperations": null,
-        "classBOperations": null,
-        "classALimit": 1000000,
-        "classBLimit": 10000000,
-        "scope": "account_exact"
-      },
-      "githubActions": {
-        "quotaUsedMinutes": 1740,
-        "usedMinutes": 2426,
-        "limitMinutes": 2000
-      },
-      "project": {
-        "workers": {
-          "requestsToday": 0,
-          "errorsToday": 0
-        },
-        "d1": {
-          "rowsReadToday": 0,
-          "rowsWrittenToday": 0,
-          "storageBytes": 602112
-        },
-        "r2": {
-          "storageBytes": 109567197,
-          "classAOperations": null,
-          "classBOperations": null
-        },
-        "githubActions": {
-          "usedMinutes": 1754,
-          "quotaUsedMinutes": 1068
-        }
-      }
-    },
-    {
-      "at": "2026-10-27T07:05:40.672Z",
-      "workers": {
-        "requestsToday": 65,
-        "errorsToday": 0,
-        "limitRequests": 100000,
-        "scope": "account_exact"
-      },
-      "d1": {
-        "rowsReadToday": 975,
-        "rowsReadLimit": 5000000,
-        "rowsWrittenToday": 4,
-        "rowsWrittenLimit": 100000,
-        "storageBytes": 1077248,
-        "storageLimitBytes": 5368709120,
-        "scope": "account_exact"
-      },
-      "r2": {
-        "storageBytes": 135042284,
-        "storageLimitBytes": 10737418240,
-        "classAOperations": null,
-        "classBOperations": null,
-        "classALimit": 1000000,
-        "classBLimit": 10000000,
-        "scope": "account_exact"
-      },
-      "githubActions": {
-        "quotaUsedMinutes": 1777,
-        "usedMinutes": 2467,
-        "limitMinutes": 2000
-      },
-      "project": {
-        "workers": {
-          "requestsToday": 1,
-          "errorsToday": 0
-        },
-        "d1": {
-          "rowsReadToday": 561,
-          "rowsWrittenToday": 4,
-          "storageBytes": 602112
-        },
-        "r2": {
-          "storageBytes": 109567197,
-          "classAOperations": null,
-          "classBOperations": null
-        },
-        "githubActions": {
-          "usedMinutes": 1760,
-          "quotaUsedMinutes": 1070
-        }
-      }
-    },
     {
       "at": "2026-10-27T13:06:18.911Z",
       "workers": {
@@ -3744,6 +3640,58 @@
         "githubActions": {
           "usedMinutes": 779,
           "quotaUsedMinutes": 478
+        }
+      }
+    },
+    {
+      "at": "2026-11-27T08:43:44.961Z",
+      "workers": {
+        "requestsToday": 19,
+        "errorsToday": 0,
+        "limitRequests": 100000,
+        "scope": "account_exact"
+      },
+      "d1": {
+        "rowsReadToday": 1759,
+        "rowsReadLimit": 5000000,
+        "rowsWrittenToday": 8,
+        "rowsWrittenLimit": 100000,
+        "storageBytes": 942080,
+        "storageLimitBytes": 5368709120,
+        "scope": "account_exact"
+      },
+      "r2": {
+        "storageBytes": 137365566,
+        "storageLimitBytes": 10737418240,
+        "classAOperations": null,
+        "classBOperations": null,
+        "classALimit": 1000000,
+        "classBLimit": 10000000,
+        "scope": "account_exact"
+      },
+      "githubActions": {
+        "quotaUsedMinutes": 16931,
+        "usedMinutes": 17236,
+        "limitMinutes": 2000
+      },
+      "project": {
+        "workers": {
+          "requestsToday": 9,
+          "errorsToday": 0
+        },
+        "d1": {
+          "rowsReadToday": 1759,
+          "rowsWrittenToday": 8,
+          "storageBytes": 454656
+        },
+        "r2": {
+          "storageBytes": 109567197,
+          "classAOperations": null,
+          "classBOperations": null
+        },
+        "githubActions": {
+          "usedMinutes": 784,
+          "quotaUsedMinutes": 479
         }
       }
     }
